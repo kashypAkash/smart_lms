@@ -1,0 +1,137 @@
+package com.lms.cmpe.dao;
+
+import com.lms.cmpe.model.Phone;
+import com.lms.cmpe.model.User;
+import org.hibernate.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by akash on 11/13/16.
+ */
+
+@Repository
+public class UserDaoImpl implements UserDao {
+
+    @Autowired
+    private SessionFactory sessionFactory;
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<User> getUsers() {
+        //open a hibernate session
+        Session session = sessionFactory.openSession();
+
+        // Get all the users
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
+        criteriaQuery.from(User.class);
+        List<User> users = session.createQuery(criteriaQuery).getResultList();
+
+        //Close the session
+        session.close();
+        return users;
+    }
+
+    @Override
+    public User getUserById(int id) {
+
+        //Open the session
+        Session session = sessionFactory.openSession();
+
+        // Get the User by Id
+        User user = null;
+        try{
+             user = session.get(User.class,id);
+        }
+        catch (NoResultException e){
+            System.out.println(e.getMessage());
+        }
+
+        return user;
+
+    }
+
+    @Override
+    public List<Phone> getUsersByNumbers(String numbers) {
+
+        Session session = sessionFactory.openSession();
+        List<Phone> phoneList = new ArrayList<>();
+            String[] list = numbers.split(";");
+            for(String number: list){
+                //noinspection JpaQlInspection
+                Query query = session.createQuery("from Phone where number = :number");
+                query.setParameter("number",number);
+                try {
+                    Phone phone = (Phone) query.getSingleResult();
+                    phoneList.add(phone);
+                }
+                catch (NoResultException e){
+                    session.close();
+                    return null;
+                }
+            }
+            session.close();
+            return phoneList;
+    }
+
+
+    @Override
+    public void saveUser(User user) {
+        // todo: implement transactions
+        // Open a session
+        Session session = sessionFactory.openSession();
+
+        // begin a transaction
+        session.beginTransaction();
+
+        session.save(user);
+
+        // save the user & commit trasaction
+
+        session.getTransaction().commit();
+
+        //close the session
+        session.close();
+
+    }
+
+    @Override
+    public void deleteUser(User user) {
+        Session session = sessionFactory.openSession();
+
+        session.beginTransaction();
+
+        session.delete(user);
+
+        session.getTransaction().commit();
+
+        session.close();
+    }
+
+    @Override
+    public void updateUser(User user) {
+
+        Session session = sessionFactory.openSession();
+        // begin a transaction
+        session.beginTransaction();
+        // update and commit transaction
+        try {
+            session.update(user);
+            session.getTransaction().commit();
+        }
+        catch (HibernateException e){
+            session.getTransaction().rollback();
+        }
+        //close the session
+        session.close();
+
+    }
+}
