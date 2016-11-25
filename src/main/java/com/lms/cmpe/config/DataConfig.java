@@ -27,7 +27,7 @@ public class DataConfig {
         Resource config = new ClassPathResource("hibernate.cfg.xml");
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setConfigLocation(config);
-        sessionFactory.setPackagesToScan(env.getProperty("lab2.entity.package"));
+        sessionFactory.setPackagesToScan(env.getProperty("lab.entity.package"));
         sessionFactory.setDataSource(dataSource());
         return sessionFactory;
     }
@@ -38,16 +38,16 @@ public class DataConfig {
         BasicDataSource ds = new BasicDataSource();
 
         //Driver class name
-        ds.setDriverClassName(env.getProperty("lab2.db.driver"));
+        ds.setDriverClassName(env.getProperty("lab.db.driver"));
 
         //Set the Url
-        ds.setUrl(env.getProperty("lab2.db.url"));
+        ds.setUrl(env.getProperty("lab.db.url"));
 
         //set username
-        ds.setUsername(env.getProperty("lab2.db.username"));
+        ds.setUsername(env.getProperty("lab.db.username"));
 
         //set password
-        ds.setPassword(env.getProperty("lab2.db.password"));
+        ds.setPassword(env.getProperty("lab.db.password"));
 
         return ds;
     }
