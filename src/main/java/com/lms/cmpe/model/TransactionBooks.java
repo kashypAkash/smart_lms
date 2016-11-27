@@ -17,7 +17,6 @@ public class TransactionBooks {
     @JoinColumn(name="transactionId")
     private Transaction transaction;
 
-
     private Date dueDate;
     private Date returnDate;
     @ManyToOne(cascade=CascadeType.ALL)

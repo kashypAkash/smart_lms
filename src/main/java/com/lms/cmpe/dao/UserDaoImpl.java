@@ -85,7 +85,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void saveUser(User user) {
-        // todo: implement transactions
+
         // Open a session
         Session session = sessionFactory.openSession();
 

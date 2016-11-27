@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.SystemEnvironmentPropertySource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -58,7 +59,6 @@ public class MailConfig {
         javaMailSender.setPort(Integer.parseInt(env.getProperty("mail.port")));
         javaMailSender.setUsername(env.getProperty("mail.username"));
         javaMailSender.setPassword(env.getProperty("mail.password"));
-
         javaMailSender.setJavaMailProperties(getMailProperties());
 
         return javaMailSender;

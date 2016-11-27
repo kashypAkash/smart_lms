@@ -81,4 +81,17 @@ public class User {
     public void setVerified(boolean verified) {
         isVerified = verified;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", universityId=" + universityId +
+                ", userRole=" + userRole +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", verificationCode='" + verificationCode + '\'' +
+                ", isVerified=" + isVerified +
+                '}';
+    }
 }

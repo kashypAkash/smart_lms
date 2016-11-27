@@ -13,6 +13,7 @@ public class BookKeywords {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bookKeywordId;
     private String keyword;
+    private int bookId;
 
     public int getBookKeywordId() {
         return bookKeywordId;
@@ -30,8 +31,4 @@ public class BookKeywords {
         this.keyword = keyword;
     }
 
-
-
-
-    private int bookId;
 }

@@ -28,10 +28,10 @@ public class HelloController {
     private  SessionFactory sessionFactory;
 
     @Autowired
-    private UserService userService;
+    private PhoneService phoneService;
 
     @Autowired
-    private PhoneService phoneService;
+    private UserService userService;
 
     @RequestMapping("/")
     public String hello(){
@@ -40,17 +40,6 @@ public class HelloController {
 
     @Autowired
     private JavaMailSender javaMailSender;
-/*
-    public void savePerson(Person person){
-
-        SimpleMailMessage mailMessage=new SimpleMailMessage();
-        mailMessage.setTo(person.getEmail());
-        mailMessage.setSubject("Registration");
-        mailMessage.setText("Hello " +person.getUserName() +"\n Your registration is successfull");
-        javaMailService.send(mailMessage);
-
-        personRepository.save(person);
-    }*/
 
     @GetMapping("/mail")
     public String test(){

@@ -30,7 +30,7 @@ public class Book {
     private int noOfCopies;
     private String currentStatus;
 
-   @OneToMany(mappedBy = "bookId")
+    @OneToMany(mappedBy = "bookId")
     private Collection<BookKeywords> bookKeywords;
 
     public Book(){}
