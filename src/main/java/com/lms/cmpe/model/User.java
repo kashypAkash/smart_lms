@@ -1,8 +1,6 @@
 package com.lms.cmpe.model;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class User {
@@ -10,26 +8,22 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
-    private String firstname;
-    private String lastname;
-    private String title;
-
-    @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="address_id")
-    private Address address;
-
-    @ManyToMany(cascade=CascadeType.ALL)
-    @JoinTable(name="user_phone", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="phone_id"))
-    private List<Phone> phones = new ArrayList<>();
+    private int universityId;
+    private char userRole;
+    private String email;
+    private String password;
+    private String verificationCode;
+    private boolean isVerified;
 
     public User(){}
 
-    public User(String firstname, String lastname, String title, Address address, List<Phone> phones) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.title = title;
-        this.address = address;
-        this.phones = phones;
+    public User(int universityId, char userRole, String email, String password, String verificationCode, boolean isVerified) {
+        this.universityId = universityId;
+        this.userRole = userRole;
+        this.email = email;
+        this.password = password;
+        this.verificationCode = verificationCode;
+        this.isVerified = isVerified;
     }
 
     public int getUserId() {
@@ -40,43 +34,51 @@ public class User {
         this.userId = userId;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public int getUniversityId() {
+        return universityId;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setUniversityId(int universityId) {
+        this.universityId = universityId;
     }
 
-    public String getLastname() {
-        return lastname;
+    public char getUserRole() {
+        return userRole;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setUserRole(char userRole) {
+        this.userRole = userRole;
     }
 
-    public String getTitle() {
-        return title;
+    public String getEmail() {
+        return email;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public Address getAddress() {
-        return address;
+    public String getPassword() {
+        return password;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public List<Phone> getPhones() {
-        return phones;
+    public String getVerificationCode() {
+        return verificationCode;
     }
 
-    public void setPhones(List<Phone> phones) {
-        this.phones = phones;
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 }

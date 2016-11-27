@@ -47,22 +47,24 @@ public class HelloController {
                       @RequestParam(value = "phones") String phones
                       ){
 
-        List<Phone> phoneList = userService.getUsersByNumber(phones);
+        User user = new User();
+       /* List<Phone> phoneList = userService.getUsersByNumber(phones);
         if(phoneList!=null){
             User user = new User(firstname,lastname,title,new Address(street,city,state,zip),phoneList);
             userService.saveUser(user);
             return "redirect:/users";
-        }
+        }*/
             return "badrequest";
 
     }
 
     @RequestMapping("/user/{id}")
     public String getUserById(Model model,@PathVariable("id") int id){
-        User user = userService.getUserById(id);
+        User user = new User();
+        /*User user = userService.getUserById(id);
         model.addAttribute("user",user);
         model.addAttribute("userid",user.getUserId());
-        model.addAttribute("addressid",user.getAddress().getAddressId());
+        model.addAttribute("addressid",user.getAddress().getAddressId());*/
         return "user";
     }
 
@@ -80,7 +82,7 @@ public class HelloController {
                                                     @RequestParam(value="id", required=true) int id,
                                                     @RequestParam(value="addressid", required=true) int addressId){
 
-        user.setUserId(id);
+       /* user.setUserId(id);
         user.getAddress().setAddressId(addressId);
 
         if(action.equals("update")){
@@ -90,7 +92,7 @@ public class HelloController {
 
         if(action.equals("delete")){
             userService.deleteUser(user);
-        }
+        }*/
         return String.format("redirect:/user/%d",user.getUserId());
     }
 
