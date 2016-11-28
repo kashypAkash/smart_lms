@@ -28,6 +28,30 @@ public class LoginController {
     @Autowired
     private VerificationService verificationService;
 
+    @GetMapping("/")
+    public String loginForm(Model model){
+        User user = new User();
+        model.addAttribute("user",user);
+        return "login";
+    }
+
+    @PostMapping("/login")
+    public String validateLogin(@ModelAttribute User user,Model model){
+
+        User result = userService.getUserByEmail(user.getEmail());
+        if(result!=null && result.getPassword().equals(user.getPassword())){
+            user = result;
+            model.addAttribute("user",user);
+                if(result.isVerified()) {
+                    return "profile";
+                }
+                else{
+                    return "activate";
+                }
+        }
+        return "login";
+    }
+
     @GetMapping("/signup")
     public String signUpForm(Model model){
         User user = new User();

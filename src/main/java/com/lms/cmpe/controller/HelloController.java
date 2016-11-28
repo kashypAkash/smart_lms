@@ -33,11 +33,6 @@ public class HelloController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/")
-    public String hello(){
-        return "home";
-    }
-
     @Autowired
     private JavaMailSender javaMailSender;
 

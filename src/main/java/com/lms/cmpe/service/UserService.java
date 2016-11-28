@@ -15,4 +15,5 @@ public interface UserService {
     void deleteUser(User user);
     void updateUser(User user);
     List<Phone> getUsersByNumber(String numbers);
+    User getUserByEmail(String email);
 }
