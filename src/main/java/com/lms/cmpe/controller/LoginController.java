@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
+
 /**
  * Created by akash on 11/26/16.
  */
@@ -36,14 +38,15 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String validateLogin(@ModelAttribute User user,Model model){
+    public String validateLogin(@ModelAttribute User user, Model model, HttpSession session){
 
         User result = userService.getUserByEmail(user.getEmail());
         if(result!=null && result.getPassword().equals(user.getPassword())){
             user = result;
+            session.setAttribute("user",user.getEmail());
             model.addAttribute("user",user);
                 if(result.isVerified()) {
-                    return "profile";
+                    return "redirect:/profile";
                 }
                 else{
                     return "activate";
@@ -51,6 +54,7 @@ public class LoginController {
         }
         return "login";
     }
+
 
     @GetMapping("/signup")
     public String signUpForm(Model model){
@@ -81,6 +85,20 @@ public class LoginController {
         model.addAttribute("user",user);
         model.addAttribute("message","Incorrect Verification Code! Try again");
         return "activate";
+    }
+
+    @GetMapping("/profile")
+    public String profile(Model model,HttpSession session){
+        if(session.getAttribute("user")!=null){
+            return "profile";
+        }
+        return "redirect:/";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session){
+        session.invalidate();
+        return "redirect:/";
     }
 
 }
