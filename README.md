@@ -21,7 +21,7 @@
 ### NOTE: what to do before PR
 
  * git remote add parent https://github.com/kashypAkash/smart_lms.git
- * git pull parent
+ * git pull parent <branch> (from parent which branch you want to pull from)
  * git status # Make sure the changes are ready to be staged
  * git add .
  * git commit -m
