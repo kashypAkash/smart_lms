@@ -8,6 +8,18 @@ import javax.persistence.*;
 
 @Entity
 public class BookKeywords {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "bookKeywordId")
+    private int bookKeywordId;
+    private String keyword;
+
+    //private int bookId;
+    @ManyToOne
+    @JoinColumn(name = "bookId")
+    private Book book;
+
     public BookKeywords(int bookKeywordId, String keyword, Book book) {
 
         this.bookKeywordId = bookKeywordId;
@@ -24,16 +36,6 @@ public class BookKeywords {
 
         this.keyword = keyword;
     }
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bookKeywordId")
-    private int bookKeywordId;
-    private String keyword;
-
-    //private int bookId;
-    @ManyToOne
-    @JoinColumn(name = "bookId")
-    private Book book;
 
     public int getBookKeywordId() {
         return bookKeywordId;
@@ -58,5 +60,6 @@ public class BookKeywords {
     public void setBook(Book book) {
         this.book = book;
     }
+
 
 }

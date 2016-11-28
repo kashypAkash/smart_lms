@@ -10,6 +10,8 @@ import com.lms.cmpe.service.UserService;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,14 +28,24 @@ public class HelloController {
     private  SessionFactory sessionFactory;
 
     @Autowired
+    private PhoneService phoneService;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
-    private PhoneService phoneService;
+    private JavaMailSender javaMailSender;
 
-    @RequestMapping("/")
-    public String hello(){
+    @GetMapping("/mail")
+    public String test(){
+
+            SimpleMailMessage mailMessage=new SimpleMailMessage();
+            mailMessage.setTo("senjusforest@gmail.com");
+            mailMessage.setSubject("Registration");
+            mailMessage.setText("Hello ");
+            javaMailSender.send(mailMessage);
         return "home";
+
     }
 
     @PostMapping("/add")

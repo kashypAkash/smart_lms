@@ -11,22 +11,6 @@ import java.util.List;
 @Entity
 public class Book {
 
-    public List<BookKeywords> getBookKeywords() {
-        return bookKeywordsList;
-    }
-
-    public List<BookKeywords> getBookKeywordsList() {
-        return bookKeywordsList;
-    }
-
-    public void setBookKeywordsList(List<BookKeywords> bookKeywordsList) {
-        this.bookKeywordsList = bookKeywordsList;
-    }
-
-    public void setBookKeywords(List<BookKeywords> bookKeywordsList) {
-        this.bookKeywordsList = bookKeywordsList;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bookId")
@@ -44,6 +28,18 @@ public class Book {
     private List<BookKeywords> bookKeywordsList;
 
     public Book(){}
+
+    public Book( String author, String title, int callNumber, String publisher, int yearOfPublication, String locationInLibrary, int noOfCopies, String currentStatus) {
+        // this.bookId = bookId;
+        this.author = author;
+        this.title = title;
+        this.callNumber = callNumber;
+        this.publisher = publisher;
+        this.yearOfPublication = yearOfPublication;
+        this.locationInLibrary = locationInLibrary;
+        this.noOfCopies = noOfCopies;
+        this.currentStatus = currentStatus;
+    }
 
     public Book(String author, String title, int callNumber, String publisher, int yearOfPublication, String locationInLibrary, int noOfCopies, String currentStatus, List<BookKeywords> bookKeywordsList) {
         this.author = author;
@@ -125,17 +121,22 @@ public class Book {
         this.currentStatus = currentStatus;
     }
 
-    public Book( String author, String title, int callNumber, String publisher, int yearOfPublication, String locationInLibrary, int noOfCopies, String currentStatus) {
-       // this.bookId = bookId;
-        this.author = author;
-        this.title = title;
-        this.callNumber = callNumber;
-        this.publisher = publisher;
-        this.yearOfPublication = yearOfPublication;
-        this.locationInLibrary = locationInLibrary;
-        this.noOfCopies = noOfCopies;
-        this.currentStatus = currentStatus;
+    public List<BookKeywords> getBookKeywords() {
+        return bookKeywordsList;
     }
+
+    public List<BookKeywords> getBookKeywordsList() {
+        return bookKeywordsList;
+    }
+
+    public void setBookKeywordsList(List<BookKeywords> bookKeywordsList) {
+        this.bookKeywordsList = bookKeywordsList;
+    }
+
+    public void setBookKeywords(List<BookKeywords> bookKeywordsList) {
+        this.bookKeywordsList = bookKeywordsList;
+    }
+
 
     public  void addBookKeywords(){
 

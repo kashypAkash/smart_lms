@@ -85,7 +85,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void saveUser(User user) {
-        // todo: implement transactions
+
         // Open a session
         Session session = sessionFactory.openSession();
 
@@ -134,4 +134,22 @@ public class UserDaoImpl implements UserDao {
         session.close();
 
     }
+
+    @Override
+    public User getUserByEmail(String email) {
+        Session session = sessionFactory.openSession();
+        User user;
+        //noinspection JpaQlInspection
+        Query query = session.createQuery("from User where email=:email");
+        query.setParameter("email",email);
+        try {
+           user = (User) query.getSingleResult();
+        }
+        catch (NoResultException e){
+            user = null;
+        }
+        session.close();
+        return user;
+    }
+
 }
