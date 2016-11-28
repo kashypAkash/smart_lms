@@ -11,7 +11,7 @@ import java.util.Random;
 @Service
 public class VerificationService {
 
-    public int verficattionCode(){
+    public int verficationCode(){
         Random rnd = new Random();
         int verificationCode = 100000 + rnd.nextInt(900000);
         return verificationCode;

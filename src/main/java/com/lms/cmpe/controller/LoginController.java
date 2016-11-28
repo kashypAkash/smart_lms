@@ -9,10 +9,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by akash on 11/26/16.
@@ -30,20 +28,35 @@ public class LoginController {
     @Autowired
     private VerificationService verificationService;
 
-    @GetMapping("/login")
-    public String signUp(Model model){
+    @GetMapping("/signup")
+    public String signUpForm(Model model){
         User user = new User();
         model.addAttribute("user",user);
-        return "login";
+        return "signup";
     }
 
-    @PostMapping("/login")
+    @PostMapping("/signup")
     public String createUser(@ModelAttribute User user){
-        user.setVerificationCode(Integer.toString(verificationService.verficattionCode()));
-        System.out.println(user.toString());
+        user.setVerificationCode(Integer.toString(verificationService.verficationCode()));
         userService.saveUser(user);
         mailService.sendMail(user);
-        return null;
+        return "activate";
+    }
+
+    @PostMapping("/activate")
+    public String activateAccount(@RequestParam(value="activationcode", required=true) String activationcode,
+                                  @RequestParam(value="userid", required=true) String userid,
+                                  Model model){
+        System.out.println(userid);
+        User user = userService.getUserById(Integer.parseInt(userid));
+        if(activationcode.equals(user.getVerificationCode())){
+            user.setVerified(true);
+            userService.updateUser(user);
+            return "profile";
+        }
+        model.addAttribute("user",user);
+        model.addAttribute("message","Incorrect Verification Code! Try again");
+        return "activate";
     }
 
 }
