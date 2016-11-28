@@ -2,6 +2,7 @@ package com.lms.cmpe.model;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by Nischith on 11/26/2016.
@@ -10,19 +11,28 @@ import java.util.Collection;
 @Entity
 public class Book {
 
-    public Collection<BookKeywords> getBookKeywords() {
-        return bookKeywords;
+    public List<BookKeywords> getBookKeywords() {
+        return bookKeywordsList;
     }
 
-    public void setBookKeywords(Collection<BookKeywords> bookKeywords) {
-        this.bookKeywords = bookKeywords;
+    public List<BookKeywords> getBookKeywordsList() {
+        return bookKeywordsList;
+    }
+
+    public void setBookKeywordsList(List<BookKeywords> bookKeywordsList) {
+        this.bookKeywordsList = bookKeywordsList;
+    }
+
+    public void setBookKeywords(List<BookKeywords> bookKeywordsList) {
+        this.bookKeywordsList = bookKeywordsList;
     }
 
     @Id
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "bookId")
     private int bookId;
     private String author;
+    private String title;
     private int callNumber;
     private String publisher;
     private int yearOfPublication;
@@ -30,19 +40,21 @@ public class Book {
     private int noOfCopies;
     private String currentStatus;
 
-   @OneToMany(mappedBy = "bookId")
-    private Collection<BookKeywords> bookKeywords;
+   @OneToMany(mappedBy = "book",cascade = CascadeType.ALL)
+    private List<BookKeywords> bookKeywordsList;
 
     public Book(){}
 
-    public Book(String author, int callNumber, String publisher, int yearOfPublication, String locationInLibrary, int noOfCopies, String currentStatus) {
+    public Book(String author, String title, int callNumber, String publisher, int yearOfPublication, String locationInLibrary, int noOfCopies, String currentStatus, List<BookKeywords> bookKeywordsList) {
         this.author = author;
+        this.title = title;
         this.callNumber = callNumber;
         this.publisher = publisher;
         this.yearOfPublication = yearOfPublication;
         this.locationInLibrary = locationInLibrary;
         this.noOfCopies = noOfCopies;
         this.currentStatus = currentStatus;
+        this.bookKeywordsList = bookKeywordsList;
     }
 
     public int getBookId() {
@@ -60,6 +72,10 @@ public class Book {
     public void setAuthor(String author) {
         this.author = author;
     }
+
+    public String getTitle() { return title; }
+
+    public void setTitle(String title) { this.title = title; }
 
     public int getCallNumber() {
         return callNumber;
@@ -107,5 +123,26 @@ public class Book {
 
     public void setCurrentStatus(String currentStatus) {
         this.currentStatus = currentStatus;
+    }
+
+    public Book( String author, String title, int callNumber, String publisher, int yearOfPublication, String locationInLibrary, int noOfCopies, String currentStatus) {
+       // this.bookId = bookId;
+        this.author = author;
+        this.title = title;
+        this.callNumber = callNumber;
+        this.publisher = publisher;
+        this.yearOfPublication = yearOfPublication;
+        this.locationInLibrary = locationInLibrary;
+        this.noOfCopies = noOfCopies;
+        this.currentStatus = currentStatus;
+    }
+
+    public  void addBookKeywords(){
+
+        List<BookKeywords> bookKeywords=this.getBookKeywordsList();
+
+        for (BookKeywords bookKeyword:bookKeywords) {
+            bookKeyword.setBook(this);
+        }
     }
 }

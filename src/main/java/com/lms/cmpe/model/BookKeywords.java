@@ -8,11 +8,32 @@ import javax.persistence.*;
 
 @Entity
 public class BookKeywords {
+    public BookKeywords(int bookKeywordId, String keyword, Book book) {
 
+        this.bookKeywordId = bookKeywordId;
+        this.keyword = keyword;
+        this.book = book;
+    }
+
+    public BookKeywords(String keyword, Book book) {
+
+        this.keyword = keyword;
+        this.book = book;
+    }
+    public BookKeywords(String keyword) {
+
+        this.keyword = keyword;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "bookKeywordId")
     private int bookKeywordId;
     private String keyword;
+
+    //private int bookId;
+    @ManyToOne
+    @JoinColumn(name = "bookId")
+    private Book book;
 
     public int getBookKeywordId() {
         return bookKeywordId;
@@ -30,8 +51,12 @@ public class BookKeywords {
         this.keyword = keyword;
     }
 
+    public Book getBook() {
+        return book;
+    }
 
+    public void setBook(Book book) {
+        this.book = book;
+    }
 
-
-    private int bookId;
 }
