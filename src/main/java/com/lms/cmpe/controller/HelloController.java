@@ -89,7 +89,7 @@ public class HelloController {
 
 
 
-    @RequestMapping(value = "/user/modify",method = RequestMethod.POST)
+    @RequestMapping(value = "/updateBook",method = RequestMethod.POST)
     public String modify(@ModelAttribute User user, @RequestParam(value="action", required=true) String action,
                                                     @RequestParam(value="id", required=true) int id,
                                                     @RequestParam(value="addressid", required=true) int addressId){
