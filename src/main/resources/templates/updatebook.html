@@ -80,6 +80,7 @@
                     <button class="btn waves-effect waves-light red book-tag" type="submit" name="action" value="addkeyword">Tag</button>
                     <div th:each="word, keyStat : *{bookKeywordsList}">
                         <div class="input-field col s3 m3">
+                            <input th:field="*{bookKeywordsList[__${keyStat.index}__].bookKeywordId}"/>
                             <input th:field="*{bookKeywordsList[__${keyStat.index}__].keyword}" type="text" class="validate" />
                         </div>
                     </div>

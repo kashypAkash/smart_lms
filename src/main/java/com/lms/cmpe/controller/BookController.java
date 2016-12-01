@@ -72,13 +72,14 @@ public class BookController {
         return "updatebook";
     }
 
-    @RequestMapping(value = "/book/update",method = RequestMethod.POST)
+    @RequestMapping(value = "/book/update/{id}",method = RequestMethod.POST)
     public String updateBook(@ModelAttribute Book book, @PathVariable("id") int id,
                              @RequestParam(value="action", required=true) String action, HttpSession session,
                              Model model){
         model.addAttribute("user",session.getAttribute("user"));
         System.out.println(book.toString());
         book.setBookId(id);
+        book.addBookKeywords();
         System.out.println(book.toString());
         if(action.equals("update")){
             bookService.updateBook(book);
