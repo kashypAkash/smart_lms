@@ -23,6 +23,7 @@ public class Book {
     private int yearOfPublication;
     private String locationInLibrary;
     private int noOfCopies;
+    private int noOfAvailableCopies;
     private String currentStatus;
 
    @OneToMany(mappedBy = "book",cascade = CascadeType.ALL)
@@ -30,7 +31,8 @@ public class Book {
 
     public Book(){}
 
-    public Book( String author, String title, int callNumber, String publisher, int yearOfPublication, String locationInLibrary, int noOfCopies, String currentStatus) {
+    public Book( String author, String title, int callNumber, String publisher, int yearOfPublication, String locationInLibrary, int noOfCopies, String currentStatus,List<BookKeywords> bookKeywordsList) {
+        this.author = author;
         // this.bookId = bookId;
         this.author = author;
         this.title = title;
@@ -40,9 +42,10 @@ public class Book {
         this.locationInLibrary = locationInLibrary;
         this.noOfCopies = noOfCopies;
         this.currentStatus = currentStatus;
+        this.bookKeywordsList = bookKeywordsList;
     }
 
-    public Book(String author, String title, int callNumber, String publisher, int yearOfPublication, String locationInLibrary, int noOfCopies, String currentStatus, List<BookKeywords> bookKeywordsList) {
+    public Book(String author, String title, int callNumber, String publisher, int yearOfPublication, String locationInLibrary, int noOfCopies, int noOfAvailableCopies, String currentStatus, List<BookKeywords> bookKeywordsList) {
         this.author = author;
         this.title = title;
         this.callNumber = callNumber;
@@ -50,6 +53,7 @@ public class Book {
         this.yearOfPublication = yearOfPublication;
         this.locationInLibrary = locationInLibrary;
         this.noOfCopies = noOfCopies;
+        this.noOfAvailableCopies = noOfAvailableCopies;
         this.currentStatus = currentStatus;
         this.bookKeywordsList = bookKeywordsList;
     }
@@ -106,13 +110,15 @@ public class Book {
         this.locationInLibrary = locationInLibrary;
     }
 
-    public int getNoOfCopies() {
-        return noOfCopies;
-    }
+    public int getNoOfCopies() { return noOfCopies; }
 
     public void setNoOfCopies(int noOfCopies) {
         this.noOfCopies = noOfCopies;
     }
+
+    public int getNoOfAvailableCopies() { return noOfAvailableCopies; }
+
+    public void setNoOfAvailableCopies(int noOfAvailableCopies) { this.noOfAvailableCopies = noOfAvailableCopies; }
 
     public String getCurrentStatus() {
         return currentStatus;
