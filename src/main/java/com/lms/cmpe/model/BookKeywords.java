@@ -37,6 +37,9 @@ public class BookKeywords {
         this.keyword = keyword;
     }
 
+    public BookKeywords() {
+    }
+
     public int getBookKeywordId() {
         return bookKeywordId;
     }

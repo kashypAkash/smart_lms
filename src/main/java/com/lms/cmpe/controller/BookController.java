@@ -52,20 +52,49 @@ public class BookController {
         return "book";
     }
 
-    @RequestMapping(value = "/book/update",method = RequestMethod.POST)
-    public String updateBook(@ModelAttribute Book book, @PathVariable("id") int id,
-                             @RequestParam(value="action", required=true) String action){
+    @RequestMapping("/book/keyword/{keyword}")
+    public String getBooksByKeyword(Model model, @PathVariable("keyword") String keyword){
+        List<BookKeywords> bookKeywords;
 
-       book.setBookId(id);
+        String dummyKeyword = "testkw";
 
-        if(action.equals("update")){
+        bookKeywords = bookService.getBooksByKeyword(dummyKeyword);
 
-            bookService.updateBook(book);
+        for (BookKeywords bookKeyword:bookKeywords) {
+            System.out.println(bookKeyword.getBook().getAuthor() + " " + bookKeyword.getBookKeywordId());
         }
+       /*model.addAttribute("user",user);
+        model.addAttribute("userid",user.getUserId());
+        model.addAttribute("addressid",user.getAddress().getAddressId());*/
+        return "book";
+    }
 
-        /*if(action.equals("delete")){
-            bookService.deleteUser(book);
-        }*/
+    @RequestMapping(value = "/book/update",method = RequestMethod.POST)
+    public String updateBook(@ModelAttribute Book book){
+
+        book = bookService.getBookById(1);
+        book.setAuthor("New Author");
+        book.setTitle("New Title");
+        bookService.updateBook(book);
+
         return String.format("redirect:/book/%d",book.getBookId());
+    }
+
+    @RequestMapping(value = "/book/delete",method = RequestMethod.POST)
+    public String deleteBook(@ModelAttribute Book book){
+        book = bookService.getBookById(2);
+        bookService.deleteBook(book);
+
+        return String.format("redirect:/book/%d",book.getBookId());
+    }
+
+    @RequestMapping(value="/books",method = RequestMethod.GET)
+    public String getAllBooks(){
+        System.out.println("All books");
+        List<Book> books=bookService.getAllBooks();
+        for (Book book:books) {
+                System.out.println("printing each book"+book.getBookId());
+        }
+        return "badrequest";
     }
 }

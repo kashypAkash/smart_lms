@@ -2,6 +2,7 @@ package com.lms.cmpe.dao;
 
 import com.lms.cmpe.model.Phone;
 import com.lms.cmpe.model.Book;
+import com.lms.cmpe.model.BookKeywords;
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -42,7 +43,6 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book getBookById(int id) {
-
         //Open the session
         Session session = sessionFactory.openSession();
 
@@ -59,17 +59,19 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public List<Book> getBooksByKeyword(String keyword) {
-
+    public List<BookKeywords> getBooksByKeyword(String keyword) {
         Session session = sessionFactory.openSession();
-        List<Book> booksList = new ArrayList<>();
+        List<BookKeywords> bookKeywords = new ArrayList<BookKeywords>();
 
-        Query query = session.createQuery("from keyword where bookkeywords = :keyword");
+        String s = "from BookKeywords bk where bk.keyword in (:keyword)";
+        System.out.println(s);
+        Query query = session.createQuery(s);
         query.setParameter("keyword",keyword);
-        booksList = query.getResultList();
+        bookKeywords = query.getResultList();
 
         session.close();
-        return booksList;
+
+        return bookKeywords;
     }
 
     @Override
@@ -81,6 +83,7 @@ public class BookDaoImpl implements BookDao {
         // begin a transaction
         session.beginTransaction();
 
+        book.setNoOfAvailableCopies(book.getNoOfCopies());
         session.save(book);
 
         // add the book & commit trasaction
