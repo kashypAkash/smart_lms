@@ -44,6 +44,7 @@ public class BookController {
 
         if(action.equals("add")){
             System.out.println(book.toString());
+            book.addBookKeywords();
             bookService.addBook(book);
             return "test";
         }
