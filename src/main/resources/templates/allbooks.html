@@ -26,24 +26,23 @@
         </div>
     </nav>
     <div class="row" >
-        <div th:each="book : ${books}">
+        <div th:each="book : ${books}" class="col s10 m10">
             <div class="row valign-wrapper">
-                <div class="col m1 valign">
+                <div class="col m3 valign">
                     <img src="http://placehold.it/110x120" />
                 </div>
-                <div class="col m11">
-                    <h5 th:text="${book.getTitle()}">Title of the Book</h5>
+                <div class="col m9">
+                    <h5 th:text="${book.getTitle()}" >Title of the Book</h5>
                     <p th:text="${book.getAuthor()}">Author of the Book</p>
                     <ul class="right" >
-                        <li class="book-options"><a class="secondary-content" title="Delete" th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">delete</i></a></li>
-                        <li class="book-options"><a class="secondary-content" title="Update" th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">playlist_add</i></a></li>
-                        <li class="book-options"><a class="secondary-content" title="Add to cart" th:href="@{/addtocart}" th:if="${user.getUserRole() == 'USER'}"><i class="small material-icons">shopping_cart</i></a></li>
+                        <li class="book-options"><a class="secondary-content" title="Delete" th:href="@{|/book/delete/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">delete</i></a></li>
+                        <li class="book-options"><a class="secondary-content" title="Update" th:href="@{|/book/update/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">playlist_add</i></a></li>
+                        <li class="book-options"><a class="secondary-content" title="Add to cart" th:href="@{|/book/addtocart/${book.getBookId()}|}" th:if="${user.getUserRole() == 'USER'}"><i class="small material-icons">shopping_cart</i></a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-
 </div><!--end of main container-->
 </body>
 </html>
