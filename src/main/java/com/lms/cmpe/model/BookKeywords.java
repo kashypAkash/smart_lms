@@ -20,6 +20,9 @@ public class BookKeywords {
     @JoinColumn(name = "bookId")
     private Book book;
 
+    public BookKeywords() {
+    }
+
     public BookKeywords(int bookKeywordId, String keyword, Book book) {
 
         this.bookKeywordId = bookKeywordId;

@@ -3,16 +3,12 @@ package com.lms.cmpe.controller;
 import com.lms.cmpe.model.Book;
 import com.lms.cmpe.model.BookKeywords;
 import com.lms.cmpe.service.BookService;
-
-import com.lms.cmpe.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by Nischith on 11/27/2016.
@@ -22,21 +18,36 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @PostMapping("/book/add")
-    public String addBook(@ModelAttribute Book book){
+    @GetMapping("/books")
+    public String getAllBooks(Model model, HttpSession session){
+        model.addAttribute("user",session.getAttribute("user"));
+        model.addAttribute("books",bookService.getAllBooks());
+        return "allbooks";
+    }
 
-        List<BookKeywords> dummyKeyWords=new ArrayList<BookKeywords>();
-        dummyKeyWords.add(new BookKeywords("testkw"));
-        dummyKeyWords.add(new BookKeywords("testkw2"));
+    @GetMapping("/book")
+    public String bookForm(Model model,HttpSession session){
+        Book book = new Book();
+        model.addAttribute("user",session.getAttribute("user"));
+        model.addAttribute("book",book);
+        return "book";
+    }
 
-        BookKeywords bk1=new BookKeywords("bk1");
-        BookKeywords bk2=new BookKeywords("bk2");
-        Book dummybook = new Book("Author", " title", 12345, "publisher", 2014, "Location", 5, "Available",dummyKeyWords);
+    @RequestMapping(value = "/book/add", method = RequestMethod.POST)
+    public String addBook(@ModelAttribute Book book, Model model, @RequestParam(value="action") String action,HttpSession session){
+        model.addAttribute("user",session.getAttribute("user"));
+        if(action.equals("addkeyword")){
+            book.getBookKeywordsList().add(new BookKeywords());
+            model.addAttribute("book",book);
+            return "book";
+        }
 
-        dummybook.addBookKeywords();
-        bookService.addBook(dummybook);
-
-        return "badrequest";
+        if(action.equals("add")){
+            System.out.println(book.toString());
+            bookService.addBook(book);
+            return "test";
+        }
+        return "test";
     }
 
     @RequestMapping("/book/{id}")
@@ -52,49 +63,26 @@ public class BookController {
         return "book";
     }
 
-    @RequestMapping("/book/keyword/{keyword}")
-    public String getBooksByKeyword(Model model, @PathVariable("keyword") String keyword){
-        List<BookKeywords> bookKeywords;
-
-        String dummyKeyword = "testkw";
-
-        bookKeywords = bookService.getBooksByKeyword(dummyKeyword);
-
-        for (BookKeywords bookKeyword:bookKeywords) {
-            System.out.println(bookKeyword.getBook().getAuthor() + " " + bookKeyword.getBookKeywordId());
-        }
-       /*model.addAttribute("user",user);
-        model.addAttribute("userid",user.getUserId());
-        model.addAttribute("addressid",user.getAddress().getAddressId());*/
-        return "book";
-    }
-
     @RequestMapping(value = "/book/update",method = RequestMethod.POST)
-    public String updateBook(@ModelAttribute Book book){
+    public String updateBook(@ModelAttribute Book book, @PathVariable("id") int id,
+                             @RequestParam(value="action", required=true) String action){
 
-        book = bookService.getBookById(1);
-        book.setAuthor("New Author");
-        book.setTitle("New Title");
-        bookService.updateBook(book);
+       book.setBookId(id);
 
-        return String.format("redirect:/book/%d",book.getBookId());
-    }
-
-    @RequestMapping(value = "/book/delete",method = RequestMethod.POST)
-    public String deleteBook(@ModelAttribute Book book){
-        book = bookService.getBookById(2);
-        bookService.deleteBook(book);
-
-        return String.format("redirect:/book/%d",book.getBookId());
-    }
-
-    @RequestMapping(value="/books",method = RequestMethod.GET)
-    public String getAllBooks(){
-        System.out.println("All books");
-        List<Book> books=bookService.getAllBooks();
-        for (Book book:books) {
-                System.out.println("printing each book"+book.getBookId());
+        if(action.equals("update")){
+            bookService.updateBook(book);
         }
-        return "badrequest";
+
+        /*if(action.equals("delete")){
+            bookService.deleteUser(book);
+        }*/
+        return String.format("redirect:/book/%d",book.getBookId());
+    }
+
+    @GetMapping("/book/delete/{id}")
+    public String deleteBookByid(@PathVariable("id") int id){
+        Book book= bookService.getBookById(id);
+        bookService.deleteBook(book);
+        return "redirect:/books";
     }
 }

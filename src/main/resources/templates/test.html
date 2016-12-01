@@ -20,12 +20,12 @@
             <a href="#" class="brand-logo">e-Library</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}">Add Books</a></li>
-                <li><a th:href="@{/books}">View Books</a></li>
+                <li><a th:href="@{/book}">View Books</a></li>
                 <li><a class="red" th:href="@{/logout}">Logout</a></li>
             </ul>
         </div>
     </nav>
-    <p>Profile page</p>
+<p>Test Page</p>
 </div>
 </body>
 </html>

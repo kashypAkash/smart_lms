@@ -17,4 +17,29 @@ nav{
 
 .brand-logo{
     margin-left: 20px;
+    font-family: 'Kaushan Script', cursive;
 }
+
+.form-heading{
+    font-family: 'Kaushan Script', cursive;
+    text-align: center;
+}
+
+.book-heading{
+    margin-left: 20px;
+}
+
+.book-tag{
+    margin-left: 10px;
+}
+
+.book-options{
+    display:inline;
+}
+
+.secondary-content{
+    margin-right: 30px;
+
+}
+
+.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }

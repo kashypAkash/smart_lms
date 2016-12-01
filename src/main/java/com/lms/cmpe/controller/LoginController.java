@@ -1,5 +1,6 @@
 package com.lms.cmpe.controller;
 
+import com.lms.cmpe.model.Book;
 import com.lms.cmpe.model.User;
 import com.lms.cmpe.service.MailService;
 import com.lms.cmpe.service.UserService;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by akash on 11/26/16.
@@ -36,14 +39,15 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String validateLogin(@ModelAttribute User user,Model model){
+    public String validateLogin(@ModelAttribute User user, Model model, HttpSession session){
 
         User result = userService.getUserByEmail(user.getEmail());
         if(result!=null && result.getPassword().equals(user.getPassword())){
             user = result;
+            session.setAttribute("user",user);
             model.addAttribute("user",user);
                 if(result.isVerified()) {
-                    return "profile";
+                    return "redirect:/profile";
                 }
                 else{
                     return "activate";
@@ -51,6 +55,7 @@ public class LoginController {
         }
         return "login";
     }
+
 
     @GetMapping("/signup")
     public String signUpForm(Model model){
@@ -73,14 +78,30 @@ public class LoginController {
                                   Model model){
         System.out.println(userid);
         User user = userService.getUserById(Integer.parseInt(userid));
+        model.addAttribute("user",user);
         if(activationcode.equals(user.getVerificationCode())){
             user.setVerified(true);
             userService.updateUser(user);
             return "profile";
         }
-        model.addAttribute("user",user);
+
         model.addAttribute("message","Incorrect Verification Code! Try again");
         return "activate";
+    }
+
+    @GetMapping("/profile")
+    public String profile(Model model,HttpSession session){
+        if(session.getAttribute("user")!=null){
+            model.addAttribute("user",session.getAttribute("user"));
+            return "profile";
+        }
+        return "redirect:/";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session){
+        session.invalidate();
+        return "redirect:/";
     }
 
 }
