@@ -1,6 +1,7 @@
 package com.lms.cmpe.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class Book {
     private String currentStatus;
 
    @OneToMany(mappedBy = "book",cascade = CascadeType.ALL)
-    private List<BookKeywords> bookKeywordsList;
+    private List<BookKeywords> bookKeywordsList = new ArrayList<BookKeywords>();;
 
     public Book(){}
 
@@ -137,7 +138,6 @@ public class Book {
         this.bookKeywordsList = bookKeywordsList;
     }
 
-
     public  void addBookKeywords(){
 
         List<BookKeywords> bookKeywords=this.getBookKeywordsList();
@@ -145,5 +145,21 @@ public class Book {
         for (BookKeywords bookKeyword:bookKeywords) {
             bookKeyword.setBook(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "bookId=" + bookId +
+                ", author='" + author + '\'' +
+                ", title='" + title + '\'' +
+                ", callNumber=" + callNumber +
+                ", publisher='" + publisher + '\'' +
+                ", yearOfPublication=" + yearOfPublication +
+                ", locationInLibrary='" + locationInLibrary + '\'' +
+                ", noOfCopies=" + noOfCopies +
+                ", currentStatus='" + currentStatus + '\'' +
+                ", bookKeywordsList=" + bookKeywordsList +
+                '}';
     }
 }

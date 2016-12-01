@@ -1,5 +1,6 @@
 package com.lms.cmpe.controller;
 
+import com.lms.cmpe.model.Book;
 import com.lms.cmpe.model.User;
 import com.lms.cmpe.service.MailService;
 import com.lms.cmpe.service.UserService;
@@ -43,7 +44,7 @@ public class LoginController {
         User result = userService.getUserByEmail(user.getEmail());
         if(result!=null && result.getPassword().equals(user.getPassword())){
             user = result;
-            session.setAttribute("user",user.getEmail());
+            session.setAttribute("user",user);
             model.addAttribute("user",user);
                 if(result.isVerified()) {
                     return "redirect:/profile";
@@ -77,12 +78,13 @@ public class LoginController {
                                   Model model){
         System.out.println(userid);
         User user = userService.getUserById(Integer.parseInt(userid));
+        model.addAttribute("user",user);
         if(activationcode.equals(user.getVerificationCode())){
             user.setVerified(true);
             userService.updateUser(user);
             return "profile";
         }
-        model.addAttribute("user",user);
+
         model.addAttribute("message","Incorrect Verification Code! Try again");
         return "activate";
     }
@@ -90,6 +92,7 @@ public class LoginController {
     @GetMapping("/profile")
     public String profile(Model model,HttpSession session){
         if(session.getAttribute("user")!=null){
+            model.addAttribute("user",session.getAttribute("user"));
             return "profile";
         }
         return "redirect:/";

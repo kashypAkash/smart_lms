@@ -9,7 +9,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
     private int universityId;
-    private char userRole;
+    private String userRole = "USER";
     private String email;
     private String password;
     private String verificationCode;
@@ -17,7 +17,7 @@ public class User {
 
     public User(){}
 
-    public User(int universityId, char userRole, String email, String password, String verificationCode, boolean isVerified) {
+    public User(int universityId, String userRole, String email, String password, String verificationCode, boolean isVerified) {
         this.universityId = universityId;
         this.userRole = userRole;
         this.email = email;
@@ -42,11 +42,11 @@ public class User {
         this.universityId = universityId;
     }
 
-    public char getUserRole() {
+    public String getUserRole() {
         return userRole;
     }
 
-    public void setUserRole(char userRole) {
+    public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
 
