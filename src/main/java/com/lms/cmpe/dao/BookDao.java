@@ -1,6 +1,7 @@
 package com.lms.cmpe.dao;
 
 import com.lms.cmpe.model.Book;
+import com.lms.cmpe.model.BookKeywords;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface BookDao {
     void updateBook(Book book);
     void deleteBook(Book book);
 
-    List<Book> getBooksByKeyword(String keyword);
+    List<BookKeywords> getBooksByKeyword(String keyword);
     List<Book> getAllBooks();
     Book getBookById(int id);
 }
