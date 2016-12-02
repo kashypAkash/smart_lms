@@ -1,6 +1,7 @@
 package com.lms.cmpe.service;
 
 import com.lms.cmpe.model.Book;
+import com.lms.cmpe.model.BookKeywords;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
 
 public interface BookService {
     List<Book> getAllBooks();
-    List<Book> getBooksByKeyword(String keyword);
+    List<BookKeywords> getBooksByKeyword(String keyword);
     Book getBookById(int id);
     void addBook(Book book);
     void deleteBook(Book book);
