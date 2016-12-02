@@ -26,12 +26,12 @@
         </div>
     </nav>
     <div class="row" >
-        <div th:each="book : ${books}" class="col s10 m10">
+        <div th:each="book : ${books}" class="col s9 m9">
             <div class="row valign-wrapper">
-                <div class="col m3 valign">
-                    <img src="http://placehold.it/110x120" />
+                <div class="col m2 valign">
+                    <img class="responsive-img" src="http://placehold.it/160x120" />
                 </div>
-                <div class="col m9">
+                <div class="col m10">
                     <h5 th:text="${book.getTitle()}" >Title of the Book</h5>
                     <p th:text="${book.getAuthor()}">Author of the Book</p>
                     <ul class="right" >
@@ -41,6 +41,9 @@
                     </ul>
                 </div>
             </div>
+        </div>
+        <div class="col s3 m3">
+
         </div>
     </div>
 </div><!--end of main container-->

@@ -4,7 +4,6 @@ import com.lms.cmpe.model.Book;
 import com.lms.cmpe.model.BookKeywords;
 import com.lms.cmpe.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -77,18 +76,21 @@ public class BookController {
                              @RequestParam(value="action", required=true) String action, HttpSession session,
                              Model model){
         model.addAttribute("user",session.getAttribute("user"));
-        System.out.println(book.toString());
         book.setBookId(id);
-        book.addBookKeywords();
+
+        if(action.equals("addkeyword")){
+            book.getBookKeywordsList().add(new BookKeywords());
+            model.addAttribute("book",book);
+            return "updatebook";
+        }
+
         System.out.println(book.toString());
         if(action.equals("update")){
+            book.addBookKeywords();
             bookService.updateBook(book);
         }
 
-        /*if(action.equals("delete")){
-            bookService.deleteUser(book);
-        }*/
-        return String.format("redirect:/book/%d",book.getBookId());
+        return String.format("redirect:/book/update/%d",book.getBookId());
     }
 
     @GetMapping("/book/delete/{id}")
@@ -96,5 +98,10 @@ public class BookController {
         Book book= bookService.getBookById(id);
         bookService.deleteBook(book);
         return "redirect:/books";
+    }
+
+    @GetMapping("/book/addtocart/{id}")
+    public String addBookToCart(@PathVariable("id") int id, @ModelAttribute Book book, Model model, HttpSession session){
+        return "allbooks";
     }
 }
