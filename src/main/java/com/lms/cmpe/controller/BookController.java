@@ -21,10 +21,13 @@ public class BookController {
 
     @GetMapping("/books")
     public String getAllBooks(Model model, HttpSession session){
-        model.addAttribute("user",session.getAttribute("user"));
-        model.addAttribute("books",bookService.getAllBooks());
-        BookList bookList = new BookList();
-        model.addAttribute("booklist", bookList);
+            model.addAttribute("user",session.getAttribute("user"));
+            model.addAttribute("books",bookService.getAllBooks());
+            if(session.getAttribute("booklist")==null){
+                BookList bookList = new BookList();
+                session.setAttribute("booklist",bookList);
+            }
+            model.addAttribute("booklist", session.getAttribute("booklist"));
         return "allbooks";
     }
 
@@ -104,12 +107,35 @@ public class BookController {
     }
 
     @GetMapping("/book/addtocart/{id}")
-    public String addBookToCart(@PathVariable("id") int id, @ModelAttribute Book book, @ModelAttribute BookList booklist
-                                , Model model, HttpSession session){
-        model.addAttribute("user", session.getAttribute("user"));
-        booklist.getBookList().add(bookService.getBookById(id));
-        model.addAttribute("books",bookService.getAllBooks());
-        model.addAttribute("booklist",booklist);
-        return "allbooks";
+    public String addBookToCart(@PathVariable("id") int id, @ModelAttribute BookList booklist,
+                                Model model, HttpSession session){
+            booklist = (BookList)session.getAttribute("booklist");
+
+            for(Book book:booklist.getBookList()){
+                if(book.getBookId() == id){
+                    return "redirect:/books";
+                }
+            }
+            booklist.getBookList().add(bookService.getBookById(id));
+        return "redirect:/books";
+    }
+
+
+    @GetMapping("/book/remove/{id}/{index}")
+    public String removeFromCart(@PathVariable("id") int id, @ModelAttribute BookList booklist
+                                ,@PathVariable("index") int index, HttpSession session){
+
+        booklist = (BookList)session.getAttribute("booklist");
+        booklist.getBookList().remove(index);
+        return "redirect:/books";
+    }
+
+    @GetMapping("/books/checkout")
+    public String checkout(HttpSession session){
+        //Todo: DAO part has to be implemented
+        BookList bookList= (BookList)session.getAttribute("booklist");
+        System.out.println(bookList.toString());
+        session.removeAttribute("booklist");
+        return "redirect:/books";
     }
 }

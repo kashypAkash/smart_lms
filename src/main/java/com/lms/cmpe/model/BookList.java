@@ -27,4 +27,11 @@ public class BookList {
     public void setBookList(List<Book> bookList) {
         this.bookList = bookList;
     }
+
+    @Override
+    public String toString() {
+        return "BookList{" +
+                "bookList=" + bookList +
+                '}';
+    }
 }
