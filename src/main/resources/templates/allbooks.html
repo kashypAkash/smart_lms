@@ -43,7 +43,9 @@
             </div>
         </div>
         <div class="col s3 m3">
-
+            <div th:each="item : ${booklist.getBookList()}">
+                <p th:text="${item.getTitle()}"></p>
+            </div>
         </div>
     </div>
 </div><!--end of main container-->

@@ -2,6 +2,7 @@ package com.lms.cmpe.controller;
 
 import com.lms.cmpe.model.Book;
 import com.lms.cmpe.model.BookKeywords;
+import com.lms.cmpe.model.BookList;
 import com.lms.cmpe.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,8 @@ public class BookController {
     public String getAllBooks(Model model, HttpSession session){
         model.addAttribute("user",session.getAttribute("user"));
         model.addAttribute("books",bookService.getAllBooks());
+        BookList bookList = new BookList();
+        model.addAttribute("booklist", bookList);
         return "allbooks";
     }
 
@@ -101,7 +104,12 @@ public class BookController {
     }
 
     @GetMapping("/book/addtocart/{id}")
-    public String addBookToCart(@PathVariable("id") int id, @ModelAttribute Book book, Model model, HttpSession session){
+    public String addBookToCart(@PathVariable("id") int id, @ModelAttribute Book book, @ModelAttribute BookList booklist
+                                , Model model, HttpSession session){
+        model.addAttribute("user", session.getAttribute("user"));
+        booklist.getBookList().add(bookService.getBookById(id));
+        model.addAttribute("books",bookService.getAllBooks());
+        model.addAttribute("booklist",booklist);
         return "allbooks";
     }
 }
