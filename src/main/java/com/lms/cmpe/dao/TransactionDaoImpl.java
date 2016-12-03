@@ -27,7 +27,7 @@ public class TransactionDaoImpl implements TransactionDao{
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean checkoutBooks(Transaction transaction) {
+    public boolean checkOutBooks(Transaction transaction, int userId) {
       /*  Session session = sessionFactory.openSession();
         // Get the User by Id
         User user = null;
@@ -46,10 +46,16 @@ public class TransactionDaoImpl implements TransactionDao{
         transactions = query.getResultList();*/
 
         Session session = sessionFactory.openSession();
-        String retrieve = "SELECT * FROM TransactionBooks tb join TransactionBooks.transaction t where " +
-                "tb.transactionBooksId = t.transactionId and t.transactionDate > SYSDATE and t.userId = :userId "+
-                "and tb.returnDate is null";
+        //String retrieve = "SELECT * FROM TransactionBooks tb join TransactionBooks.transaction t where " +
+        // "tb.transactionBooksId = t.transactionId and t.transactionDate > SYSDATE and t.userId = :userId "+
+        //"and tb.returnDate is null";
 
+        String retrieve = "select count(*) from TransactionBooks tb join tb.transaction t"+
+                " where tb.returnDate"+
+                " is null and t.user.userId=:userId and t.transactionDate=current_date";
+        Query retrieveQuery=(Query) session.createQuery(retrieve);
+        retrieveQuery.setParameter("userId",userId);
+        System.out.println((int)retrieveQuery.getResultList().size());
         session.close();
         return false;
     }
@@ -65,8 +71,8 @@ public class TransactionDaoImpl implements TransactionDao{
         Session session = sessionFactory.openSession();
         String retrieve = "SELECT tb.transactionBooksId FROM TransactionBooks tb join tb.transaction t where " +
                 "tb.transactionBooksId = t.transactionId and t.user.userId = :userId ";
-           //     "tb.transactionBooksId = t.transactionId and t.transactionDate = sysdate() and t.user.userId = :userId "+
-           //     "and tb.returnDate is null";
+        //     "and t.transactionDate = sysdate() "+
+        //     "and tb.returnDate is null";
         Query retrieveQuery = (Query) session.createQuery(retrieve);
         retrieveQuery.setParameter("userId",userId);
         int count =(Integer)retrieveQuery.getSingleResult();

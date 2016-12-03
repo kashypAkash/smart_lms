@@ -27,7 +27,7 @@ public class Book {
     private String currentStatus;
 
    @OneToMany(mappedBy = "book",cascade = CascadeType.ALL)
-    private List<BookKeywords> bookKeywordsList = new ArrayList<BookKeywords>();;
+    private List<BookKeywords> bookKeywordsList = new ArrayList<BookKeywords>();
 
     public Book(){}
 

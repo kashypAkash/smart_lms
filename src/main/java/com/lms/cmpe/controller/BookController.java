@@ -1,6 +1,7 @@
 package com.lms.cmpe.controller;
 
 import com.lms.cmpe.model.Book;
+import com.lms.cmpe.model.User;
 import com.lms.cmpe.model.BookKeywords;
 import com.lms.cmpe.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class BookController {
 
     @GetMapping("/books")
     public String getAllBooks(Model model, HttpSession session){
+
         model.addAttribute("user",session.getAttribute("user"));
         model.addAttribute("books",bookService.getAllBooks());
         return "allbooks";
@@ -42,6 +44,9 @@ public class BookController {
             model.addAttribute("book",book);
             return "book";
         }
+
+        User user = (User) session.getAttribute("user");
+        System.out.println("User Iddddddddddddddd " + user.getUserId());
 
         if(action.equals("add")){
             System.out.println(book.toString());
