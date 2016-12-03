@@ -1,7 +1,9 @@
 package com.lms.cmpe.controller;
 
+
 import com.lms.cmpe.model.Book;
 import com.lms.cmpe.model.User;
+import com.lms.cmpe.service.BookService;
 import com.lms.cmpe.service.MailService;
 import com.lms.cmpe.service.UserService;
 import com.lms.cmpe.service.VerificationService;
@@ -21,6 +23,9 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 public class LoginController {
+
+    @Autowired
+    private TransactionController transactionController;
 
     @Autowired
     private MailService mailService;
@@ -47,12 +52,15 @@ public class LoginController {
             session.setAttribute("user",user);
             model.addAttribute("user",user);
                 if(result.isVerified()) {
+                    transactionController.checkOutBooks(null,null);
                     return "redirect:/profile";
                 }
                 else{
                     return "activate";
                 }
+
         }
+
         return "login";
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Nischith on 11/27/2016.
  */
 public interface TransactionDao {
-    boolean checkoutBooks(Transaction transaction);
+    boolean checkOutBooks(Transaction transaction, int userId);
     boolean returnBooks(Transaction transaction);
     List<Book> getCheckedOutBooksByUser(int userId);
 }
