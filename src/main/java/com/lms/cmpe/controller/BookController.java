@@ -138,4 +138,12 @@ public class BookController {
         session.removeAttribute("booklist");
         return "redirect:/books";
     }
+
+    @PostMapping(value = "/books", params = "search")
+    public String search(Model model, HttpSession session, @RequestParam("keyword") String keyword){
+        model.addAttribute("user", session.getAttribute("user"));
+        model.addAttribute("books", bookService.getBooksByKey(keyword));
+        model.addAttribute("booklist", session.getAttribute("booklist"));
+        return "allbooks";
+    }
 }

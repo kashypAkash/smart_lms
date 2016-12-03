@@ -15,6 +15,12 @@ nav{
     background-color: #52648e;
 }
 
+input[type="search"] {
+    margin-top: 6px;
+    height: 50px !important; /* or height of nav */
+    border-radius: 3px;
+}
+
 .brand-logo{
     margin-left: 20px;
     font-family: 'Kaushan Script', cursive;
