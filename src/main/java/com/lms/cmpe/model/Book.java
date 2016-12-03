@@ -26,8 +26,8 @@ public class Book {
     private int noOfAvailableCopies;
     private String currentStatus;
 
-   @OneToMany(mappedBy = "book",cascade = CascadeType.ALL)
-    private List<BookKeywords> bookKeywordsList = new ArrayList<BookKeywords>();
+   @OneToMany(mappedBy = "book",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<BookKeywords> bookKeywordsList = new ArrayList<BookKeywords>();;
 
     public Book(){}
 

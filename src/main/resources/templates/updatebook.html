@@ -20,7 +20,7 @@
             <a href="#" class="brand-logo">e-Library</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}">Add Books</a></li>
-                <li><a th:href="@{/book}">View Books</a></li>
+                <li><a th:href="@{/books}">View Books</a></li>
                 <li><a class="red" th:href="@{/logout}">Logout</a></li>
             </ul>
         </div>
@@ -80,6 +80,7 @@
                     <button class="btn waves-effect waves-light red book-tag" type="submit" name="action" value="addkeyword">Tag</button>
                     <div th:each="word, keyStat : *{bookKeywordsList}">
                         <div class="input-field col s3 m3">
+                            <input th:field="*{bookKeywordsList[__${keyStat.index}__].bookKeywordId}" type="hidden"/>
                             <input th:field="*{bookKeywordsList[__${keyStat.index}__].keyword}" type="text" class="validate" />
                         </div>
                     </div>
