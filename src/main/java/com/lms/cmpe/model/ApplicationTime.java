@@ -18,9 +18,11 @@ public class ApplicationTime {
     public ApplicationTime(LocalDateTime appDateTime) {
         String dt = dtf.format(appDateTime);
         this.appDateTime = LocalDateTime.parse(dt,dtf);
-        System.out.println("appDateTime " + appDateTime);
+        System.out.println("appDateTime " + this.appDateTime);
         System.out.println("actualDateTime " + actualDateTime);
     }
+
+
 
     public LocalDateTime getAppDateTime() {
         return appDateTime;

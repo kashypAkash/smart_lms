@@ -1,13 +1,11 @@
 package com.lms.cmpe.controller;
 
 
-import com.lms.cmpe.model.Address;
-import com.lms.cmpe.model.DataObj;
-import com.lms.cmpe.model.Phone;
-import com.lms.cmpe.model.User;
+import com.lms.cmpe.model.*;
 import com.lms.cmpe.service.PhoneService;
 import com.lms.cmpe.service.UserService;
 import org.hibernate.Session;
+import java.time.format.DateTimeFormatter;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -18,9 +16,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.*;
 @Controller
 public class HelloController {
 
@@ -35,6 +34,7 @@ public class HelloController {
 
     @Autowired
     private JavaMailSender javaMailSender;
+
 
     @GetMapping("/mail")
     public String test(){
@@ -87,8 +87,48 @@ public class HelloController {
         return user;
     }
 
+    @RequestMapping(value = "/getDate",method = RequestMethod.POST)
+    public String getDate(@RequestParam("dateValue") String date)
+    {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        String input = date;
+        Map<String,String> hashmap = new HashMap<String,String>();
+        hashmap.put("Jan","01");
+        hashmap.put("Feb","02");
+        hashmap.put("Mar","03");
+        hashmap.put("Apr","04");
+        hashmap.put("May","05");
+        hashmap.put("Jun","06");
+        hashmap.put("Jul","07");
+        hashmap.put("Aug","08");
+        hashmap.put("Sep","09");
+        hashmap.put("Oct","10");
+        hashmap.put("Nov","11");
+        hashmap.put("Dec","12");
+        String appDate = parseDate(input,hashmap);
+        LocalDateTime appDateTime = LocalDateTime.parse(appDate,dtf);
 
+        ApplicationTime app = new ApplicationTime(appDateTime);
+        return "redirect:profile";
+    }
 
+    public String parseDate(String input, Map<String,String> map)
+    {
+        String finalText = "";
+        String text = input.substring(input.indexOf(' ')+1);
+        text = text.substring(0,text.indexOf(' '));
+        String[] array = input.split("\\s+");
+        for(String key : map.keySet())
+        {
+            if(key.equals(text))
+            {
+                text = map.get(key);
+                break;
+            }
+        }
+        finalText = text+"/"+array[2]+"/"+array[3]+" "+array[4];
+        return finalText;
+    }
     @RequestMapping(value = "/updateBook",method = RequestMethod.POST)
     public String modify(@ModelAttribute User user, @RequestParam(value="action", required=true) String action,
                                                     @RequestParam(value="id", required=true) int id,
