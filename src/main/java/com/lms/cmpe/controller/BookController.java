@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static com.sun.org.apache.bcel.internal.Repository.instanceOf;
 
@@ -177,6 +178,13 @@ public class BookController {
         //System.out.println(ts);
         transactionService.checkOutBooks(t,1);
         session.removeAttribute("booklist");
+        return "redirect:/books";
+    }
+
+    @GetMapping("/books/booksToBeReturned")
+    public String booksToBeReturned(HttpSession session){
+        System.out.println(session.getAttribute("user"));
+        transactionService.getBooksToBeReturned((int)((User)session.getAttribute("user")).getUserId());
         return "redirect:/books";
     }
 

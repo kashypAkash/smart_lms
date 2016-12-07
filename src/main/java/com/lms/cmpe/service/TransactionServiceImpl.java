@@ -4,6 +4,7 @@ import com.lms.cmpe.dao.BookDao;
 import com.lms.cmpe.dao.TransactionDao;
 import com.lms.cmpe.model.Book;
 import com.lms.cmpe.model.Transaction;
+import com.lms.cmpe.model.TransactionBooks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,5 +24,10 @@ public class TransactionServiceImpl implements TransactionService{
 
     @Override
     public List<Book> getCheckedOutBooksByUser(int userId) { return transactionDao.getCheckedOutBooksByUser(userId); }
+
+    @Override
+    public List<TransactionBooks> getBooksToBeReturned(int userId) {
+        return transactionDao.getBooksToBeReturned(userId);
+    }
 
 }
