@@ -89,6 +89,15 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
+    public List<Book> getBooksByKey(String key){
+        List<Book> books = new ArrayList<Book>();
+        for(BookKeywords keyword:getBooksByKeyword(key)){
+            books.add(keyword.getBook());
+        }
+        return books;
+    }
+
+    @Override
     public void addBook(Book book) {
         // todo: implement transactions
         // Open a session

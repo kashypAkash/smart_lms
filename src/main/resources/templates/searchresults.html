@@ -35,7 +35,7 @@
                             <a th:href="@{/books?search=true}">Search</a>
                         </li>-->
                         <li><a th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}">Add Books</a></li>
-                        <li><a th:href="@{/book}">View Books</a></li>
+                        <li><a th:href="@{/books}">View Books</a></li>
                         <li><a class="red" th:href="@{/logout}">Logout</a></li>
                     </ul>
                 </div>
@@ -53,9 +53,9 @@
                         <h5 class="book-title" th:text="${book.getTitle()}" >Title of the Book</h5>
                         <p class="book-author" th:text="${book.getAuthor()}">Author of the Book</p>
                         <ul class="right" >
-                            <li class="book-options"><a class="secondary-content" title="Delete" th:href="@{|/book/delete/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">delete</i></a></li>
+                            <li class="book-options"><a class="secondary-content" title="Delete" th:href="@{|/book/delete/searchresult/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">delete</i></a></li>
                             <li class="book-options"><a class="secondary-content" title="Update" th:href="@{|/book/update/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">playlist_add</i></a></li>
-                            <li class="book-options"><a class="secondary-content" title="Add to cart" th:href="@{|/book/addtocart/${book.getBookId()}|}" th:if="${user.getUserRole() == 'USER'}"><i class="small material-icons">shopping_cart</i></a></li>
+                            <li class="book-options"><a class="secondary-content" title="Add to cart" th:href="@{|/book/addtocart/searchresult/${book.getBookId()}|}" th:if="${user.getUserRole() == 'USER'}"><i class="small material-icons">shopping_cart</i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                 <li class="collection-item avatar valign-wrapper">
                     <img src="http://placehold.it/100x100" class="circle" />
                     <span class="title" th:text="${item.getTitle()}">Title</span>
-                    <a class="secondary-content" th:href="@{|/book/remove/${item.getBookId()}/${status.index}|}" name="index" th:value="${status.index}"><i class="small material-icons" style="margin-top: 10px">delete</i></a>
+                    <a class="secondary-content" th:href="@{|/book/remove/searchresult/${item.getBookId()}/${status.index}|}" name="index" th:value="${status.index}"><i class="small material-icons" style="margin-top: 10px">delete</i></a>
                 </li>
             </ul>
             <a th:if="${booklist.getBookList().size()>0}" type="button" class="btn waves-effect waves-light red right" th:href="@{/books/checkout}" name="action" value="checkout">Checkout</a>

@@ -7,7 +7,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Kaushan+Script" rel="stylesheet" />
     <link rel="stylesheet" th:href="@{/style.css}" />
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <script src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
 
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
@@ -18,6 +21,7 @@
     <nav>
         <div class="nav-wrapper" th:object="${user}">
             <a href="#" class="brand-logo">e-Library</a>
+
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}">Add Books</a></li>
                 <li><a th:href="@{/books}">View Books</a></li>
@@ -26,6 +30,40 @@
         </div>
     </nav>
     <p>Profile page</p>
+    <button id="appDate" ></button>
+    <div id="popupForm" style="display:none;">
+        <form th:action = "@{/getDate}" method="POST">
+            <input id = "text" type="text" name = "dateValue"  />
+            <input type="submit" value="Submit" />
+        </form>
+    </div>
 </div>
+
+<script>
+
+$(function(){
+  now = new Date();
+  $('#appDate').text(now);
+
+
+});
+
+$("input[type=text]").change(function() {
+    $("#appDate").prop('value', $( this ).text());
+});
+
+ $(function(){
+  $( "#popupForm" ).dialog({
+    autoOpen: false
+  });
+
+  $("#appDate").click(function() {
+    $("#text").prop('value', $("#appDate").text());
+    $("#popupForm").dialog('open');
+  });
+
+});
+
+</script>
 </body>
 </html>
