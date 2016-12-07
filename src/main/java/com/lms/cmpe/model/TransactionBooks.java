@@ -9,6 +9,24 @@ import java.util.Date;
 
 @Entity
 public class TransactionBooks {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int transactionBooksId;
+
+    @ManyToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="transactionId")
+    private Transaction transaction;
+
+    private Date dueDate;
+    private Date returnDate;
+    @ManyToOne
+    @JoinColumn(name="bookId")
+    private Book book;
+
+    private int noOfTimesRenewed;
+    private int fine;
+
     public TransactionBooks(int transactionBooksId, Transaction transaction, Date dueDate, Date returnDate, Book book, int noOfTimesRenewed, int fine) {
         this.transactionBooksId = transactionBooksId;
         this.transaction = transaction;
@@ -27,14 +45,6 @@ public class TransactionBooks {
         this.noOfTimesRenewed = noOfTimesRenewed;
         this.fine = fine;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int transactionBooksId;
-
-    @ManyToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="transactionId")
-    private Transaction transaction;
 
     public int getTransactionBooksId() {
         return transactionBooksId;
@@ -96,12 +106,4 @@ public class TransactionBooks {
         this.fine = fine;
     }
 
-    private Date dueDate;
-    private Date returnDate;
-    @ManyToOne
-    @JoinColumn(name="bookId")
-    private Book book;
-
-    private int noOfTimesRenewed;
-    private int fine;
 }

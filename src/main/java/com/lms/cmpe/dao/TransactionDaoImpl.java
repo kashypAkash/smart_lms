@@ -65,7 +65,7 @@ public class TransactionDaoImpl implements TransactionDao{
                int bookId=transactionBook.getBook().getBookId();
                Book book = session.get(Book.class,bookId);
                System.out.println("number of available copies"+book.getNoOfAvailableCopies());
-               book.setNoOfAvailableCopies(2);
+               book.setNoOfAvailableCopies(book.getNoOfAvailableCopies()-1);
                book.getNoOfAvailableCopies();
                session.update(book);
 
@@ -86,6 +86,7 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
+
     public List<Book> getCheckedOutBooksByUser(int userId){
 
         Session session = sessionFactory.openSession();

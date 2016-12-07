@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
 
 /**
  * Created by Nischith on 11/27/2016.
@@ -59,6 +62,8 @@ public class BookController {
         if(action.equals("add")){
             System.out.println(book.toString());
             book.addBookKeywords();
+            int total = book.getNoOfAvailableCopies();
+            book.setNoOfAvailableCopies(total);
             bookService.addBook(book);
             return "test";
         }
@@ -139,16 +144,26 @@ public class BookController {
     }
 
     @GetMapping("/books/checkout")
-    public String checkout(HttpSession session){
-        //Todo: DAO part has to be implemented
+    public String checkout(HttpSession session, Model model){
+
         BookList bookList= (BookList)session.getAttribute("booklist");
         System.out.println(bookList.toString());
         Transaction t=new Transaction();
+
+        Date dateobj = new Date();
+
+        t.setTransactionDate(dateobj);
+        Calendar c = Calendar.getInstance();
+        c.setTime(dateobj);
+        c.add(Calendar.DATE, 30);
+
+
         t.setUser((User)session.getAttribute("user"));
         ArrayList<TransactionBooks> tbs=new ArrayList<TransactionBooks>();
         for (Book book:bookList.getBookList()) {
             TransactionBooks tb=new TransactionBooks();
             tb.setBook(book);
+            tb.setDueDate(c.getTime());
             tb.setTransaction(t);
             tbs.add(tb);
         }
@@ -158,11 +173,14 @@ public class BookController {
         //System.out.println("checking for null error");
         //System.out.println(ts);
         Transaction transaction = transactionService.checkOutBooks(t,1);
-        if(transaction != null){
-            return "test";
+        if(transaction == null){
+            return "test"; // TODO: bad request ; return a error page
+
         }
+        model.addAttribute("transaction",transaction);
+        model.addAttribute("user",session.getAttribute("user"));
         session.removeAttribute("booklist");
-        return "redirect:/books";
+        return "checkout";
     }
 
     @GetMapping("/books/searchresults")
