@@ -48,24 +48,24 @@
                         <p class="return-book-author" th:text="${transaction.book.getAuthor()}">Author of the Book</p>
                         <p class="return-book-duedate" th:inline="text"><small>Due Date : [[${transaction.dueDate}]]</small></p>
                         <ul class="right return-book-options" >
-                            <li class="book-options"><a class="secondary-content" title="Return to library" th:href="@{|/return/book/${transaction.book.getBookId()}|}" th:if="${user.getUserRole() == 'USER'}"><i class="small material-icons">shopping_cart</i></a></li>
+                            <li class="book-options"><a class="secondary-content" title="Return to library" th:href="@{|/return/book/${transaction.getTransactionBooksId()}|}" th:if="${user.getUserRole() == 'USER'}"><i class="small material-icons">shopping_cart</i></a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col s3 m3" th:object="${returnlist}" >
-            <h5 th:if="${returnlist.getBookList().size()>0}">Return Items</h5>
-            <ul class="collection" th:each="item, status : ${returnlist.getBookList()}">
+            <h5 th:if="${returnlist.size()>0}">Return Items</h5>
+            <ul class="collection" th:each="item, status : ${returnlist}">
                 <li class="collection-item avatar valign-wrapper">
                     <img src="http://placehold.it/100x100" class="circle" />
-                    <span class="title" th:text="${item.getTitle()}">Title</span>
-                    <a class="secondary-content" th:href="@{|/cancelreturn/book/${item.getBookId()}/${status.index}|}" name="index" th:value="${status.index}"><i class="small material-icons" style="margin-top: 10px">delete</i></a>
+                    <span class="title" th:text="${item.book.getTitle()}">Title</span>
+                    <a class="secondary-content" th:href="@{|/cancelreturn/book/${item.getTransactionBooksId()}/${status.index}|}" name="index" th:value="${status.index}"><i class="small material-icons" style="margin-top: 10px">delete</i></a>
                 </li>
             </ul>
-            <a th:if="${returnlist.getBookList().size()>0}" type="button" class="btn waves-effect waves-light red right" th:href="@{/books/checkout}" name="action" value="checkout">Return Books</a>
+            <a th:if="${returnlist.size()>0}" type="button" class="btn waves-effect waves-light red right" th:href="@{/return/books/checkout}" name="action" value="checkout">Return Books</a>
         </div>
-    </div>
+    </div>/
 
 
 
