@@ -52,7 +52,7 @@ public class LoginController {
             session.setAttribute("user",user);
             model.addAttribute("user",user);
                 if(result.isVerified()) {
-                    transactionController.checkOutBooks(null,null);
+
                     return "redirect:/profile";
                 }
                 else{
