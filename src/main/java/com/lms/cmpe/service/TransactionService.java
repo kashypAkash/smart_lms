@@ -10,6 +10,9 @@ import java.util.List;
  */
 public interface TransactionService {
     boolean checkOutBooks(Transaction transaction, int userId);
+
+    boolean returnBooks(Transaction transaction, int userId);
+
     List<Book> getCheckedOutBooksByUser(int userId);
 
 }

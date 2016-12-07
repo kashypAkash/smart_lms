@@ -22,4 +22,12 @@ public class MailService {
         mailMessage.setText("Activation Code:" + user.getVerificationCode() );
         javaMailSender.send(mailMessage);
     }
+
+    public void sendSuccessfulRegistrationMail(User user){
+        SimpleMailMessage mailMessage=new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setSubject("Activation successful");
+        mailMessage.setText("Your account has been successfully activated");
+        javaMailSender.send(mailMessage);
+    }
 }

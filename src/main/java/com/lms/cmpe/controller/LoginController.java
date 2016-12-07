@@ -88,9 +88,11 @@ public class LoginController {
         User user = userService.getUserById(Integer.parseInt(userid));
         model.addAttribute("user",user);
         if(activationcode.equals(user.getVerificationCode())){
+            mailService.sendSuccessfulRegistrationMail(user);
             user.setVerified(true);
             userService.updateUser(user);
             return "profile";
+
         }
 
         model.addAttribute("message","Incorrect Verification Code! Try again");

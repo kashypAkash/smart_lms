@@ -22,6 +22,9 @@ public class TransactionServiceImpl implements TransactionService{
     public boolean checkOutBooks(Transaction transaction, int userId) { return transactionDao.checkOutBooks(transaction, userId); }
 
     @Override
+    public boolean returnBooks(Transaction transaction, int userId) { return transactionDao.returnBooks(transaction, userId); }
+
+    @Override
     public List<Book> getCheckedOutBooksByUser(int userId) { return transactionDao.getCheckedOutBooksByUser(userId); }
 
 }

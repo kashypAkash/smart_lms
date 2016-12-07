@@ -61,7 +61,7 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
-    public boolean returnBooks(Transaction transaction) {
+    public boolean returnBooks(Transaction transaction, int userId) {
         return false;
     }
 
