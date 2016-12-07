@@ -10,7 +10,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import static com.sun.org.apache.bcel.internal.Repository.instanceOf;
+
 
 /**
  * Created by Nischith on 11/27/2016.
@@ -145,11 +152,21 @@ public class BookController {
         BookList bookList= (BookList)session.getAttribute("booklist");
         System.out.println(bookList.toString());
         Transaction t=new Transaction();
+
+        Date dateobj = new Date();
+
+        t.setTransactionDate(dateobj);
+        Calendar c = Calendar.getInstance();
+        c.setTime(dateobj);
+        c.add(Calendar.DATE, 30);
+
+
         t.setUser((User)session.getAttribute("user"));
         ArrayList<TransactionBooks> tbs=new ArrayList<TransactionBooks>();
         for (Book book:bookList.getBookList()) {
             TransactionBooks tb=new TransactionBooks();
             tb.setBook(book);
+            tb.setDueDate(c.getTime());
             tb.setTransaction(t);
             tbs.add(tb);
         }

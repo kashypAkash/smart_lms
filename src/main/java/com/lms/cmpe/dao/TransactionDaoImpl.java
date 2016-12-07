@@ -73,6 +73,7 @@ public class TransactionDaoImpl implements TransactionDao{
            session.save(transaction);
            session.getTransaction().commit();
            session.close();
+           System.out.println(transaction);
            return false;
        }catch (LmsException e){
            System.out.println(e);
