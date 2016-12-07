@@ -30,7 +30,7 @@
         </div>
     </nav>
     <p>Profile page</p>
-    <button id="appDate" ></button>
+    <button id="appDate" >${date}</button>
     <div id="popupForm" style="display:none;">
         <form th:action = "@{/getDate}" method="POST">
             <input id = "text" type="text" name = "dateValue"  />
