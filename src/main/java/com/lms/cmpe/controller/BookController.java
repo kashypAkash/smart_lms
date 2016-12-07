@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -181,6 +182,13 @@ public class BookController {
         model.addAttribute("user",session.getAttribute("user"));
         session.removeAttribute("booklist");
         return "checkout";
+    }
+
+    @GetMapping("/books/booksToBeReturned")
+    public String booksToBeReturned(HttpSession session){
+        System.out.println(session.getAttribute("user"));
+        transactionService.getBooksToBeReturned((int)((User)session.getAttribute("user")).getUserId());
+        return "redirect:/books";
     }
 
     @GetMapping("/books/searchresults")
