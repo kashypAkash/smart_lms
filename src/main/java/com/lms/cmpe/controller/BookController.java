@@ -12,7 +12,6 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -39,6 +38,7 @@ public class BookController {
                 BookList bookList = new BookList();
                 session.setAttribute("booklist",bookList);
             }
+
             model.addAttribute("booklist", session.getAttribute("booklist"));
         return "allbooks";
     }
@@ -246,6 +246,9 @@ public class BookController {
         booklist.getBookList().remove(index);
         return "redirect:/books/searchresults";
     }
+
+
+
 
 
 }

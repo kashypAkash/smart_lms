@@ -103,6 +103,7 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
+    //unchecked
     public List<TransactionBooks> getBooksToBeReturned(int userId) {
         Session session=sessionFactory.openSession();
         String retrieve="select tb from TransactionBooks tb join tb.transaction t" +
@@ -111,8 +112,9 @@ public class TransactionDaoImpl implements TransactionDao{
         Query query = (Query) session.createQuery(retrieve);
         query.setParameter("userId", userId);
         System.out.println(query.getResultList());// todo:// here you get the list of transactionbooks objects which include all the book details and due date, fine etc., off the books taken by a user
+        List<TransactionBooks> list = (List<TransactionBooks>)query.getResultList();
         session.close();
-        return null;
+        return list;
     }
 
 }
