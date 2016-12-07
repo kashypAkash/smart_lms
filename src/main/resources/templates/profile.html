@@ -63,9 +63,9 @@
                     <a class="secondary-content" th:href="@{|/cancelreturn/book/${item.getBookId()}/${status.index}|}" name="index" th:value="${status.index}"><i class="small material-icons" style="margin-top: 10px">delete</i></a>
                 </li>
             </ul>
-            <a th:if="${returnlist.getBookList().size()>0}" type="button" class="btn waves-effect waves-light red right" th:href="@{/books/checkout}" name="action" value="checkout">Return Books</a>
+            <a th:if="${returnlist.getBookList().size()>0}" type="button" class="btn waves-effect waves-light red right" th:href="@{/return/books/checkout}" name="action" value="checkout">Return Books</a>
         </div>
-    </div>
+    </div>/
 
 
 

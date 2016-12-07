@@ -184,12 +184,12 @@ public class BookController {
         return "checkout";
     }
 
-    @GetMapping("/books/booksToBeReturned")
+/*    @GetMapping("/books/booksToBeReturned")
     public String booksToBeReturned(HttpSession session){
         System.out.println(session.getAttribute("user"));
         transactionService.getBooksToBeReturned((int)((User)session.getAttribute("user")).getUserId());
         return "redirect:/books";
-    }
+    }*/
 
     @GetMapping("/books/searchresults")
     public String searchResults(Model model, HttpSession session){
@@ -197,6 +197,13 @@ public class BookController {
         model.addAttribute("booklist", session.getAttribute("booklist"));
         model.addAttribute("books", session.getAttribute("books"));
         return "searchresults";
+    }
+
+    @GetMapping("/return/books/checkout")
+    public String processBookReturns(HttpSession session, Model model){
+        System.out.println(session.getAttribute("returnlist"));
+        //TODO: Nishchith process returns and remove from session and redirect to profile
+        return "redirect:/profile";
     }
 
     @PostMapping(value = "/books", params = "search")
