@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 
 /**
  * Created by Nischith on 11/27/2016.
@@ -23,6 +24,11 @@ public class BookController {
     public String getAllBooks(Model model, HttpSession session){
             model.addAttribute("user",session.getAttribute("user"));
             model.addAttribute("books",bookService.getAllBooks());
+
+            if(session.getAttribute("books")!=null){
+                session.removeAttribute("books");
+            }
+
             if(session.getAttribute("booklist")==null){
                 BookList bookList = new BookList();
                 session.setAttribute("booklist",bookList);
@@ -139,11 +145,63 @@ public class BookController {
         return "redirect:/books";
     }
 
+    @GetMapping("/books/searchresults")
+    public String searchResults(Model model, HttpSession session){
+        model.addAttribute("user", session.getAttribute("user"));
+        model.addAttribute("booklist", session.getAttribute("booklist"));
+        model.addAttribute("books", session.getAttribute("books"));
+        return "searchresults";
+    }
+
     @PostMapping(value = "/books", params = "search")
     public String search(Model model, HttpSession session, @RequestParam("keyword") String keyword){
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("books", bookService.getBooksByKey(keyword));
+        session.setAttribute("books",bookService.getBooksByKey(keyword));
         model.addAttribute("booklist", session.getAttribute("booklist"));
-        return "allbooks";
+        return "redirect:/books/searchresults";
     }
+
+
+    @GetMapping("/book/delete/searchresult/{id}")
+    public String deleteBookSearchedByid(@PathVariable("id") int id, HttpSession session){
+        Book book= bookService.getBookById(id);
+        bookService.deleteBook(book);
+        ArrayList<Book> templist = (ArrayList<Book>)session.getAttribute("books");
+        for(Book item: templist){
+            if(item.getBookId() == id){
+                ((ArrayList<Book>) session.getAttribute("books")).remove(item);
+                return "redirect:/books/searchresults";
+            }
+        }
+
+        return "redirect:/books/searchresults";
+    }
+
+    @GetMapping("/book/addtocart/searchresult/{id}")
+    public String addBookSearchedToCart(@PathVariable("id") int id, @ModelAttribute BookList booklist,
+                                Model model, HttpSession session){
+        booklist = (BookList)session.getAttribute("booklist");
+/*        model.addAttribute("user",session.getAttribute("user"));
+        model.addAttribute("booklist",session.getAttribute("booklist"));
+        model.addAttribute("books",session.getAttribute("books"));*/
+        for(Book book:booklist.getBookList()){
+            if(book.getBookId() == id){
+                return "redirect:/books/searchresults";
+            }
+        }
+        booklist.getBookList().add(bookService.getBookById(id));
+        return "redirect:/books/searchresults";
+    }
+
+    @GetMapping("/book/remove/searchresult/{id}/{index}")
+    public String removeSearchResultFromCart(@PathVariable("id") int id, @ModelAttribute BookList booklist
+            ,@PathVariable("index") int index, HttpSession session){
+
+        booklist = (BookList)session.getAttribute("booklist");
+        booklist.getBookList().remove(index);
+        return "redirect:/books/searchresults";
+    }
+
+
 }
