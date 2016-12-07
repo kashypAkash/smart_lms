@@ -3,8 +3,6 @@ package com.lms.cmpe.service;
 import com.lms.cmpe.dao.BookDao;
 import com.lms.cmpe.model.Book;
 import com.lms.cmpe.model.BookKeywords;
-import com.lms.cmpe.model.Phone;
-import com.lms.cmpe.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,5 +33,14 @@ public class BookServiceImpl implements BookService{
     public void deleteBook(Book book) { bookDao.deleteBook(book);};
 
     @Override
-    public void updateBook(Book book) { bookDao.updateBook(book);};
+    public void updateBook(Book book) { bookDao.updateBook(book);}
+
+    @Override
+    public List<Book> getBooksByKey(String key) {
+        return bookDao.getBooksByKey(key);
+    }
+
+    ;
+
+
 }

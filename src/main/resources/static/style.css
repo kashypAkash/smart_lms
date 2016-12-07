@@ -18,6 +18,12 @@ nav{
     background-color: #52648e;
 }
 
+input[type="search"] {
+    margin-top: 6px;
+    height: 50px !important; /* or height of nav */
+    border-radius: 3px;
+}
+
 .brand-logo{
     margin-left: 20px;
     font-family: 'Kaushan Script', cursive;
@@ -49,5 +55,12 @@ nav{
     margin-bottom: 0px;
     margin-top:5px;
 }
+
+.return-book-title, .return-book-author, .return-book-transac-id, .return-book-duedate, .return-book-options{
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+
 
 .material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }

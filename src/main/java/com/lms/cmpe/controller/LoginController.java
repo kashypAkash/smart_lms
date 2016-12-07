@@ -1,21 +1,17 @@
 package com.lms.cmpe.controller;
 
 
-import com.lms.cmpe.model.Book;
+import com.lms.cmpe.model.TransactionBooks;
 import com.lms.cmpe.model.User;
-import com.lms.cmpe.service.BookService;
-import com.lms.cmpe.service.MailService;
-import com.lms.cmpe.service.UserService;
-import com.lms.cmpe.service.VerificationService;
+import com.lms.cmpe.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by akash on 11/26/16.
@@ -25,9 +21,6 @@ import javax.servlet.http.HttpSession;
 public class LoginController {
 
     @Autowired
-    private TransactionController transactionController;
-
-    @Autowired
     private MailService mailService;
 
     @Autowired
@@ -35,6 +28,15 @@ public class LoginController {
 
     @Autowired
     private VerificationService verificationService;
+
+    @Autowired
+    private BookService bookService;
+
+    @Autowired
+    private TransactionService transactionService;
+
+    @Autowired
+    private TransactionBooksService transactionBooksService;
 
     @GetMapping("/")
     public String loginForm(Model model){
@@ -52,15 +54,13 @@ public class LoginController {
             session.setAttribute("user",user);
             model.addAttribute("user",user);
                 if(result.isVerified()) {
-                    transactionController.checkOutBooks(null,null);
+
                     return "redirect:/profile";
                 }
                 else{
                     return "activate";
                 }
-
         }
-
         return "login";
     }
 
@@ -73,10 +73,15 @@ public class LoginController {
     }
 
     @PostMapping("/signup")
-    public String createUser(@ModelAttribute User user){
+    public String createUser(@ModelAttribute User user,@RequestParam(value="userRole", required=false) String role){
         user.setVerificationCode(Integer.toString(verificationService.verficationCode()));
+        if(role != null){
+            user.setUserRole(role);
+        }
+
         userService.saveUser(user);
         mailService.sendMail(user);
+
         return "activate";
     }
 
@@ -90,7 +95,7 @@ public class LoginController {
         if(activationcode.equals(user.getVerificationCode())){
             user.setVerified(true);
             userService.updateUser(user);
-            return "profile";
+            return "redirect:/profile";
         }
 
         model.addAttribute("message","Incorrect Verification Code! Try again");
@@ -99,11 +104,48 @@ public class LoginController {
 
     @GetMapping("/profile")
     public String profile(Model model,HttpSession session){
+
         if(session.getAttribute("user")!=null){
+
             model.addAttribute("user",session.getAttribute("user"));
+            User tempuser = (User)session.getAttribute("user");
+            // TODO: Akash replace -> mybooks from transaction table
+            model.addAttribute("mybooks",transactionService.getBooksToBeReturned(tempuser.getUserId()));
+
+            if(session.getAttribute("returnlist")==null){
+                List<TransactionBooks> returnlist = new ArrayList<TransactionBooks>();
+                session.setAttribute("returnlist",returnlist);
+            }
+
+            model.addAttribute("returnlist", session.getAttribute("returnlist"));
+
             return "profile";
         }
         return "redirect:/";
+    }
+
+    @GetMapping("/return/book/{id}")
+    public String returnCart(@PathVariable("id") int id,
+                                Model model, HttpSession session){
+
+        List<TransactionBooks> returnlist = (ArrayList<TransactionBooks>)session.getAttribute("returnlist");
+        for(TransactionBooks transactionBook:returnlist){
+            if(transactionBook.getTransactionBooksId() == id){
+                return "redirect:/profile";
+            }
+        }
+        returnlist.add(transactionBooksService.getTransactionBookById(id));
+        return "redirect:/profile";
+    }
+
+    @GetMapping("/cancelreturn/book/{id}/{index}")
+    public String returnToLibrary(@PathVariable("id") int id
+            ,@PathVariable("index") int index, HttpSession session){
+
+        List<TransactionBooks> returnlist = (ArrayList<TransactionBooks>)session.getAttribute("returnlist");
+
+        returnlist.remove(index);
+        return "redirect:/profile";
     }
 
     @GetMapping("/logout")
