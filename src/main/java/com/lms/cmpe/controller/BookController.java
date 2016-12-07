@@ -203,6 +203,8 @@ public class BookController {
     public String processBookReturns(HttpSession session, Model model){
         System.out.println(session.getAttribute("returnlist"));
         //TODO: Nishchith process returns and remove from session and redirect to profile
+
+        session.removeAttribute("returnlist");
         return "redirect:/profile";
     }
 
