@@ -1,9 +1,9 @@
 package com.lms.cmpe.controller;
 
-import com.lms.cmpe.model.Book;
-import com.lms.cmpe.model.BookKeywords;
-import com.lms.cmpe.model.BookList;
+import com.lms.cmpe.model.*;
 import com.lms.cmpe.service.BookService;
+import com.lms.cmpe.service.TransactionService;
+import com.lms.cmpe.service.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +19,9 @@ import java.util.ArrayList;
 public class BookController {
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @GetMapping("/books")
     public String getAllBooks(Model model, HttpSession session){
@@ -141,6 +144,21 @@ public class BookController {
         //Todo: DAO part has to be implemented
         BookList bookList= (BookList)session.getAttribute("booklist");
         System.out.println(bookList.toString());
+        Transaction t=new Transaction();
+        t.setUser((User)session.getAttribute("user"));
+        ArrayList<TransactionBooks> tbs=new ArrayList<TransactionBooks>();
+        for (Book book:bookList.getBookList()) {
+            TransactionBooks tb=new TransactionBooks();
+            tb.setBook(book);
+            tb.setTransaction(t);
+            tbs.add(tb);
+        }
+        t.setTransactionBooksList(tbs);
+        System.out.println(t.getUser()+t.getTransactionBooksList().get(0).getBook().getAuthor()+"in check out books");
+        //TransactionService ts=new TransactionServiceImpl();
+        //System.out.println("checking for null error");
+        //System.out.println(ts);
+        transactionService.checkOutBooks(t,1);
         session.removeAttribute("booklist");
         return "redirect:/books";
     }

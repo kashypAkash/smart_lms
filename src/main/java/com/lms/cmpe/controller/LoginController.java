@@ -47,6 +47,7 @@ public class LoginController {
             session.setAttribute("user",user);
             model.addAttribute("user",user);
                 if(result.isVerified()) {
+
                     return "redirect:/profile";
                 }
                 else{
