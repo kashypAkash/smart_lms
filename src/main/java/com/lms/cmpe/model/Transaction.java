@@ -18,6 +18,11 @@ public class Transaction {
     @JoinColumn(name="userId")
     private User user;
 
+    private Date transactionDate;
+
+    @OneToMany(mappedBy = "transaction",cascade = CascadeType.ALL)
+    private List<TransactionBooks> transactionBooksList = new ArrayList<TransactionBooks>();
+
     public List<TransactionBooks> getTransactionBooksList() {
         return transactionBooksList;
     }
@@ -25,11 +30,6 @@ public class Transaction {
     public void setTransactionBooksList(List<TransactionBooks> transactionBooksList) {
         this.transactionBooksList = transactionBooksList;
     }
-
-    private Date transactionDate;
-
-    @OneToMany(mappedBy = "transaction",cascade = CascadeType.ALL)
-    private List<TransactionBooks> transactionBooksList = new ArrayList<TransactionBooks>();
 
     public int getTransactionId() {
         return transactionId;

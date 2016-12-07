@@ -1,8 +1,7 @@
 package com.lms.cmpe.controller;
 
 
-import com.lms.cmpe.model.Book;
-import com.lms.cmpe.model.BookList;
+import com.lms.cmpe.model.TransactionBooks;
 import com.lms.cmpe.model.User;
 import com.lms.cmpe.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by akash on 11/26/16.
@@ -33,6 +34,9 @@ public class LoginController {
 
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    private TransactionBooksService transactionBooksService;
 
     @GetMapping("/")
     public String loginForm(Model model){
@@ -108,7 +112,7 @@ public class LoginController {
             model.addAttribute("mybooks",transactionService.getBooksToBeReturned(tempuser.getUserId()));
 
             if(session.getAttribute("returnlist")==null){
-                BookList returnlist = new BookList();
+                List<TransactionBooks> returnlist = new ArrayList<TransactionBooks>();
                 session.setAttribute("returnlist",returnlist);
             }
 
@@ -120,25 +124,26 @@ public class LoginController {
     }
 
     @GetMapping("/return/book/{id}")
-    public String returnCart(@PathVariable("id") int id, @ModelAttribute BookList returnlist,
+    public String returnCart(@PathVariable("id") int id,
                                 Model model, HttpSession session){
-        returnlist = (BookList)session.getAttribute("returnlist");
 
-        for(Book book:returnlist.getBookList()){
-            if(book.getBookId() == id){
+        List<TransactionBooks> returnlist = (ArrayList<TransactionBooks>)session.getAttribute("returnlist");
+        for(TransactionBooks transactionBook:returnlist){
+            if(transactionBook.getTransactionBooksId() == id){
                 return "redirect:/profile";
             }
         }
-        returnlist.getBookList().add(bookService.getBookById(id));
+        returnlist.add(transactionBooksService.getTransactionBookById(id));
         return "redirect:/profile";
     }
 
     @GetMapping("/cancelreturn/book/{id}/{index}")
-    public String returnToLibrary(@PathVariable("id") int id, @ModelAttribute BookList returnlist
+    public String returnToLibrary(@PathVariable("id") int id
             ,@PathVariable("index") int index, HttpSession session){
 
-        returnlist = (BookList)session.getAttribute("returnlist");
-        returnlist.getBookList().remove(index);
+        List<TransactionBooks> returnlist = (ArrayList<TransactionBooks>)session.getAttribute("returnlist");
+
+        returnlist.remove(index);
         return "redirect:/profile";
     }
 
