@@ -30,7 +30,7 @@ public class TransactionDaoImpl implements TransactionDao{
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean checkOutBooks(Transaction transaction, int userId) {
+    public Transaction checkOutBooks(Transaction transaction, int userId) {
 
        try {
            Session session = sessionFactory.openSession();
@@ -73,10 +73,10 @@ public class TransactionDaoImpl implements TransactionDao{
            session.save(transaction);
            session.getTransaction().commit();
            session.close();
-           return false;
+           return transaction;
        }catch (LmsException e){
            System.out.println(e);
-           return false;
+           return null;
        }
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Nischith on 11/29/2016.
  */
 public interface TransactionService {
-    boolean checkOutBooks(Transaction transaction, int userId);
+    Transaction checkOutBooks(Transaction transaction, int userId);
     List<Book> getCheckedOutBooksByUser(int userId);
 
 }

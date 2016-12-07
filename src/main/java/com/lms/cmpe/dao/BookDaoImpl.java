@@ -99,7 +99,7 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public void addBook(Book book) {
-        // todo: implement transactions
+
         // Open a session
         Session session = sessionFactory.openSession();
 

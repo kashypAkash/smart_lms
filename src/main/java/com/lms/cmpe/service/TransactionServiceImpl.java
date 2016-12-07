@@ -1,6 +1,5 @@
 package com.lms.cmpe.service;
 
-import com.lms.cmpe.dao.BookDao;
 import com.lms.cmpe.dao.TransactionDao;
 import com.lms.cmpe.model.Book;
 import com.lms.cmpe.model.Transaction;
@@ -19,7 +18,7 @@ public class TransactionServiceImpl implements TransactionService{
     private TransactionDao transactionDao;
 
     @Override
-    public boolean checkOutBooks(Transaction transaction, int userId) { return transactionDao.checkOutBooks(transaction, userId); }
+    public Transaction checkOutBooks(Transaction transaction, int userId) { return transactionDao.checkOutBooks(transaction, userId); }
 
     @Override
     public List<Book> getCheckedOutBooksByUser(int userId) { return transactionDao.getCheckedOutBooksByUser(userId); }

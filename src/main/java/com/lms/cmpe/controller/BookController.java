@@ -3,7 +3,6 @@ package com.lms.cmpe.controller;
 import com.lms.cmpe.model.*;
 import com.lms.cmpe.service.BookService;
 import com.lms.cmpe.service.TransactionService;
-import com.lms.cmpe.service.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -158,7 +157,10 @@ public class BookController {
         //TransactionService ts=new TransactionServiceImpl();
         //System.out.println("checking for null error");
         //System.out.println(ts);
-        transactionService.checkOutBooks(t,1);
+        Transaction transaction = transactionService.checkOutBooks(t,1);
+        if(transaction != null){
+            return "test";
+        }
         session.removeAttribute("booklist");
         return "redirect:/books";
     }
