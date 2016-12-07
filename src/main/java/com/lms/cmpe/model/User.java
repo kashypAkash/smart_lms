@@ -10,7 +10,10 @@ public class User {
     private int userId;
     private int universityId;
     private String userRole = "USER";
+
+    @Column(unique = true)
     private String email;
+
     private String password;
     private String verificationCode;
     private boolean isVerified;
