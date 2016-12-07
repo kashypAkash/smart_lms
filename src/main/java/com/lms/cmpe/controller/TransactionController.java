@@ -2,6 +2,7 @@ package com.lms.cmpe.controller;
 
 
 import com.lms.cmpe.model.Book;
+import com.lms.cmpe.model.TransactionBooks;
 import com.lms.cmpe.service.BookService;
 import com.lms.cmpe.service.TransactionService;
 import com.lms.cmpe.service.UserService;
@@ -40,32 +41,8 @@ public class TransactionController {
         model.addAttribute("addressid",user.getAddress().getAddressId());*/
         return "book";
     }
-/*
-    @RequestMapping(value = "/checkout", method = RequestMethod.POST)
-    public String checkOutBooks(Model model, HttpSession session){
-        boolean checkOutSuccessful = false;
-        int id = 1;
-
-        Transaction transaction = new Transaction();
-        transaction.setTransactionDate(new Date());
-
-        //user.getUserId()
-        transaction.setUser(userService.getUserById(1));
-        ArrayList<TransactionBooks> tbs=new ArrayList<TransactionBooks>();
-        Book b=bookService.getBookById(1);
-        TransactionBooks tb=new TransactionBooks();
-        tb.setBook(b);
-        tb.setDueDate(new Date(12022016));
-        //tb.setReturnDate(null);
-
-        tbs.add(tb);
-        transaction.setTransactionBooksList(tbs);
 
 
-        checkOutSuccessful = transactionService.checkOutBooks(transaction, id);
-       *//*model.addAttribute("user",user);
-        model.addAttribute("userid",user.getUserId());
-        model.addAttribute("addressid",user.getAddress().getAddressId());*//*
-        return "book";
-    }*/
 }
+
+
