@@ -12,6 +12,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.springframework.orm.hibernate3.SessionFactoryUtils.getSession;
@@ -81,12 +82,31 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
-    public boolean returnBooks(Transaction transaction, int userId) {
+    public boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId){
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        Date dateobj = new Date();
+
+        for (TransactionBooks transactionBook:transactionBooksList) {
+
+            int transactionBookId = transactionBook.getTransactionBooksId();
+            TransactionBooks transactionBooks = session.get(TransactionBooks.class,transactionBookId);
+            System.out.println("Hereeeeeeeeeeeeeeeeee "+transactionBooks.getDueDate());
+            transactionBooks.setReturnDate(dateobj);
+
+            int bookId=transactionBook.getBook().getBookId();
+            Book book = session.get(Book.class,bookId);
+            book.setNoOfAvailableCopies(book.getNoOfAvailableCopies() + 1);
+            session.update(book);
+        }
+
+        //session.save(transaction);
+        session.getTransaction().commit();
+        session.close();
         return false;
     }
 
     @Override
-
     public List<Book> getCheckedOutBooksByUser(int userId){
 
         Session session = sessionFactory.openSession();

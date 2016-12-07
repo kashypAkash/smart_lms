@@ -173,10 +173,9 @@ public class BookController {
         //TransactionService ts=new TransactionServiceImpl();
         //System.out.println("checking for null error");
         //System.out.println(ts);
-        Transaction transaction = transactionService.checkOutBooks(t,1);
+        Transaction transaction = transactionService.checkOutBooks(t,t.getUser().getUserId());
         if(transaction == null){
             return "test"; // TODO: bad request ; return a error page
-
         }
         model.addAttribute("transaction",transaction);
         model.addAttribute("user",session.getAttribute("user"));
@@ -201,8 +200,12 @@ public class BookController {
 
     @GetMapping("/return/books/checkout")
     public String processBookReturns(HttpSession session, Model model){
-        System.out.println(session.getAttribute("returnlist"));
-        //TODO: Nishchith process returns and remove from session and redirect to profile
+        ArrayList<TransactionBooks> transactionBooksList = (ArrayList<TransactionBooks>)session.getAttribute("returnlist");
+
+        User user = (User)session.getAttribute("user");
+
+        boolean successfullyReturned = transactionService.returnBooks(transactionBooksList,user.getUserId());
+        session.removeAttribute("returnlist");
         return "redirect:/profile";
     }
 
