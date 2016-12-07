@@ -182,9 +182,7 @@ public class BookController {
     public String addBookSearchedToCart(@PathVariable("id") int id, @ModelAttribute BookList booklist,
                                 Model model, HttpSession session){
         booklist = (BookList)session.getAttribute("booklist");
-/*        model.addAttribute("user",session.getAttribute("user"));
-        model.addAttribute("booklist",session.getAttribute("booklist"));
-        model.addAttribute("books",session.getAttribute("books"));*/
+
         for(Book book:booklist.getBookList()){
             if(book.getBookId() == id){
                 return "redirect:/books/searchresults";
