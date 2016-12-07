@@ -1,9 +1,7 @@
 package com.lms.cmpe.dao;
 
-import com.lms.cmpe.model.Book;
-import com.lms.cmpe.model.BookKeywords;
-import com.lms.cmpe.model.Transaction;
-import com.lms.cmpe.model.User;
+import com.lms.cmpe.model.*;
+import com.lms.cmpe.service.LmsException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.orm.hibernate3.SessionFactoryUtils.getSession;
+
+
 /**
  * Created by Nischith on 11/28/2016.
  */
@@ -25,39 +26,58 @@ public class TransactionDaoImpl implements TransactionDao{
     @Autowired
     private SessionFactory sessionFactory;
 
+
+
     @Override
     @SuppressWarnings("unchecked")
-    public boolean checkOutBooks(Transaction transaction, int userId) {
-      /*  Session session = sessionFactory.openSession();
-        // Get the User by Id
-        User user = null;
-        try{
-            user = session.get(User.class,1);
-        }
-        catch (NoResultException e){
-            System.out.println(e.getMessage());
-        }
-        List<Transaction> transactions = new ArrayList<Transaction>();
+    public Transaction checkOutBooks(Transaction transaction, int userId) {
 
-        String s = "from Transaction t where t.user=:user";
-        System.out.println(s);
-        Query query = session.createQuery(s);
-        query.setParameter("user",user);
-        transactions = query.getResultList();*/
+       try {
+           Session session = sessionFactory.openSession();
 
-        Session session = sessionFactory.openSession();
-        //String retrieve = "SELECT * FROM TransactionBooks tb join TransactionBooks.transaction t where " +
-        // "tb.transactionBooksId = t.transactionId and t.transactionDate > SYSDATE and t.userId = :userId "+
-        //"and tb.returnDate is null";
+           session.beginTransaction();
+           String retrieve = "select count(*) from TransactionBooks tb join tb.transaction t" +
+                   " where tb.returnDate" +
+                   " is null and t.user.userId=:userId and day(t.transactionDate)=day(current_date)";
+           Query retrieveQuery = (Query) session.createQuery(retrieve);
+           retrieveQuery.setParameter("userId", userId);
+           //System.out.println((int)retrieveQuery.getResultList().size()+"in transaction query result");
+           System.out.println(retrieveQuery.getResultList() + "only today");
 
-        String retrieve = "select count(*) from TransactionBooks tb join tb.transaction t"+
-                " where tb.returnDate"+
-                " is null and t.user.userId=:userId and t.transactionDate=current_date";
-        Query retrieveQuery=(Query) session.createQuery(retrieve);
-        retrieveQuery.setParameter("userId",userId);
-        System.out.println((int)retrieveQuery.getResultList().size());
-        session.close();
-        return false;
+           Long todayBooks = (Long) retrieveQuery.getResultList().get(0);
+           int temp = transaction.getTransactionBooksList().size();
+           if (todayBooks + temp > 5) {
+               System.out.println(todayBooks + temp + "the number of bookks today");
+               throw new LmsException("maximumNoOfBooksPerDayViolated");
+           }
+           String r2 = "select count(*) from TransactionBooks tb join tb.transaction t" +
+                   " where tb.returnDate" +
+                   " is null and t.user.userId=:userId";
+           Query q2 = (Query) session.createQuery(r2);
+           q2.setParameter("userId", userId);
+           System.out.println(q2.getResultList() + "all days");
+           Long allBooks = (Long) q2.getResultList().get(0);
+           if (allBooks + temp > 10) {
+               System.out.println(allBooks + temp + "number of books all time");
+               throw new LmsException("maximumNoOfBooksViolated");
+           }
+           for (TransactionBooks transactionBook:transaction.getTransactionBooksList()) {
+               int bookId=transactionBook.getBook().getBookId();
+               Book book = session.get(Book.class,bookId);
+               System.out.println("number of available copies"+book.getNoOfAvailableCopies());
+               book.setNoOfAvailableCopies(book.getNoOfAvailableCopies()-1);
+               book.getNoOfAvailableCopies();
+               session.update(book);
+
+           }
+           session.save(transaction);
+           session.getTransaction().commit();
+           session.close();
+           return transaction;
+       }catch (LmsException e){
+           System.out.println(e);
+           return null;
+       }
     }
 
     @Override
@@ -66,6 +86,7 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
+
     public List<Book> getCheckedOutBooksByUser(int userId){
 
         Session session = sessionFactory.openSession();

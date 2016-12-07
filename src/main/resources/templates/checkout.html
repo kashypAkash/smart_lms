@@ -34,41 +34,23 @@
             </div>
         </div>
     </nav>
-    <p>Profile page</p>
-    <button id="appDate" ></button>
-    <div id="popupForm" style="display:none;">
-        <form th:action = "@{/getDate}" method="POST">
-            <input id = "text" type="text" name = "dateValue"  />
-            <input type="submit" value="Submit" />
-        </form>
+
+    <div style="margin-left: 30px" class="col s9 m9" th:object="${transaction}">
+        <h5 style="text-align: left"  th:inline="text">Transaction Id : [[${transaction.transactionId}]]</h5>
+        <h5 style="text-align: left"  th:inline="text"><small>Due Date : [[${transaction.transactionDate}]]</small></h5>
+        <div th:each="item : ${transaction.getTransactionBooksList()}" class="col s12 m12">
+            <div class="row valign-wrapper book-item">
+                <div class="col m1 valign">
+                    <img class="responsive-img" src="http://placehold.it/70x70" />
+                </div>
+                <div class="col m11">
+                    <h5 class="checkout-title" th:text="${item.book.getTitle()}" >Title of the Book</h5>
+                    <p class="checkout" th:text="${item.book.getAuthor()}">Author of the Book</p>
+                </div>
+            </div>
+        </div>
     </div>
+
 </div>
-
-<script>
-
-$(function(){
-  now = new Date();
-  $('#appDate').text(now);
-
-
-});
-
-$("input[type=text]").change(function() {
-    $("#appDate").prop('value', $( this ).text());
-});
-
- $(function(){
-  $( "#popupForm" ).dialog({
-    autoOpen: false
-  });
-
-  $("#appDate").click(function() {
-    $("#text").prop('value', $("#appDate").text());
-    $("#popupForm").dialog('open');
-  });
-
-});
-
-</script>
 </body>
 </html>

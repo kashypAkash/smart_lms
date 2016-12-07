@@ -16,4 +16,5 @@ public interface BookService {
     void addBook(Book book);
     void deleteBook(Book book);
     void updateBook(Book book);
+    List<Book> getBooksByKey(String key);
 }

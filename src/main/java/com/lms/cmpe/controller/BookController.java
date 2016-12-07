@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
 
 /**
  * Created by Nischith on 11/27/2016.
@@ -26,6 +29,11 @@ public class BookController {
     public String getAllBooks(Model model, HttpSession session){
             model.addAttribute("user",session.getAttribute("user"));
             model.addAttribute("books",bookService.getAllBooks());
+
+            if(session.getAttribute("books")!=null){
+                session.removeAttribute("books");
+            }
+
             if(session.getAttribute("booklist")==null){
                 BookList bookList = new BookList();
                 session.setAttribute("booklist",bookList);
@@ -54,6 +62,8 @@ public class BookController {
         if(action.equals("add")){
             System.out.println(book.toString());
             book.addBookKeywords();
+            int total = book.getNoOfAvailableCopies();
+            book.setNoOfAvailableCopies(total);
             bookService.addBook(book);
             return "test";
         }
@@ -134,35 +144,100 @@ public class BookController {
     }
 
     @GetMapping("/books/checkout")
-    public String checkout(HttpSession session){
-        //Todo: DAO part has to be implemented
-        BookList bookList= (BookList)session.getAttribute("booklist");
-        System.out.println(bookList.toString());
-        session.removeAttribute("booklist");
-        return "redirect:/books";
-    }
+    public String checkout(HttpSession session, Model model){
 
-    @GetMapping("/books/return")
-    public String returnBooks(HttpSession session){
-        //Todo: DAO part has to be implemented
         BookList bookList= (BookList)session.getAttribute("booklist");
         System.out.println(bookList.toString());
         Transaction t=new Transaction();
+
+        Date dateobj = new Date();
+
+        t.setTransactionDate(dateobj);
+        Calendar c = Calendar.getInstance();
+        c.setTime(dateobj);
+        c.add(Calendar.DATE, 30);
+
+
         t.setUser((User)session.getAttribute("user"));
         ArrayList<TransactionBooks> tbs=new ArrayList<TransactionBooks>();
         for (Book book:bookList.getBookList()) {
             TransactionBooks tb=new TransactionBooks();
             tb.setBook(book);
+            tb.setDueDate(c.getTime());
             tb.setTransaction(t);
             tbs.add(tb);
         }
         t.setTransactionBooksList(tbs);
-        System.out.println(t.getUser()+t.getTransactionBooksList().get(0).getBook().getAuthor()+t.getTransactionBooksList().get(1).getBook().getAuthor()+"in check out books");
+        System.out.println(t.getUser()+t.getTransactionBooksList().get(0).getBook().getAuthor()+"in check out books");
         //TransactionService ts=new TransactionServiceImpl();
         //System.out.println("checking for null error");
         //System.out.println(ts);
-        transactionService.returnBooks(t,1);
+        Transaction transaction = transactionService.checkOutBooks(t,1);
+        if(transaction == null){
+            return "test"; // TODO: bad request ; return a error page
+
+        }
+        model.addAttribute("transaction",transaction);
+        model.addAttribute("user",session.getAttribute("user"));
         session.removeAttribute("booklist");
-        return "redirect:/books";
+        return "checkout";
     }
+
+    @GetMapping("/books/searchresults")
+    public String searchResults(Model model, HttpSession session){
+        model.addAttribute("user", session.getAttribute("user"));
+        model.addAttribute("booklist", session.getAttribute("booklist"));
+        model.addAttribute("books", session.getAttribute("books"));
+        return "searchresults";
+    }
+
+    @PostMapping(value = "/books", params = "search")
+    public String search(Model model, HttpSession session, @RequestParam("keyword") String keyword){
+        model.addAttribute("user", session.getAttribute("user"));
+        model.addAttribute("books", bookService.getBooksByKey(keyword));
+        session.setAttribute("books",bookService.getBooksByKey(keyword));
+        model.addAttribute("booklist", session.getAttribute("booklist"));
+        return "redirect:/books/searchresults";
+    }
+
+
+    @GetMapping("/book/delete/searchresult/{id}")
+    public String deleteBookSearchedByid(@PathVariable("id") int id, HttpSession session){
+        Book book= bookService.getBookById(id);
+        bookService.deleteBook(book);
+        ArrayList<Book> templist = (ArrayList<Book>)session.getAttribute("books");
+        for(Book item: templist){
+            if(item.getBookId() == id){
+                ((ArrayList<Book>) session.getAttribute("books")).remove(item);
+                return "redirect:/books/searchresults";
+            }
+        }
+
+        return "redirect:/books/searchresults";
+    }
+
+    @GetMapping("/book/addtocart/searchresult/{id}")
+    public String addBookSearchedToCart(@PathVariable("id") int id, @ModelAttribute BookList booklist,
+                                Model model, HttpSession session){
+        booklist = (BookList)session.getAttribute("booklist");
+
+        for(Book book:booklist.getBookList()){
+            if(book.getBookId() == id){
+                return "redirect:/books/searchresults";
+            }
+        }
+        booklist.getBookList().add(bookService.getBookById(id));
+        return "redirect:/books/searchresults";
+    }
+
+    @GetMapping("/book/remove/searchresult/{id}/{index}")
+    public String removeSearchResultFromCart(@PathVariable("id") int id, @ModelAttribute BookList booklist
+            ,@PathVariable("index") int index, HttpSession session){
+
+        booklist = (BookList)session.getAttribute("booklist");
+        booklist.getBookList().remove(index);
+        return "redirect:/books/searchresults";
+    }
+
+
 }
