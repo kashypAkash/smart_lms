@@ -56,4 +56,11 @@ input[type="search"] {
     margin-top:5px;
 }
 
+.return-book-title, .return-book-author, .return-book-transac-id, .return-book-duedate, .return-book-options{
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+
+
 .material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
