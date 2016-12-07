@@ -66,7 +66,7 @@ public class BookController {
             int total = book.getNoOfAvailableCopies();
             book.setNoOfAvailableCopies(total);
             bookService.addBook(book);
-            return "test";
+            return "redirect:/book";
         }
         return "test";
     }
