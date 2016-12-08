@@ -12,7 +12,7 @@ public interface UserDao {
     List<User> getUsers();
     User getUserById(int id);
     List<Phone> getUsersByNumbers(String numbers);
-    void saveUser(User user);
+    boolean saveUser(User user);
     void deleteUser(User user);
     void updateUser(User user);
     User getUserByEmail(String email);

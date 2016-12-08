@@ -2,6 +2,7 @@ package com.lms.cmpe.dao;
 
 import com.lms.cmpe.model.*;
 import com.lms.cmpe.service.LmsException;
+import com.lms.cmpe.service.MailService;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.springframework.orm.hibernate3.SessionFactoryUtils.getSession;
@@ -26,7 +28,8 @@ public class TransactionDaoImpl implements TransactionDao{
     @Autowired
     private SessionFactory sessionFactory;
 
-
+    @Autowired
+    private MailService mailService;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -48,7 +51,7 @@ public class TransactionDaoImpl implements TransactionDao{
            int temp = transaction.getTransactionBooksList().size();
            if (todayBooks + temp > 5) {
                System.out.println(todayBooks + temp + "the number of bookks today");
-               throw new LmsException("maximumNoOfBooksPerDayViolated");
+               throw new LmsException("maximumNoOfBooksPerDayViolated");//TODO: Akash implement custom exception page from the UI
            }
            String r2 = "select count(*) from TransactionBooks tb join tb.transaction t" +
                    " where tb.returnDate" +
@@ -59,7 +62,7 @@ public class TransactionDaoImpl implements TransactionDao{
            Long allBooks = (Long) q2.getResultList().get(0);
            if (allBooks + temp > 10) {
                System.out.println(allBooks + temp + "number of books all time");
-               throw new LmsException("maximumNoOfBooksViolated");
+               throw new LmsException("maximumNoOfBooksViolated");//TODO: Akash implement custom exception page from the UI
            }
            for (TransactionBooks transactionBook:transaction.getTransactionBooksList()) {
                int bookId=transactionBook.getBook().getBookId();
@@ -81,12 +84,32 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
-    public boolean returnBooks(Transaction transaction) {
+    public boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId){
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        Date dateobj = new Date();
+
+        for (TransactionBooks transactionBook:transactionBooksList) {
+
+            int transactionBookId = transactionBook.getTransactionBooksId();
+            TransactionBooks transactionBooks = session.get(TransactionBooks.class,transactionBookId);
+            System.out.println("Hereeeeeeeeeeeeeeeeee "+transactionBooks.getDueDate());
+            transactionBooks.setReturnDate(dateobj);
+
+            int bookId=transactionBook.getBook().getBookId();
+            Book book = session.get(Book.class,bookId);
+            book.setNoOfAvailableCopies(book.getNoOfAvailableCopies() + 1);
+            session.update(book);
+        }
+        mailService.sendTransactionReturnsInfoMail(transactionBooksList,(User)session.get(User.class,userId),dateobj);
+
+        //session.save(transaction);
+        session.getTransaction().commit();
+        session.close();
         return false;
     }
 
     @Override
-
     public List<Book> getCheckedOutBooksByUser(int userId){
 
         Session session = sessionFactory.openSession();

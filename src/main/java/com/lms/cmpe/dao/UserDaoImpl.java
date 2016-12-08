@@ -84,23 +84,28 @@ public class UserDaoImpl implements UserDao {
 
 
     @Override
-    public void saveUser(User user) {
+    public boolean saveUser(User user) {
 
-        // Open a session
-        Session session = sessionFactory.openSession();
+        try {
+            // Open a session
+            Session session = sessionFactory.openSession();
 
-        // begin a transaction
-        session.beginTransaction();
+            // begin a transaction
+            session.beginTransaction();
 
-        session.save(user);
+            session.save(user);
 
-        // save the user & commit trasaction
+            // save the user & commit trasaction
 
-        session.getTransaction().commit();
+            session.getTransaction().commit();
 
-        //close the session
-        session.close();
-
+            //close the session
+            session.close();
+            return true;
+        }catch (Exception e){
+            System.out.println(e+"printing exception");
+            return false;
+        }
     }
 
     @Override

@@ -82,10 +82,11 @@ public class LoginController {
             user.setUserRole(role);
         }
 
-        userService.saveUser(user);
-        mailService.sendMail(user);
-
-        return "activate";
+        if(userService.saveUser(user)) {
+            mailService.sendMail(user);
+            return "activate";
+        }
+        return "test";
     }
 
     @PostMapping("/activate")
