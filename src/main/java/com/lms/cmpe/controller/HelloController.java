@@ -13,6 +13,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -88,7 +89,7 @@ public class HelloController {
     }
 
     @RequestMapping(value = "/getDate",method = RequestMethod.POST)
-    public String getDate(@RequestParam("dateValue") String date)
+    public String getDate(@RequestParam("dateValue") String date, RedirectAttributes redirectAttributes)
     {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         String input = date;
@@ -106,9 +107,11 @@ public class HelloController {
         hashmap.put("Nov","11");
         hashmap.put("Dec","12");
         String appDate = parseDate(input,hashmap);
+        System.out.println("Parsed Date is ---"+appDate);
         LocalDateTime appDateTime = LocalDateTime.parse(appDate,dtf);
 
         ApplicationTime app = new ApplicationTime(appDateTime);
+        redirectAttributes.addAttribute("date",date);
         return "redirect:profile";
     }
 
@@ -126,7 +129,7 @@ public class HelloController {
                 break;
             }
         }
-        finalText = text+"/"+array[2]+"/"+array[3]+" "+array[4];
+        finalText = array[2]+"/"+text+"/"+array[3]+" "+array[4];
         return finalText;
     }
     @RequestMapping(value = "/updateBook",method = RequestMethod.POST)
