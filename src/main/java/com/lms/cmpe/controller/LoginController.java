@@ -54,7 +54,7 @@ public class LoginController {
             session.setAttribute("user",user);
             model.addAttribute("user",user);
                 if(result.isVerified()) {
-
+                    mailService.sendSuccessfulRegistrationMail(user);
                     return "redirect:/profile";
                 }
                 else{
