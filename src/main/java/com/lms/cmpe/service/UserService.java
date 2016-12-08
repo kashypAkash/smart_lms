@@ -11,7 +11,7 @@ import java.util.List;
 public interface UserService {
     List<User> getUsers();
     User getUserById(int id);
-    void saveUser(User user);
+    boolean saveUser(User user);
     void deleteUser(User user);
     void updateUser(User user);
     List<Phone> getUsersByNumber(String numbers);
