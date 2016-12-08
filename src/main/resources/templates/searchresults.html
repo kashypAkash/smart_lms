@@ -52,7 +52,7 @@
                         <ul class="right" >
                             <li class="book-options"><a class="secondary-content" title="Delete" th:href="@{|/book/delete/searchresult/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">delete</i></a></li>
                             <li class="book-options"><a class="secondary-content" title="Update" th:href="@{|/book/update/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">playlist_add</i></a></li>
-                            <li class="book-options"><a class="secondary-content" title="Add to cart" th:href="@{|/book/addtocart/searchresult/${book.getBookId()}|}" th:if="${user.getUserRole() == 'USER'}"><i class="small material-icons">shopping_cart</i></a></li>
+                            <li class="book-options"><a class="secondary-content" title="Add to cart" th:href="@{|/book/addtocart/searchresult/${book.getBookId()}|}" th:if="${user.getUserRole() == 'USER' and book.noOfAvailableCopies >0}"><i class="small material-icons">shopping_cart</i></a></li>
                         </ul>
                     </div>
                 </div>
