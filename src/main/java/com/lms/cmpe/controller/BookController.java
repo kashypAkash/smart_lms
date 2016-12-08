@@ -2,6 +2,7 @@ package com.lms.cmpe.controller;
 
 import com.lms.cmpe.model.*;
 import com.lms.cmpe.service.BookService;
+import com.lms.cmpe.service.MailService;
 import com.lms.cmpe.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,9 @@ public class BookController {
 
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    private MailService mailService;
 
     @GetMapping("/books")
     public String getAllBooks(Model model, HttpSession session){
@@ -173,12 +177,15 @@ public class BookController {
         //TransactionService ts=new TransactionServiceImpl();
         //System.out.println("checking for null error");
         //System.out.println(ts);
-        Transaction transaction = transactionService.checkOutBooks(t,t.getUser().getUserId());
+        User u=(User)session.getAttribute("user");
+        Transaction transaction = transactionService.checkOutBooks(t,u.getUserId());
         if(transaction == null){
             return "test"; // TODO: bad request ; return a error page
+
         }
         model.addAttribute("transaction",transaction);
         model.addAttribute("user",session.getAttribute("user"));
+        mailService.sendTransactionInfoMail(transaction,(User)session.getAttribute("user"));
         session.removeAttribute("booklist");
         return "checkout";
     }
@@ -205,6 +212,9 @@ public class BookController {
         User user = (User)session.getAttribute("user");
 
         boolean successfullyReturned = transactionService.returnBooks(transactionBooksList,user.getUserId());
+
+        mailService.sendTransactionReturnsInfoMail(transactionBooksList,(User)session.getAttribute("user"));
+
         session.removeAttribute("returnlist");
         return "redirect:/profile";
     }

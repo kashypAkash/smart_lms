@@ -49,7 +49,7 @@ public class TransactionDaoImpl implements TransactionDao{
            int temp = transaction.getTransactionBooksList().size();
            if (todayBooks + temp > 5) {
                System.out.println(todayBooks + temp + "the number of bookks today");
-               throw new LmsException("maximumNoOfBooksPerDayViolated");
+               throw new LmsException("maximumNoOfBooksPerDayViolated");//TODO: Akash implement custom exception page from the UI
            }
            String r2 = "select count(*) from TransactionBooks tb join tb.transaction t" +
                    " where tb.returnDate" +
@@ -60,7 +60,7 @@ public class TransactionDaoImpl implements TransactionDao{
            Long allBooks = (Long) q2.getResultList().get(0);
            if (allBooks + temp > 10) {
                System.out.println(allBooks + temp + "number of books all time");
-               throw new LmsException("maximumNoOfBooksViolated");
+               throw new LmsException("maximumNoOfBooksViolated");//TODO: Akash implement custom exception page from the UI
            }
            for (TransactionBooks transactionBook:transaction.getTransactionBooksList()) {
                int bookId=transactionBook.getBook().getBookId();
