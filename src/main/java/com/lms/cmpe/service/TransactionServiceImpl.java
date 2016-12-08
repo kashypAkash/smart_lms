@@ -7,6 +7,7 @@ import com.lms.cmpe.model.TransactionBooks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +21,9 @@ public class TransactionServiceImpl implements TransactionService{
 
     @Override
     public Transaction checkOutBooks(Transaction transaction, int userId) { return transactionDao.checkOutBooks(transaction, userId); }
+
+    @Override
+    public boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId) { return transactionDao.returnBooks(transactionBooksList, userId); }
 
     @Override
     public List<Book> getCheckedOutBooksByUser(int userId) { return transactionDao.getCheckedOutBooksByUser(userId); }
