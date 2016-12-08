@@ -2,6 +2,7 @@ package com.lms.cmpe.dao;
 
 import com.lms.cmpe.model.*;
 import com.lms.cmpe.service.LmsException;
+import com.lms.cmpe.service.MailService;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,8 @@ public class TransactionDaoImpl implements TransactionDao{
     @Autowired
     private SessionFactory sessionFactory;
 
-
+    @Autowired
+    private MailService mailService;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -99,6 +101,7 @@ public class TransactionDaoImpl implements TransactionDao{
             book.setNoOfAvailableCopies(book.getNoOfAvailableCopies() + 1);
             session.update(book);
         }
+        mailService.sendTransactionReturnsInfoMail(transactionBooksList,(User)session.get(User.class,userId),dateobj);
 
         //session.save(transaction);
         session.getTransaction().commit();

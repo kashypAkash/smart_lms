@@ -9,6 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by akash on 11/27/16.
@@ -45,13 +46,13 @@ public class MailService {
         javaMailSender.send(mailMessage);
     }
 
-    public void sendTransactionReturnsInfoMail(ArrayList<TransactionBooks> transactionBooks, User user){
+    public void sendTransactionReturnsInfoMail(ArrayList<TransactionBooks> transactionBooks, User user, Date returnDate){
         StringBuilder sb=new StringBuilder("The following books have been returned");
         sb.append(System.getProperty("line.separator"));
 
         for (TransactionBooks transactionBook:transactionBooks) {
             sb.append("Book Title - "+transactionBook.getBook().getTitle()+"  ");
-            sb.append(System.getProperty("line.separator"));
+            sb.append("Return Date - "+returnDate);
             sb.append(System.getProperty("line.separator"));
         }
         SimpleMailMessage mailMessage=new SimpleMailMessage();

@@ -213,8 +213,6 @@ public class BookController {
 
         boolean successfullyReturned = transactionService.returnBooks(transactionBooksList,user.getUserId());
 
-        mailService.sendTransactionReturnsInfoMail(transactionBooksList,(User)session.getAttribute("user"));
-
         session.removeAttribute("returnlist");
         return "redirect:/profile";
     }
