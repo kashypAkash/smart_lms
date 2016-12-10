@@ -265,8 +265,12 @@ public class BookController {
         return "redirect:/books/searchresults";
     }
 
+    @GetMapping("reissue/book/{id}")
+    public String reIssueBook()
+    {
 
-
+        return null;
+    }
 
 
 }
