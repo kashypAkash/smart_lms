@@ -97,6 +97,7 @@ public class LoginController {
         User user = userService.getUserById(Integer.parseInt(userid));
         model.addAttribute("user",user);
         if(activationcode.equals(user.getVerificationCode())){
+            mailService.sendSuccessfulRegistrationMail(user);
             user.setVerified(true);
             userService.updateUser(user);
             return "redirect:/profile";
