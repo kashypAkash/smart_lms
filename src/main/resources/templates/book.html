@@ -45,7 +45,7 @@
             <label for = "isbn">Enter ISBN Code</label>
         </div>
         <div class="input-field col s6 m6">
-            <button id="submitCode" class="btn waves-effect waves-light col m4" onclick = "myFunction();" value="data">ISBN Data</button>
+            <button id="submitCode" class="btn waves-effect waves-light col m4" value="data">ISBN Data</button>
         </div>
 
         <form class="col s9 m9" th:action="@{/book/add}" method="post" th:object="${book}">
@@ -116,11 +116,27 @@
     <script>
      $(document).ready(function(){
         $('#submitCode').click(function(){
+        var x;
          var isbn = $('#isbn').val();
+         var xmlhttp = new XMLHttpRequest();
+         var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn;
 
-        });
-     });
-    </script>
+            xmlhttp.onreadystatechange = function() {
+            /*<![CDATA[*/
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            x = JSON.parse(xmlhttp.responseText);
+            callback(x);
+           }/*]]>*/
+           };
+           xmlhttp.open("GET", url, true);
+           xmlhttp.send();
+
+    function callback(x) {
+    console.log(x);
+   };
+    });
+    });
+</script>
 
 </body>
 </html>

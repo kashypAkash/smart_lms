@@ -1,9 +1,7 @@
 package com.lms.cmpe.controller;
 
 import com.lms.cmpe.model.*;
-import com.lms.cmpe.service.BookService;
-import com.lms.cmpe.service.MailService;
-import com.lms.cmpe.service.TransactionService;
+import com.lms.cmpe.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
+import java.util.List;
 
 /**
  * Created by Nischith on 11/27/2016.
@@ -22,6 +20,9 @@ import java.util.Date;
 public class BookController {
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private TransactionService transactionService;
@@ -45,6 +46,24 @@ public class BookController {
 
             model.addAttribute("booklist", session.getAttribute("booklist"));
         return "allbooks";
+    }
+
+    @GetMapping("/waitListedbook")
+    public String getWaitlistedBooks(Model model,HttpSession session)
+    {
+        model.addAttribute("user",session.getAttribute("user"));
+        List<WaitlistBooksToBeAssigned> waitlist = new ArrayList<WaitlistBooksToBeAssigned>();
+        WaitlistBooksToBeAssigned waitlistBooksToBeAssigned = new WaitlistBooksToBeAssigned();
+        Book book = bookService.getBookById(2);
+        User user = userService.getUserById(23);
+        waitlistBooksToBeAssigned.setBook(book);
+        waitlistBooksToBeAssigned.setUser(user);
+
+        waitlistBooksToBeAssigned.setInvalid(false);
+        waitlist.add(waitlistBooksToBeAssigned);
+        System.out.println("User email is --"+waitlist.get(0).getUser().getEmail());
+        model.addAttribute("waitlist",waitlist);
+        return "waitlist";
     }
 
     @GetMapping("/book")
@@ -264,13 +283,5 @@ public class BookController {
         booklist.getBookList().remove(index);
         return "redirect:/books/searchresults";
     }
-
-    @GetMapping("reissue/book/{id}")
-    public String reIssueBook()
-    {
-
-        return null;
-    }
-
 
 }
