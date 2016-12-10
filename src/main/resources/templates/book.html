@@ -11,7 +11,8 @@
 
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-    <script  th:src="@{/JS/scripts.js}">    </script>
+    <script  th:src="@{/JS/scripts.js}"></script>
+
 </head>
 <body>
 <div>
@@ -38,6 +39,15 @@
         <div class="col m3" >
             <img src="http://placehold.it/250x250" />
         </div>
+
+        <div class="input-field col s6 m6">
+            <input id="isbn" name="isbn" type="text" class="validate" />
+            <label for = "isbn">Enter ISBN Code</label>
+        </div>
+        <div class="input-field col s6 m6">
+            <button id="submitCode" class="btn waves-effect waves-light col m4" onclick = "myFunction();" value="data">ISBN Data</button>
+        </div>
+
         <form class="col s9 m9" th:action="@{/book/add}" method="post" th:object="${book}">
             <div class="col s10 m10">
                 <div class="row">
@@ -102,5 +112,15 @@
 
 </div>
 <script  th:src="@{/JS/validation.js}"></script>
+
+    <script>
+     $(document).ready(function(){
+        $('#submitCode').click(function(){
+         var isbn = $('#isbn').val();
+
+        });
+     });
+    </script>
+
 </body>
 </html>
