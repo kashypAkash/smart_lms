@@ -69,4 +69,14 @@ public class MailService {
         mailMessage.setText("Your account has been successfully activated");
         javaMailSender.send(mailMessage);
     }
+    public void sendReminderMail(User user,TransactionBooks transactionBook){
+        StringBuilder sb=new StringBuilder("You have not returned the following book and due date is near. Please return it");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Book Title"+"------"+transactionBook.getBook().getTitle()+"------ Due Date"+transactionBook.getDueDate());
+        SimpleMailMessage mailMessage=new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setSubject("Reminder Mail --- Book Title ---"+transactionBook.getBook().getTitle());
+        mailMessage.setText("Reminder Mail"+sb);
+        javaMailSender.send(mailMessage);
+    }
 }

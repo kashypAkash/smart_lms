@@ -20,12 +20,25 @@ public class TransactionBooks {
 
     private Date dueDate;
     private Date returnDate;
+
+    public TransactionBooks(int transactionBooksId, Transaction transaction, Date dueDate, Date returnDate, Book book, int noOfTimesRenewed, int fine, Date lastReminderMailTime) {
+        this.transactionBooksId = transactionBooksId;
+        this.transaction = transaction;
+        this.dueDate = dueDate;
+        this.returnDate = returnDate;
+        this.book = book;
+        this.noOfTimesRenewed = noOfTimesRenewed;
+        this.fine = fine;
+        this.lastReminderMailTime = lastReminderMailTime;
+    }
+
     @ManyToOne
     @JoinColumn(name="bookId")
     private Book book;
 
     private int noOfTimesRenewed;
     private int fine;
+    private Date lastReminderMailTime;
 
     public TransactionBooks(int transactionBooksId, Transaction transaction, Date dueDate, Date returnDate, Book book, int noOfTimesRenewed, int fine) {
         this.transactionBooksId = transactionBooksId;
@@ -106,4 +119,11 @@ public class TransactionBooks {
         this.fine = fine;
     }
 
+    public Date getLastReminderMailTime() {
+        return lastReminderMailTime;
+    }
+
+    public void setLastReminderMailTime(Date lastReminderMailTime) {
+        this.lastReminderMailTime = lastReminderMailTime;
+    }
 }

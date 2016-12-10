@@ -21,6 +21,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
+import static java.lang.Math.toIntExact;
+
 
 /**
  * Created by Nischith on 11/27/2016.
@@ -139,6 +141,17 @@ public class BookDaoImpl implements BookDao {
         session.beginTransaction();
         // update and commit transaction
         try {
+            String retrieve = "select count(*) from TransactionBooks tb " +
+                    " where tb.returnDate" +
+                    " is null and tb.book.bookId=:bookId";
+            Query retrieveQuery = (Query) session.createQuery(retrieve);
+            retrieveQuery.setParameter("bookId", book.getBookId());
+            //System.out.println((int)retrieveQuery.getResultList().size()+"in transaction query result");
+            //System.out.println(retrieveQuery.getResultList() + "only today");
+
+            Long outstandingBooks = (Long) retrieveQuery.getResultList().get(0);
+
+            book.setNoOfAvailableCopies(book.getNoOfCopies()-toIntExact(outstandingBooks));
             session.update(book);
             session.getTransaction().commit();
         }
