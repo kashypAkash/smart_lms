@@ -3,6 +3,7 @@ package com.lms.cmpe.dao;
 import com.lms.cmpe.model.*;
 import com.lms.cmpe.service.LmsException;
 import com.lms.cmpe.service.MailService;
+import javassist.bytecode.stackmap.BasicBlock;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -258,5 +260,53 @@ public class TransactionDaoImpl implements TransactionDao{
         }
         session.getTransaction().commit();
         session.close();
+    }
+
+    @Override
+    public boolean reissueBook(int transactionBookId, int userId){
+
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        TransactionBooks transactionBook = session.get(TransactionBooks.class, transactionBookId);
+        int bookId = transactionBook.getBook().getBookId();
+
+        Book book = session.get(Book.class, bookId);
+
+        String retrieve = "SELECT wl.waitlistId FROM Waitlist wl where wl.book = :book ";
+        int count = 0;
+        try{
+            Query retrieveQuery = (Query) session.createQuery(retrieve);
+            retrieveQuery.setParameter("book",book);
+            count = (Integer)retrieveQuery.getSingleResult();
+        }
+        catch(Exception e)
+        {
+            System.out.println("Exception ");
+        }
+
+        try {
+            if (count > 0) {
+                System.out.println("Cannot issueeeeeeeeeeeeee as it is requested by someone else ");
+                throw new LmsException("reissueFailedAsBookRequestedBySomeone");
+            } else if (transactionBook.getNoOfTimesRenewed() >= 2) {
+                throw new LmsException("reissueFailedAsBookIssuedTwice");
+            } else {
+                Date dueDate = transactionBook.getDueDate();
+                Calendar c = Calendar.getInstance();
+                c.setTime(dueDate);
+                c.add(Calendar.DATE, 30);
+                transactionBook.setNoOfTimesRenewed(transactionBook.getNoOfTimesRenewed() + 1);
+                transactionBook.setDueDate(c.getTime());
+            }
+        }catch(LmsException e)
+        {
+            System.out.println(e);
+            return false;
+        }
+        session.getTransaction().commit();
+        session.close();
+
+        return true;
     }
 }
