@@ -112,6 +112,7 @@ public class TransactionDaoImpl implements TransactionDao{
                     int bookId=transactionBook.getBook().getBookId();
                     Book book = session.get(Book.class,bookId);
                     book.setNoOfAvailableCopies(book.getNoOfAvailableCopies() + 1);
+                    session.update(transactionBook);
                     session.update(book);
                 }
                 //take out the patron from waitlist table, assign the book to him by creating a record in waitlistToBeAssigned table
@@ -132,6 +133,7 @@ public class TransactionDaoImpl implements TransactionDao{
                 int bookId = transactionBook.getBook().getBookId();
                 Book book = session.get(Book.class, bookId);
                 book.setNoOfAvailableCopies(book.getNoOfAvailableCopies() + 1);
+                session.update(transactionBook);
                 session.update(book);
             }
         }
