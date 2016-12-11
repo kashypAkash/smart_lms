@@ -266,10 +266,13 @@ public class BookController {
     }
 
     @GetMapping("reissue/book/{id}")
-    public String reIssueBook()
+    public String reIssueBook(@PathVariable("id") int id, HttpSession session)
     {
+        System.out.println("Reissue Hereeeeeeeeeeeeeeeee " + id);
+        User user = (User)session.getAttribute("user");
+        transactionService.reissueBook(id, user.getUserId());
+        return "redirect:/profile";
 
-        return null;
     }
 
 

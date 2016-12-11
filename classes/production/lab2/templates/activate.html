@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8" />
+    <title>crazySpring</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Kaushan+Script" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/style.css}" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+    <script  th:src="@{/JS/scripts.js}">    </script>
+</head>
+<body>
+<div>
+    <nav>
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo">e-Library</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="row" th:object="${user}">
+        <div class="row">
+            <h5 style="text-align: center" th:inline="text"> Welcome, [[${user.email}]]. please activate your account!</h5>
+        </div>
+           <form class="col s6 m6 offset-m3 offset-s3" th:action="@{/activate}" method="post">
+            <div class="col s12">
+                <div class="row">
+                    <input type="hidden" th:value="${user.getUserId()}" name="userid"/>
+                    <div class="input-field col s12 m10 offset-m1 offset-s2">
+                        <input id="activationcode" name="activationcode" type="text"  class="validate" />
+                        <label for="activationcode">Activation Code</label>
+                    </div>
+                    <div class="input-field col s12 m10 offset-m1 offset-s2">
+                        <p th:if="${message != null}" th:text="${message}" style="color: red"></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m10 offset-m1 offset-s2">
+                        <button class="btn waves-effect waves-light" type="submit" name="action" value="activate">Activate</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+</body>
+</html>
