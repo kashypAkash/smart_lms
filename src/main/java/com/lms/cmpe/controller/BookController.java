@@ -31,6 +31,11 @@ public class BookController {
 
     @GetMapping("/books")
     public String getAllBooks(Model model, HttpSession session){
+
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
+
             model.addAttribute("user",session.getAttribute("user"));
             model.addAttribute("books",bookService.getAllBooks());
 
@@ -49,6 +54,11 @@ public class BookController {
 
     @GetMapping("/book")
     public String bookForm(Model model,HttpSession session){
+
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
+
         Book book = new Book();
         model.addAttribute("user",session.getAttribute("user"));
         model.addAttribute("book",book);
@@ -57,6 +67,10 @@ public class BookController {
 
     @RequestMapping(value = "/book/add", method = RequestMethod.POST)
     public String addBook(@ModelAttribute Book book, Model model, @RequestParam(value="action") String action, HttpSession session){
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
+
         model.addAttribute("user",session.getAttribute("user"));
         if(action.equals("addkeyword")){
             book.getBookKeywordsList().add(new BookKeywords());
@@ -90,6 +104,10 @@ public class BookController {
 
     @GetMapping("/book/update/{id}")
     public String bookUpdateForm(@PathVariable("id") int id, Model model, HttpSession session){
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
+
         model.addAttribute("book", bookService.getBookById(id));
         model.addAttribute("user", session.getAttribute("user"));
         return "updatebook";
@@ -99,6 +117,10 @@ public class BookController {
     public String updateBook(@ModelAttribute Book book, @PathVariable("id") int id,
                              @RequestParam(value="action", required=true) String action, HttpSession session,
                              Model model){
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
+
         model.addAttribute("user",session.getAttribute("user"));
         book.setBookId(id);
 
@@ -118,7 +140,11 @@ public class BookController {
     }
 
     @GetMapping("/book/delete/{id}")
-    public String deleteBookByid(@PathVariable("id") int id){
+    public String deleteBookByid(@PathVariable("id") int id, HttpSession session){
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
+
         Book book= bookService.getBookById(id);
         bookService.deleteBook(book);
         return "redirect:/books";
@@ -127,6 +153,10 @@ public class BookController {
     @GetMapping("/book/addtocart/{id}")
     public String addBookToCart(@PathVariable("id") int id, @ModelAttribute BookList booklist,
                                 Model model, HttpSession session){
+            if(session.getAttribute("user")==null){
+                return "redirect:/";
+            }
+
             booklist = (BookList)session.getAttribute("booklist");
 
             for(Book book:booklist.getBookList()){
@@ -143,6 +173,10 @@ public class BookController {
     public String removeFromCart(@PathVariable("id") int id, @ModelAttribute BookList booklist
                                 ,@PathVariable("index") int index, HttpSession session){
 
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
+
         booklist = (BookList)session.getAttribute("booklist");
         booklist.getBookList().remove(index);
         return "redirect:/books";
@@ -150,6 +184,10 @@ public class BookController {
 
     @GetMapping("/books/checkout")
     public String checkout(HttpSession session, Model model){
+
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
 
         BookList bookList= (BookList)session.getAttribute("booklist");
         System.out.println(bookList.toString());
@@ -199,6 +237,10 @@ public class BookController {
 
     @GetMapping("/books/searchresults")
     public String searchResults(Model model, HttpSession session){
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
+
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("booklist", session.getAttribute("booklist"));
         model.addAttribute("books", session.getAttribute("books"));
@@ -219,6 +261,10 @@ public class BookController {
 
     @PostMapping(value = "/books", params = "search")
     public String search(Model model, HttpSession session, @RequestParam("keyword") String keyword){
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
+
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("books", bookService.getBooksByKey(keyword));
         session.setAttribute("books",bookService.getBooksByKey(keyword));
@@ -229,6 +275,10 @@ public class BookController {
 
     @GetMapping("/book/delete/searchresult/{id}")
     public String deleteBookSearchedByid(@PathVariable("id") int id, HttpSession session){
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
+
         Book book= bookService.getBookById(id);
         bookService.deleteBook(book);
         ArrayList<Book> templist = (ArrayList<Book>)session.getAttribute("books");
@@ -245,6 +295,10 @@ public class BookController {
     @GetMapping("/book/addtocart/searchresult/{id}")
     public String addBookSearchedToCart(@PathVariable("id") int id, @ModelAttribute BookList booklist,
                                 Model model, HttpSession session){
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
+
         booklist = (BookList)session.getAttribute("booklist");
 
         for(Book book:booklist.getBookList()){
@@ -259,6 +313,10 @@ public class BookController {
     @GetMapping("/book/remove/searchresult/{id}/{index}")
     public String removeSearchResultFromCart(@PathVariable("id") int id, @ModelAttribute BookList booklist
             ,@PathVariable("index") int index, HttpSession session){
+
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
 
         booklist = (BookList)session.getAttribute("booklist");
         booklist.getBookList().remove(index);
