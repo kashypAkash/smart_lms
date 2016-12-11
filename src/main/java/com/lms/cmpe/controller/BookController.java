@@ -224,7 +224,7 @@ public class BookController {
         User u=(User)session.getAttribute("user");
         Transaction transaction = transactionService.checkOutBooks(t,u.getUserId());
         if(transaction == null){
-            return "test"; // TODO: bad request ; return a error page
+            return "redirect:/myerror"; // TODO: bad request ; return a error page
 
         }
         model.addAttribute("transaction",transaction);
@@ -338,6 +338,13 @@ public class BookController {
         return "redirect:/profile";
 
     }
+
+    @GetMapping("/myerror")
+    public String customError(Model model, HttpSession session){
+        model.addAttribute("user",session.getAttribute("user"));
+        return "test";
+    }
+
 
 
 }
