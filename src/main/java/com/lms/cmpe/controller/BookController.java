@@ -224,8 +224,7 @@ public class BookController {
         User u=(User)session.getAttribute("user");
         Transaction transaction = transactionService.checkOutBooks(t,u.getUserId());
         if(transaction == null){
-            return "redirect:/myerror"; // TODO: bad request ; return a error page
-
+            return "redirect:/myerror"; 
         }
         model.addAttribute("transaction",transaction);
         model.addAttribute("user",session.getAttribute("user"));
