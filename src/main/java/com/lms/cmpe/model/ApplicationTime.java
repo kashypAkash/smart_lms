@@ -1,6 +1,7 @@
 package com.lms.cmpe.model;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,35 +12,31 @@ import java.util.Date;
  * Created by Nischith on 12/2/2016.
  */
 public class ApplicationTime {
-    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-    private LocalDateTime appDateTime = LocalDateTime.now();
-    private LocalDateTime actualDateTime = LocalDateTime.now();
 
-    public ApplicationTime(LocalDateTime appDateTime) {
-        String dt = dtf.format(appDateTime);
-        this.appDateTime = LocalDateTime.parse(dt,dtf);
-        System.out.println("appDateTime " + this.appDateTime);
-        System.out.println("actualDateTime " + actualDateTime);
+    private Date appDateTime;
+
+
+    public ApplicationTime(String appDateTimeInString) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
+            appDateTime = formatter.parse(appDateTimeInString);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
     }
 
 
 
-    public LocalDateTime getAppDateTime() {
+    public Date getAppDateTime() {
         return appDateTime;
 
     }
 
-    public void setAppDateTime(LocalDateTime appDateTime) {
+    public void setAppDateTime(Date appDateTime) {
         this.appDateTime = appDateTime;
     }
 
-    public LocalDateTime getActualDateTime() {
-        return actualDateTime;
-    }
 
-    public void setActualDateTime(LocalDateTime actualDateTime) {
-        this.actualDateTime = actualDateTime;
-    }
 
 
 }
