@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -266,11 +267,19 @@ public class BookController {
     }
 
     @GetMapping("reissue/book/{id}")
-    public String reIssueBook(@PathVariable("id") int id, HttpSession session)
+    public String reIssueBook(@PathVariable("id") int id, HttpSession session, RedirectAttributes redirectAttributes)
     {
         System.out.println("Reissue Hereeeeeeeeeeeeeeeee " + id);
         User user = (User)session.getAttribute("user");
-        transactionService.reissueBook(id, user.getUserId());
+        int returnValue = transactionService.reissueBook(id, user.getUserId());
+        if(returnValue == 1)
+        {
+            redirectAttributes.addFlashAttribute("message", "Reissue failed as book is requested by someone else");
+        }
+        else if (returnValue == 2)
+        {
+            redirectAttributes.addFlashAttribute("message", "Reissue failed as book is already issued twice");
+        }
         return "redirect:/profile";
 
     }

@@ -263,8 +263,8 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
-    public boolean reissueBook(int transactionBookId, int userId){
-
+    public int reissueBook(int transactionBookId, int userId){
+        int returnValue = 0;
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
@@ -288,8 +288,10 @@ public class TransactionDaoImpl implements TransactionDao{
         try {
             if (count > 0) {
                 System.out.println("Cannot issueeeeeeeeeeeeee as it is requested by someone else ");
+                returnValue = 1;
                 throw new LmsException("reissueFailedAsBookRequestedBySomeone");
             } else if (transactionBook.getNoOfTimesRenewed() >= 2) {
+                returnValue = 2;
                 throw new LmsException("reissueFailedAsBookIssuedTwice");
             } else {
                 Date dueDate = transactionBook.getDueDate();
@@ -302,11 +304,11 @@ public class TransactionDaoImpl implements TransactionDao{
         }catch(LmsException e)
         {
             System.out.println(e);
-            return false;
+            return returnValue;
         }
         session.getTransaction().commit();
         session.close();
 
-        return true;
+        return returnValue;
     }
 }
