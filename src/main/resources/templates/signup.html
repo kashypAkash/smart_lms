@@ -76,14 +76,13 @@ $('#email').on("keyup",function(){
         var str = "@sjsu.edu"
         if(email.match("@sjsu.edu$"))
         {
-        alert("Hi");
            $('#checkbox')[0].checked = true;
-           $('#checkbox')[0].readonly = true;
+          $("#checkbox").attr("disabled", true);
         }
          else
          {
            $('#checkbox')[0].checked = false;
-           $('#checkbox')[0].readonly = true;
+           $("#checkbox").attr("disabled", true);
          }
      });
 

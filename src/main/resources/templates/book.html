@@ -132,11 +132,14 @@
            xmlhttp.send();
 
     function callback(x) {
-    console.log(x);
+    var book = x.items[0].volumeInfo;
+      $('#author').val(book.authors.join('; '));
+      $('#title').val(book.title);
+      $('#yearOfPublication').val(book.publishedDate);
+       $('#publisher').val(book.publisher);
    };
-    });
-    });
+  });
+});
 </script>
-
 </body>
 </html>
