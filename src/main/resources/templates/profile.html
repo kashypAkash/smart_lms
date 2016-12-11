@@ -67,21 +67,21 @@
             </ul>
             <a th:if="${returnlist.size()>0}" type="button" class="btn waves-effect waves-light red right" th:href="@{/return/books/checkout}" name="action" value="checkout">Return Books</a>
         </div>
-    </div>/
+    </div>
 
 
 
 
-    <button id="appDate" ></button>
+<!--    <button id="appDate" ></button>
     <div id="popupForm" style="display:none;">
         <form th:action = "@{/getDate}" method="POST">
             <input id = "text" type="text" name = "dateValue"  />
             <input type="submit" value="Submit" />
         </form>
-    </div>
+    </div>-->
 </div>
 
-<script>
+<!--<script>
 
 $(function(){
   now = new Date();
@@ -106,6 +106,6 @@ $("input[type=text]").change(function() {
 
 });
 
-</script>
+</script>-->
 </body>
 </html>
