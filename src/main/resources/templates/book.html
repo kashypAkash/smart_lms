@@ -50,6 +50,7 @@
 
         <form class="col s9 m9" th:action="@{/book/add}" method="post" th:object="${book}">
             <div class="col s10 m10">
+                <p th:if="${message != null}" th:text="${message}" style="color: red;text-align: center"></p>
                 <div class="row">
                     <div class="input-field col s6 m6">
                         <input id="author" name="author" th:field="*{author}" type="text" class="validate" />
@@ -103,7 +104,7 @@
 
                 <div class="row">
                     <div class="input-field col s6 m6">
-                        <button id="submit" class="btn waves-effect waves-light col m4" disabled="disabled" type="submit" name="action" value="add">add</button>
+                        <button id="submit" class="btn waves-effect waves-light col m4" type="submit" name="action" value="add">add</button>
                     </div>
                 </div>
             </div>
@@ -111,7 +112,7 @@
     </div>
 
 </div>
-<script  th:src="@{/JS/validation.js}"></script>
+<!--<script  th:src="@{/JS/validation.js}"></script>
 
     <script>
      $(document).ready(function(){
@@ -120,7 +121,7 @@
 
         });
      });
-    </script>
+    </script>-->
 
 </body>
 </html>
