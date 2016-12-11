@@ -35,7 +35,7 @@ public class ScheduledTasks {
     public void checkForWaitlistAssignments() {
 
         //log.info("The time is now {}", dateFormat.format(new Date()));
-        transactionDao.checkForWaitlistAssignments();
+        //transactionDao.checkForWaitlistAssignments();
 
     }
 
