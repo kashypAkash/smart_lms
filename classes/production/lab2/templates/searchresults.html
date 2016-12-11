@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8" />
+    <title>Smart LMS</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Kaushan+Script" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/style.css}" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+    <script  th:src="@{/JS/scripts.js}">    </script>
+</head>
+<body>
+<div class="main-container" th:object="${user}">
+    <nav>
+        <div class="nav-wrapper">
+            <div class="row">
+                <div class="col s2">
+                    <a href="#" class="brand-logo">e-Library</a>
+                </div>
+                <div class="col s6">
+                    <form th:action="@{/books?search=true}" method="post">
+                        <div class="input-field">
+                            <input id="search" type="search"  name="keyword"/>
+                            <label for="search"><i class="material-icons">search</i></label>
+                        </div>
+                    </form>
+                </div>
+                <div class="col s4">
+                    <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <li><a th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}">Add Books</a></li>
+                        <li><a th:href="@{/books}">View Books</a></li>
+                        <li><a class="red" th:href="@{/logout}">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="row" >
+        <div class="col s9 m9">
+            <div th:each="book : ${books}" class="col s12 m12">
+                <div class="row valign-wrapper book-item">
+                    <div class="col m2 valign">
+                        <img class="responsive-img" src="http://placehold.it/160x120" />
+                    </div>
+                    <div class="col m10">
+                        <h5 class="book-title" th:text="${book.getTitle()}" >Title of the Book</h5>
+                        <p class="book-author" th:text="${book.getAuthor()}">Author of the Book</p>
+                        <ul class="right" >
+                            <li class="book-options"><a class="secondary-content" title="Delete" th:href="@{|/book/delete/searchresult/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">delete</i></a></li>
+                            <li class="book-options"><a class="secondary-content" title="Update" th:href="@{|/book/update/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">playlist_add</i></a></li>
+                            <li class="book-options"><a class="secondary-content" title="Add to cart" th:href="@{|/book/addtocart/searchresult/${book.getBookId()}|}" th:if="${user.getUserRole() == 'USER' and book.noOfAvailableCopies >0}"><i class="small material-icons">shopping_cart</i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col s3 m3" th:object="${booklist}" >
+            <h5 th:if="${booklist.getBookList().size()>0}">Cart Items</h5>
+            <ul class="collection" th:each="item, status : ${booklist.getBookList()}">
+                <li class="collection-item avatar valign-wrapper">
+                    <img src="http://placehold.it/100x100" class="circle" />
+                    <span class="title" th:text="${item.getTitle()}">Title</span>
+                    <a class="secondary-content" th:href="@{|/book/remove/searchresult/${item.getBookId()}/${status.index}|}" name="index" th:value="${status.index}"><i class="small material-icons" style="margin-top: 10px">delete</i></a>
+                </li>
+            </ul>
+            <a th:if="${booklist.getBookList().size()>0}" type="button" class="btn waves-effect waves-light red right" th:href="@{/books/checkout}" name="action" value="checkout">Checkout</a>
+        </div>
+    </div>
+</div><!--end of main container-->
+</body>
+</html>
