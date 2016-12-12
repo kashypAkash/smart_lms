@@ -88,10 +88,11 @@ public class TransactionDaoImpl implements TransactionDao{
 
     @Override
     public boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId){
+        List<Waitlist> waitLists =null ;
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         Date dateobj = new Date();
-
+        User u = null;
         for (TransactionBooks transactionBook:transactionBooksList) {
 
             int transactionBookId = transactionBook.getTransactionBooksId();
@@ -99,12 +100,18 @@ public class TransactionDaoImpl implements TransactionDao{
             System.out.println("Hereeeeeeeeeeeeeeeeee "+transactionBook.getDueDate());
             //if number of available copies was 0 then we have to take out the first patron in waitlist and assign the book to him
             if(transactionBook.getBook().getNoOfAvailableCopies()==0){
-                String getWaitlistPatron = "select w.user from Waitlist w where w.waitlistId = (select min(w2.waitlistId) from Waitlist w2 where w2.book=:book)";
+                String getWaitlistPatron = "select w from Waitlist w where w.waitlistId = (select min(w2.waitlistId) from Waitlist w2 where w2.book=:book)";
                 Query getWaitlistPatronQuery = (Query) session.createQuery(getWaitlistPatron);
                 getWaitlistPatronQuery.setParameter("book",transactionBook.getBook());
                 //System.out.println((int)retrieveQuery.getResultList().size()+"in transaction query result");
-                System.out.println(getWaitlistPatronQuery.getResultList().get(0) + "only today");
-                User u=(User)getWaitlistPatronQuery.getResultList().get(0);
+                List<Waitlist> wList=(List<Waitlist>) getWaitlistPatronQuery.getResultList();
+                Waitlist w=null;
+                if(wList.size()>0)
+                {
+                    w=wList.get(0);
+                    u = w.getUser();
+                }
+
                 //if there are no patrons in waitlist for that book, increase the number of available copies by 1
                 if(u==null){
                     transactionBook.setReturnDate(dateobj);
@@ -119,9 +126,12 @@ public class TransactionDaoImpl implements TransactionDao{
                 else{
                     System.out.println("inside the waitlistbookstobeassigned");
                     Date date=new Date();
-                    WaitlistBooksToBeAssigned obj=new WaitlistBooksToBeAssigned(transactionBook.getTransaction().getUser(),transactionBook.getBook(),date);
+                    WaitlistBooksToBeAssigned obj=new WaitlistBooksToBeAssigned(transactionBook.getTransaction().getUser(),w.getBook(),date);
                     session.save(obj);
-                    session.delete(u);
+
+                    waitLists.add(w);
+
+
                 }
                 //Long todayBooks = (Long) getWaitlistPatronQuery.getResultList().get(0);
 
@@ -139,9 +149,23 @@ public class TransactionDaoImpl implements TransactionDao{
         }
         mailService.sendTransactionReturnsInfoMail(transactionBooksList,(User)session.get(User.class,userId),dateobj);
 
-        //session.save(transaction);
         session.getTransaction().commit();
         session.close();
+
+        Session session1 = sessionFactory.openSession();
+        session1.beginTransaction();
+
+
+        if(waitLists != null) {
+            for (Waitlist waitList:waitLists) {
+                session1.delete(waitList);
+
+            }
+            session1.getTransaction().commit();
+        }
+
+        session1.close();
+
         return false;
     }
 
@@ -280,10 +304,14 @@ public class TransactionDaoImpl implements TransactionDao{
             retrieveQuery.setParameter("book",book);
             count = (Integer)retrieveQuery.getSingleResult();
         }
+        catch (NoResultException e){
+            System.out.println("Exception ");
+        }
         catch(Exception e)
         {
             System.out.println("Exception ");
         }
+
 
         try {
             if (count > 0) {
@@ -292,6 +320,8 @@ public class TransactionDaoImpl implements TransactionDao{
                 throw new LmsException("reissueFailedAsBookRequestedBySomeone");
             } else if (transactionBook.getNoOfTimesRenewed() >= 2) {
                 returnValue = 2;
+                System.out.println("Cannot issueeeeeeeeeeeeee as it is requested by someone else ");
+
                 throw new LmsException("reissueFailedAsBookIssuedTwice");
             } else {
                 Date dueDate = transactionBook.getDueDate();
@@ -304,6 +334,8 @@ public class TransactionDaoImpl implements TransactionDao{
         }catch(LmsException e)
         {
             System.out.println(e);
+            System.out.println("errorrrrrrrrrrrrrrrrrrrrrrrrrrrrr " + returnValue);
+
             return returnValue;
         }
         session.getTransaction().commit();

@@ -377,11 +377,15 @@ public class BookController {
         if(returnValue == 1)
         {
             redirectAttributes.addFlashAttribute("message", "Reissue failed as book is requested by someone else");
+            return "redirect:/profile";
         }
         else if (returnValue == 2)
         {
             redirectAttributes.addFlashAttribute("message", "Reissue failed as book is already issued twice");
+            return "redirect:/profile";
         }
+        redirectAttributes.addFlashAttribute("message", "Booked has been reissued successfully");
+
         return "redirect:/profile";
 
     }
