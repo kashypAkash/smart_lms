@@ -112,25 +112,24 @@
     </div>
 
 </div>
-<script  th:src="@{/JS/validation.js}"></script>
-
-    <script>
-     $(document).ready(function(){
+<script>
+    $(document).ready(function(){
         $('#submitCode').click(function(){
-        var x;
-         var isbn = $('#isbn').val();
-         var xmlhttp = new XMLHttpRequest();
-         var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn;
+                   var x;
+            var isbn = $('#isbn').val();
+                  var xmlhttp = new XMLHttpRequest();
+                     var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn;
 
-            xmlhttp.onreadystatechange = function() {
-            /*<![CDATA[*/
+
+                xmlhttp.onreadystatechange = function() {
+          /*<![CDATA[*/
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             x = JSON.parse(xmlhttp.responseText);
             callback(x);
            }/*]]>*/
            };
            xmlhttp.open("GET", url, true);
-           xmlhttp.send();
+          xmlhttp.send();
 
     function callback(x) {
     var book = x.items[0].volumeInfo;

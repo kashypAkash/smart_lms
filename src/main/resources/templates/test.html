@@ -32,7 +32,7 @@
             </div>
         </div>
     </nav>
-<p style="text-align: center">Your daily/total limit of book to checkout has been reached. </p>
+    <p th:if="${message != null}" th:text="${message}" style="color: red;text-align: center"></p>
     <div class="row">
         <div class="col s12 m6 offset-m3 offset-s3">
             <div class="card darken-1">

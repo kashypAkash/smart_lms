@@ -229,7 +229,7 @@ public class BookController {
     }
 
     @GetMapping("/books/checkout")
-    public String checkout(HttpSession session, Model model){
+    public String checkout(HttpSession session, Model model, RedirectAttributes redirectAttributes){
 
         if(session.getAttribute("user")==null){
             return "redirect:/";
@@ -258,12 +258,10 @@ public class BookController {
         }
         t.setTransactionBooksList(tbs);
         System.out.println(t.getUser()+t.getTransactionBooksList().get(0).getBook().getAuthor()+"in check out books");
-        //TransactionService ts=new TransactionServiceImpl();
-        //System.out.println("checking for null error");
-        //System.out.println(ts);
         User u=(User)session.getAttribute("user");
         Transaction transaction = transactionService.checkOutBooks(t,u.getUserId());
         if(transaction == null){
+            redirectAttributes.addFlashAttribute("message","Your Daily/Total limit of checkout books has been reached");
             return "redirect:/myerror";
         }
         model.addAttribute("transaction",transaction);
@@ -273,12 +271,6 @@ public class BookController {
         return "checkout";
     }
 
-/*    @GetMapping("/books/booksToBeReturned")
-    public String booksToBeReturned(HttpSession session){
-        System.out.println(session.getAttribute("user"));
-        transactionService.getBooksToBeReturned((int)((User)session.getAttribute("user")).getUserId());
-        return "redirect:/books";
-    }*/
 
     @GetMapping("/books/searchresults")
     public String searchResults(Model model, HttpSession session){
