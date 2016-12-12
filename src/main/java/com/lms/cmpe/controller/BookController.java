@@ -76,20 +76,10 @@ public class BookController {
     {
         model.addAttribute("user",session.getAttribute("user"));
         User user = (User)session.getAttribute("user");
-        /*List<WaitlistBooksToBeAssigned> waitlist = new ArrayList<WaitlistBooksToBeAssigned>();
-        WaitlistBooksToBeAssigned waitlistBooksToBeAssigned = new WaitlistBooksToBeAssigned();
-        Book book = bookService.getBookById(2);
-        User user = userService.getUserById(23);
-        waitlistBooksToBeAssigned.setBook(book);
-        waitlistBooksToBeAssigned.setUser(user);
-        waitlistBooksToBeAssigned.setInvalid(false);
-        waitlist.add(waitlistBooksToBeAssigned);
-        System.out.println("User email is --"+waitlist.get(0).getUser().getEmail());
-        model.addAttribute("waitlist",waitlist);
-        return "waitlist";*/
-        List<Book> bookList = waitlistBooksToBeAssignedService.getWaitlistedBooks(user);
-        System.out.println("Size of books ---"+bookList.size());
-        model.addAttribute("bookList",bookList);
+        List<Book> waitlistBookstobeaddedbookList = waitlistBooksToBeAssignedService.getWaitlistedBooks(user);
+        List<Book> waitlistbooklist = waitlistService.getWaitlistBooks(user);
+        model.addAttribute("waitlistbooklist",waitlistbooklist);
+        model.addAttribute("bookList",waitlistBookstobeaddedbookList);
         return "waitlist";
     }
 
@@ -229,7 +219,7 @@ public class BookController {
     }
 
     @GetMapping("/books/checkout")
-    public String checkout(HttpSession session, Model model){
+    public String checkout(HttpSession session, Model model, RedirectAttributes redirectAttributes){
 
         if(session.getAttribute("user")==null){
             return "redirect:/";
@@ -239,7 +229,7 @@ public class BookController {
         System.out.println(bookList.toString());
         Transaction t=new Transaction();
 
-        Date dateobj = new Date();
+        Date dateobj = (Date)session.getAttribute("appTime");
 
         t.setTransactionDate(dateobj);
         Calendar c = Calendar.getInstance();
@@ -258,12 +248,10 @@ public class BookController {
         }
         t.setTransactionBooksList(tbs);
         System.out.println(t.getUser()+t.getTransactionBooksList().get(0).getBook().getAuthor()+"in check out books");
-        //TransactionService ts=new TransactionServiceImpl();
-        //System.out.println("checking for null error");
-        //System.out.println(ts);
         User u=(User)session.getAttribute("user");
-        Transaction transaction = transactionService.checkOutBooks(t,u.getUserId());
+        Transaction transaction = transactionService.checkOutBooks(t,u.getUserId(),(Date)session.getAttribute("appTime"));
         if(transaction == null){
+            redirectAttributes.addFlashAttribute("message","Your Daily/Total limit of checkout books has been reached");
             return "redirect:/myerror";
         }
         model.addAttribute("transaction",transaction);
@@ -273,12 +261,6 @@ public class BookController {
         return "checkout";
     }
 
-/*    @GetMapping("/books/booksToBeReturned")
-    public String booksToBeReturned(HttpSession session){
-        System.out.println(session.getAttribute("user"));
-        transactionService.getBooksToBeReturned((int)((User)session.getAttribute("user")).getUserId());
-        return "redirect:/books";
-    }*/
 
     @GetMapping("/books/searchresults")
     public String searchResults(Model model, HttpSession session){
@@ -297,8 +279,9 @@ public class BookController {
         ArrayList<TransactionBooks> transactionBooksList = (ArrayList<TransactionBooks>)session.getAttribute("returnlist");
 
         User user = (User)session.getAttribute("user");
+        Date appTime=(Date)session.getAttribute("appTime");
 
-        boolean successfullyReturned = transactionService.returnBooks(transactionBooksList,user.getUserId());
+        boolean successfullyReturned = transactionService.returnBooks(transactionBooksList,user.getUserId(),appTime);
 
         session.removeAttribute("returnlist");
         return "redirect:/profile";

@@ -31,6 +31,7 @@
                 </div>
                 <div class="col s4">
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <li><a th:href="@{/profile}">Profile</a></li>
                         <li><a th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}">Add Books</a></li>
                         <li><a th:href="@{/books}">View Books</a></li>
                         <li><a class="red" th:href="@{/logout}">Logout</a></li>
@@ -54,7 +55,7 @@
                             <li class="book-options"><a class="secondary-content" title="Delete" th:href="@{|/book/delete/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">delete</i></a></li>
                             <li class="book-options"><a class="secondary-content" title="Update" th:href="@{|/book/update/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">playlist_add</i></a></li>
                             <li class="book-options"><a class="secondary-content" title="Add to cart" th:href="@{|/book/addtocart/${book.getBookId()}|}" th:if="${user.getUserRole() == 'USER' and book.noOfAvailableCopies >0}"><i class="small material-icons">shopping_cart</i></a></li>
-                            <li class="book-options"><a class="secondary-content" title="Add to waitlist" th:href="@{|/book/addtowaitlist/${book.getBookId()}|}" th:if="${user.getUserRole() == 'USER' and book.noOfAvailableCopies == 0}"><img src = "https://cdn2.iconfinder.com/data/icons/bitsies/128/Clock-48.png">Waiting List</img></a></li>
+                            <li class="book-options"><a class="secondary-content" title="Add to waitlist" th:href="@{|/book/addtowaitlist/${book.getBookId()}|}" th:if="${user.getUserRole() == 'USER' and book.noOfAvailableCopies == 0}"><i class="small material-icons">schedule</i></a></li>
                         </ul>
                     </div>
                 </div>

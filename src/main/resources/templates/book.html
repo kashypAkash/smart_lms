@@ -24,6 +24,7 @@
                 </div>
                 <div class="col s4">
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <li><a th:href="@{/profile}">Profile</a></li>
                         <li><a th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}">Add Books</a></li>
                         <li><a th:href="@{/books}">View Books</a></li>
                         <li><a class="red" th:href="@{/logout}">Logout</a></li>
@@ -94,7 +95,7 @@
                 </div>
 
                 <div class="row">
-                    <button class="btn waves-effect waves-light red book-tag" type="submit" name="action" value="addkeyword">Tag</button>
+                    <button class="btn waves-effect waves-light red book-tag" type="submit" name="action" value="addkeyword">Tag</button> <label style="color: red;margin-left: 20px">Add Author, Title, and other Details for better searchability.</label>
                     <div th:each="word, keyStat : *{bookKeywordsList}">
                         <div class="input-field col s3 m3">
                             <input th:field="*{bookKeywordsList[__${keyStat.index}__].keyword}" type="text" class="validate" />
@@ -112,39 +113,37 @@
     </div>
 
 </div>
-<script  th:src="@{/JS/validation.js}"></script>
-
-    <script>
-     $(document).ready(function(){
+<script>
+    $(document).ready(function(){
         $('#submitCode').click(function(){
-        var x;
-         var isbn = $('#isbn').val();
-         var xmlhttp = new XMLHttpRequest();
-         var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn;
-
+                     var x;
+            var isbn = $('#isbn').val();
+                      var xmlhttp = new XMLHttpRequest();
+                      var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn;
             xmlhttp.onreadystatechange = function() {
-            /*<![CDATA[*/
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            x = JSON.parse(xmlhttp.responseText);
-            callback(x);
-           }/*]]>*/
-           };
-           xmlhttp.open("GET", url, true);
-           xmlhttp.send();
+                             /*<![CDATA[*/
+                                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                                 x = JSON.parse(xmlhttp.responseText);
+                                 callback(x);
+                                }/*]]>*/
+                            };
+                        xmlhttp.open("GET", url, true);
+                        xmlhttp.send();
 
-    function callback(x) {
-    var book = x.items[0].volumeInfo;
-    $("#author").focus();
-      $('#author').val(book.authors.join('; '));
-       $("#title").focus();
-      $('#title').val(book.title);
-       $("#yearOfPublication").focus();
-      $('#yearOfPublication').val(book.publishedDate);
-       $("#publisher").focus();
-       $('#publisher').val(book.publisher);
-   };
-  });
-});
-</script>
+                 function callback(x) {
+                     var book = x.items[0].volumeInfo;
+                     $("#author").focus();
+                       $('#author').val(book.authors.join('; '));
+                        $("#title").focus();
+                       $('#title').val(book.title);
+                        $("#yearOfPublication").focus();
+                       $('#yearOfPublication').val(book.publishedDate);
+                        $("#publisher").focus();
+                        $('#publisher').val(book.publisher);
+                    };
+               });
+         });
+     </script>
+
 </body>
 </html>
