@@ -1,45 +1,93 @@
 package com.lms.cmpe.model;
 
-import java.text.DateFormat;
+import org.springframework.stereotype.Component;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by Nischith on 12/2/2016.
  */
-public class ApplicationTime {
-    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-    private LocalDateTime appDateTime = LocalDateTime.now();
-    private LocalDateTime actualDateTime = LocalDateTime.now();
 
-    public ApplicationTime(LocalDateTime appDateTime) {
-        String dt = dtf.format(appDateTime);
-        this.appDateTime = LocalDateTime.parse(dt,dtf);
-        System.out.println("appDateTime " + this.appDateTime);
-        System.out.println("actualDateTime " + actualDateTime);
+@Component
+public class ApplicationTime {
+
+    private Date appDateTime;
+
+    public ApplicationTime() {
+    }
+
+    public ApplicationTime(String appDateTimeInString) {
+        if(appDateTimeInString==null){
+            //return false;
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
+        sdf.setLenient(false);
+
+        try {
+
+            //if not valid, it will throw ParseException
+            Date date = sdf.parse(appDateTimeInString);
+            System.out.println(date);
+
+        } catch (ParseException e) {
+
+            e.printStackTrace();
+            //return false;
+        }
+
+        //return true;
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
+            appDateTime = formatter.parse(appDateTimeInString);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
     }
 
 
 
-    public LocalDateTime getAppDateTime() {
+    public Date getAppDateTime() {
         return appDateTime;
 
     }
 
-    public void setAppDateTime(LocalDateTime appDateTime) {
-        this.appDateTime = appDateTime;
+    public boolean setAppDateTime(String appDateTimeInString) {
+
+        //this.appDateTime = appDateTime;
+        if(appDateTimeInString==null){
+            return false;
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
+        sdf.setLenient(false);
+
+        try {
+
+            //if not valid, it will throw ParseException
+            Date date = sdf.parse(appDateTimeInString);
+            System.out.println(date);
+
+        } catch (ParseException e) {
+
+            e.printStackTrace();
+            return false;
+        }
+
+
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
+            appDateTime = formatter.parse(appDateTimeInString);
+            return true;
+        }catch (ParseException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    public LocalDateTime getActualDateTime() {
-        return actualDateTime;
-    }
 
-    public void setActualDateTime(LocalDateTime actualDateTime) {
-        this.actualDateTime = actualDateTime;
-    }
 
 
 }

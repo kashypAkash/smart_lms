@@ -70,27 +70,21 @@
 <script  th:src="@{/JS/validation.js}"></script>
 <script>
 
-$("#email, #checkbox").change(updateSubmitButtonState);
 
-
-function updateSubmitButtonState()
-{
-     if($('#checkbox').checked)
+$('#email').on("keyup",function(){
+        var email = $('#email').val();
+        var str = "@sjsu.edu"
+        if(email.match("@sjsu.edu$"))
+        {
+           $('#checkbox')[0].checked = true;
+          $("#checkbox").attr("disabled", true);
+        }
+         else
          {
-                  var email = $('#email').val();
-                  var str = "@sjsu.edu"
-                  if(email.match("@sjsu.edu$"))
-                  {
-
-                    $("#submit").removeAttr("disabled");
-                  }
-                  else
-                  {
-                    $("#submit").attr("disabled", "disabled");
-                  }
-               }
-}
-
+           $('#checkbox')[0].checked = false;
+           $("#checkbox").attr("disabled", true);
+         }
+     });
 
 
 </script>
