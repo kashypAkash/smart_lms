@@ -7,7 +7,6 @@ import com.lms.cmpe.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -55,7 +54,6 @@ public class LoginController {
             session.setAttribute("user",user);
             model.addAttribute("user",user);
                 if(result.isVerified()) {
-
                     return "redirect:/profile";
                 }
                 else{
@@ -97,6 +95,7 @@ public class LoginController {
         User user = userService.getUserById(Integer.parseInt(userid));
         model.addAttribute("user",user);
         if(activationcode.equals(user.getVerificationCode())){
+            mailService.sendSuccessfulRegistrationMail(user);
             user.setVerified(true);
             userService.updateUser(user);
             return "redirect:/profile";
@@ -113,7 +112,7 @@ public class LoginController {
 
             model.addAttribute("user",session.getAttribute("user"));
             User tempuser = (User)session.getAttribute("user");
-            // TODO: Akash replace -> mybooks from transaction table
+
             model.addAttribute("mybooks",transactionService.getBooksToBeReturned(tempuser.getUserId()));
 
             if(session.getAttribute("returnlist")==null){
@@ -132,6 +131,10 @@ public class LoginController {
     public String returnCart(@PathVariable("id") int id,
                                 Model model, HttpSession session){
 
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
+
         List<TransactionBooks> returnlist = (ArrayList<TransactionBooks>)session.getAttribute("returnlist");
         for(TransactionBooks transactionBook:returnlist){
             if(transactionBook.getTransactionBooksId() == id){
@@ -145,6 +148,9 @@ public class LoginController {
     @GetMapping("/cancelreturn/book/{id}/{index}")
     public String returnToLibrary(@PathVariable("id") int id
             ,@PathVariable("index") int index, HttpSession session){
+        if(session.getAttribute("user")==null){
+            return "redirect:/";
+        }
 
         List<TransactionBooks> returnlist = (ArrayList<TransactionBooks>)session.getAttribute("returnlist");
 

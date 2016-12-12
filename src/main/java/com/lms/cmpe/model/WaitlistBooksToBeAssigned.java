@@ -8,27 +8,6 @@ import java.util.Date;
  */
 @Entity
 public class WaitlistBooksToBeAssigned {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int waitlistBooksToBeAssignedId;
-
-    @ManyToOne(cascade= CascadeType.ALL)
-    @JoinColumn(name="userId")
-    private User user;
-
-    public Book getBook() {
-        return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
-    }
-
-    @ManyToOne(cascade= CascadeType.ALL)
-    @JoinColumn(name="bookId")
-
-    private Book book;
-
     public int getWaitlistBooksToBeAssignedId() {
         return waitlistBooksToBeAssignedId;
     }
@@ -43,6 +22,14 @@ public class WaitlistBooksToBeAssigned {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
     }
 
     public Date getCurrentDate() {
@@ -61,8 +48,29 @@ public class WaitlistBooksToBeAssigned {
         isInvalid = invalid;
     }
 
+    @Id
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int waitlistBooksToBeAssignedId;
+
+    @ManyToOne(cascade= CascadeType.ALL)
+    @JoinColumn(name="userId")
+    private User user;
+
+    public WaitlistBooksToBeAssigned() {
+    }
+
+    public WaitlistBooksToBeAssigned(User user, Book book, Date currentDate) {
+        this.user = user;
+
+        this.book = book;
+        this.currentDate = currentDate;
+    }
+
+    @ManyToOne(cascade= CascadeType.ALL)
+    @JoinColumn(name="bookId")
+    private Book book;
+
     private Date currentDate;
     private boolean isInvalid;
 }
-
-

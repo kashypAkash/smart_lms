@@ -27,7 +27,7 @@
                 <div class="col s4">
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
                         <li><a th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}">Add Books</a></li>
-                        <li><a th:href="@{/waitListedbook}" th:if="${user.getUserRole() != 'ADMIN'}">Wait list</a></li>
+                        <li><a th:href="@{/book}" th:if="${user.getUserRole() != 'ADMIN'}">Wait list</a></li>
                         <li><a th:href="@{/books}">View Books</a></li>
                         <li><a class="red" th:href="@{/logout}">Logout</a></li>
                     </ul>
@@ -49,7 +49,7 @@
                         <p class="return-book-author" th:text="${transaction.book.getAuthor()}">Author of the Book</p>
                         <p class="return-book-duedate" th:inline="text"><small>Due Date : [[${transaction.dueDate}]]</small></p>
                         <ul class="right return-book-options" >
-                            <li class="book-options"><a class="secondary-content" title="Re- Issue book" th:href="@{|/return/reissue/${transaction.getTransactionBooksId()}|}" th:if="${user.getUserRole() == 'USER'}">Re-Issue</a></li>
+                            <li class="book-options"><a class="secondary-content" title="Re- Issue book" th:href="@{|/reissue/book/${transaction.getTransactionBooksId()}|}" th:if="${user.getUserRole() == 'USER'}">Re-Issue</a></li>
                             <li class="book-options"><a class="secondary-content" title="Return to library" th:href="@{|/return/book/${transaction.getTransactionBooksId()}|}" th:if="${user.getUserRole() == 'USER'}">Return</a></li>
                         </ul>
                     </div>
@@ -67,24 +67,27 @@
             </ul>
             <a th:if="${returnlist.size()>0}" type="button" class="btn waves-effect waves-light red right" th:href="@{/return/books/checkout}" name="action" value="checkout">Return Books</a>
         </div>
-    </div>/
+    </div>
 
 
 
 
-    <button id="appDate" ></button>
+<!--    <button id="appDate" ></button>
     <div id="popupForm" style="display:none;">
         <form th:action = "@{/getDate}" method="POST">
-            <input id = "text" type="date" name = "dateValue"  />
+            <input id = "text" type="text" name = "dateValue"  />
             <input type="submit" value="Submit" />
         </form>
-    </div>
+    </div>-->
 </div>
 
-<script>
+<!--<script>
+
 $(function(){
   now = new Date();
   $('#appDate').text(now);
+
+
 });
 
 $("input[type=text]").change(function() {
@@ -103,6 +106,6 @@ $("input[type=text]").change(function() {
 
 });
 
-</script>
+</script>-->
 </body>
 </html>
