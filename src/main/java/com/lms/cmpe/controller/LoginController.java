@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,6 +54,8 @@ public class LoginController {
             user = result;
             session.setAttribute("user",user);
             model.addAttribute("user",user);
+            Date appTime=new Date();
+            session.setAttribute("appTime",appTime);
                 if(result.isVerified()) {
                     return "redirect:/profile";
                 }

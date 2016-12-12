@@ -229,7 +229,7 @@ public class BookController {
         System.out.println(bookList.toString());
         Transaction t=new Transaction();
 
-        Date dateobj = new Date();
+        Date dateobj = (Date)session.getAttribute("appTime");
 
         t.setTransactionDate(dateobj);
         Calendar c = Calendar.getInstance();
@@ -249,7 +249,7 @@ public class BookController {
         t.setTransactionBooksList(tbs);
         System.out.println(t.getUser()+t.getTransactionBooksList().get(0).getBook().getAuthor()+"in check out books");
         User u=(User)session.getAttribute("user");
-        Transaction transaction = transactionService.checkOutBooks(t,u.getUserId());
+        Transaction transaction = transactionService.checkOutBooks(t,u.getUserId(),(Date)session.getAttribute("appTime"));
         if(transaction == null){
             redirectAttributes.addFlashAttribute("message","Your Daily/Total limit of checkout books has been reached");
             return "redirect:/myerror";
@@ -279,8 +279,9 @@ public class BookController {
         ArrayList<TransactionBooks> transactionBooksList = (ArrayList<TransactionBooks>)session.getAttribute("returnlist");
 
         User user = (User)session.getAttribute("user");
+        Date appTime=(Date)session.getAttribute("appTime");
 
-        boolean successfullyReturned = transactionService.returnBooks(transactionBooksList,user.getUserId());
+        boolean successfullyReturned = transactionService.returnBooks(transactionBooksList,user.getUserId(),appTime);
 
         session.removeAttribute("returnlist");
         return "redirect:/profile";

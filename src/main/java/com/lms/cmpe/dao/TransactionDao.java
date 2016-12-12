@@ -10,8 +10,8 @@ import java.util.*;
  * Created by Nischith on 11/27/2016.
  */
 public interface TransactionDao {
-    Transaction checkOutBooks(Transaction transaction, int userId);
-    boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId);
+    Transaction checkOutBooks(Transaction transaction, int userId,Date appTime);
+    boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId, Date appTime);
     List<Book> getCheckedOutBooksByUser(int userId);
     List<TransactionBooks> getBooksToBeReturned(int userId);
     void checkForDueDates();
