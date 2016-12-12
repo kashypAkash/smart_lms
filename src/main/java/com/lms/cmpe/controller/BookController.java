@@ -152,7 +152,7 @@ public class BookController {
 
         Book book= bookService.getBookById(id);
         bookService.deleteBook(book);
-        redirectAttributes.addFlashAttribute("message", "Book has been deleted");
+        redirectAttributes.addFlashAttribute("message", book.getTitle() +" has been deleted");
         return "redirect:/books";
     }
 
@@ -224,7 +224,7 @@ public class BookController {
         User u=(User)session.getAttribute("user");
         Transaction transaction = transactionService.checkOutBooks(t,u.getUserId());
         if(transaction == null){
-            return "redirect:/myerror"; 
+            return "redirect:/myerror";
         }
         model.addAttribute("transaction",transaction);
         model.addAttribute("user",session.getAttribute("user"));
