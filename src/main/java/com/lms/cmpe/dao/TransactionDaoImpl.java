@@ -6,10 +6,13 @@ import com.lms.cmpe.service.MailService;
 import javassist.bytecode.stackmap.BasicBlock;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.procedure.ProcedureCall;
+import org.hibernate.result.Output;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
+import javax.persistence.ParameterMode;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -102,8 +105,22 @@ public class TransactionDaoImpl implements TransactionDao{
             //TransactionBooks transactionBooks = session.get(TransactionBooks.class,transactionBookId);
             System.out.println("Hereeeeeeeeeeeeeeeeee "+transactionBook.getDueDate());
             //if number of available copies was 0 then we have to take out the first patron in waitlist and assign the book to him
+
             if(transactionBook.getBook().getNoOfAvailableCopies()==0){
-                String getWaitlistPatron = "select w.user from Waitlist w where w.waitlistId = (select min(w2.waitlistId) from Waitlist w2 where w2.book=:book)";
+                ProcedureCall call = session
+                        .createStoredProcedureCall("return_books");
+
+                call.registerParameter(1, Long.class,
+                        ParameterMode.IN).bindValue((long)transactionBook.getTransactionBooksId());
+
+
+
+                Output output = call.getOutputs().getCurrent();
+                if (output.isResultSet()) {
+                    //List<Object[]> postComments =
+                    //((ResultSetOutput) output).getResultList();
+                }
+                /*String getWaitlistPatron = "select w.user from Waitlist w where w.waitlistId = (select min(w2.waitlistId) from Waitlist w2 where w2.book=:book)";
                 Query getWaitlistPatronQuery = (Query) session.createQuery(getWaitlistPatron);
                 getWaitlistPatronQuery.setParameter("book",transactionBook.getBook());
                 //System.out.println((int)retrieveQuery.getResultList().size()+"in transaction query result");
@@ -126,7 +143,7 @@ public class TransactionDaoImpl implements TransactionDao{
                     WaitlistBooksToBeAssigned obj=new WaitlistBooksToBeAssigned(transactionBook.getTransaction().getUser(),transactionBook.getBook(),date);
                     session.save(obj);
                     session.delete(u);
-                }
+                }*/
                 //Long todayBooks = (Long) getWaitlistPatronQuery.getResultList().get(0);
 
             }
