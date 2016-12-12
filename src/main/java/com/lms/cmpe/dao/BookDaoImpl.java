@@ -38,11 +38,11 @@ public class BookDaoImpl implements BookDao {
     @SuppressWarnings("unchecked")
     public List<Book> getAllBooks() {
 
-        String str = "1986-04-08 12:30";
+        /*String str = "1986-04-08 12:30";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime dateTime = LocalDateTime.parse(str, formatter);
 
-        ApplicationTime ap = new ApplicationTime(dateTime);
+        ApplicationTime ap = new ApplicationTime(dateTime);*/
         //open a hibernate session
         Session session = sessionFactory.openSession();
 
