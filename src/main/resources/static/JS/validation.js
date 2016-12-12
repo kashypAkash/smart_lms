@@ -2,7 +2,7 @@ $(document).ready(function(){
         $("input").on("keyup", function(){
 
          var empty = false;
-        $('input').each(function() {
+        $('input').not('#isbn').each(function() {
             if ($(this).val() == '') {
                 empty = true;
             }

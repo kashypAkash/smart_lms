@@ -1,9 +1,7 @@
 package com.lms.cmpe.controller;
 
 import com.lms.cmpe.model.*;
-import com.lms.cmpe.service.BookService;
-import com.lms.cmpe.service.MailService;
-import com.lms.cmpe.service.TransactionService;
+import com.lms.cmpe.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +12,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
+import java.util.List;
 
 /**
  * Created by Nischith on 11/27/2016.
@@ -25,10 +23,19 @@ public class BookController {
     private BookService bookService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private TransactionService transactionService;
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private WaitlistService waitlistService;
+
+    @Autowired
+    private WaitlistBooksToBeAssignedService waitlistBooksToBeAssignedService;
 
     @GetMapping("/books")
     public String getAllBooks(Model model, HttpSession session){
@@ -51,6 +58,29 @@ public class BookController {
 
             model.addAttribute("booklist", session.getAttribute("booklist"));
         return "allbooks";
+    }
+
+    @GetMapping("/book/addtowaitlist/{id}")
+    public String addToWaitlist(Model model, HttpSession session,@PathVariable("id") int id)
+    {
+        Book book = bookService.getBookById(id);
+        User user = (User) session.getAttribute("user");
+        Waitlist waitlist = new Waitlist();
+        waitlist.setUser(user);
+        waitlist.setBook(book);
+        waitlistService.storeWaitlist(waitlist);
+        return "redirect:/waitListedbook";
+    }
+    @GetMapping("/waitListedbook")
+    public String getWaitlistedBooks(Model model,HttpSession session)
+    {
+        model.addAttribute("user",session.getAttribute("user"));
+        User user = (User)session.getAttribute("user");
+        List<Book> waitlistBookstobeaddedbookList = waitlistBooksToBeAssignedService.getWaitlistedBooks(user);
+        List<Book> waitlistbooklist = waitlistService.getWaitlistBooks(user);
+        model.addAttribute("waitlistbooklist",waitlistbooklist);
+        model.addAttribute("bookList",waitlistBookstobeaddedbookList);
+        return "waitlist";
     }
 
     @GetMapping("/book")
@@ -189,7 +219,7 @@ public class BookController {
     }
 
     @GetMapping("/books/checkout")
-    public String checkout(HttpSession session, Model model){
+    public String checkout(HttpSession session, Model model, RedirectAttributes redirectAttributes){
 
         if(session.getAttribute("user")==null){
             return "redirect:/";
@@ -218,12 +248,10 @@ public class BookController {
         }
         t.setTransactionBooksList(tbs);
         System.out.println(t.getUser()+t.getTransactionBooksList().get(0).getBook().getAuthor()+"in check out books");
-        //TransactionService ts=new TransactionServiceImpl();
-        //System.out.println("checking for null error");
-        //System.out.println(ts);
         User u=(User)session.getAttribute("user");
         Transaction transaction = transactionService.checkOutBooks(t,u.getUserId(),(Date)session.getAttribute("appTime"));
         if(transaction == null){
+            redirectAttributes.addFlashAttribute("message","Your Daily/Total limit of checkout books has been reached");
             return "redirect:/myerror";
         }
         model.addAttribute("transaction",transaction);
@@ -233,12 +261,6 @@ public class BookController {
         return "checkout";
     }
 
-/*    @GetMapping("/books/booksToBeReturned")
-    public String booksToBeReturned(HttpSession session){
-        System.out.println(session.getAttribute("user"));
-        transactionService.getBooksToBeReturned((int)((User)session.getAttribute("user")).getUserId());
-        return "redirect:/books";
-    }*/
 
     @GetMapping("/books/searchresults")
     public String searchResults(Model model, HttpSession session){

@@ -34,6 +34,15 @@ public class Waitlist {
     @JoinColumn(name="userId")
     private User user;
 
+    public int getWaitlistId() {
+        return waitlistId;
+    }
+
+    public void setWaitlistId(int waitlistId) {
+        this.waitlistId = waitlistId;
+    }
+
+
     @ManyToOne(cascade= CascadeType.ALL)
     @JoinColumn(name="bookId")
     private Book book;
