@@ -42,21 +42,6 @@ public class Waitlist {
         this.waitlistId = waitlistId;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Book getBook() {
-        return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
-    }
 
     @ManyToOne(cascade= CascadeType.ALL)
     @JoinColumn(name="bookId")
