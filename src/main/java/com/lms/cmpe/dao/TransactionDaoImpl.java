@@ -202,6 +202,10 @@ public class TransactionDaoImpl implements TransactionDao{
     @Override
     public void checkForDueDates(){
         Date appTime = ApplicationTime.staticAppDateTime;
+        if(appTime == null)
+        {
+            appTime = new Date();
+        }
        // java.sql.Date appTimeSqlFormat = new java.sql.Date(appTime.getTime());
         Calendar c = Calendar.getInstance();
         c.setTime(appTime);
@@ -257,8 +261,12 @@ public class TransactionDaoImpl implements TransactionDao{
 
     @Override
     public void checkForWaitlistAssignments() {
-        ApplicationTime a = new ApplicationTime();
+
         Date appTime = ApplicationTime.staticAppDateTime;
+        if(appTime == null)
+        {
+            appTime = new Date();
+        }
        // java.sql.Date appTimeSqlFormat = new java.sql.Date(appTime.getTime());
 
         System.out.println("Timeeeeeeeeeeeeeeeeeeeeeeeeeeeee "+ appTime);
