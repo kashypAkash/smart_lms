@@ -36,6 +36,8 @@ public class HelloController {
     @Autowired
     private JavaMailSender javaMailSender;
 
+    @Autowired
+    private ApplicationTime applicationTime;
 
     @GetMapping("/mail")
     public String test(){
@@ -89,30 +91,22 @@ public class HelloController {
     }
 
     @RequestMapping(value = "/getDate",method = RequestMethod.POST)
-    public String getDate(@RequestParam("dateValue") String date, RedirectAttributes redirectAttributes)
+    public String getDate(@RequestParam("dateValue") String dateInString, RedirectAttributes redirectAttributes)
     {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-        String input = date;
-        Map<String,String> hashmap = new HashMap<String,String>();
-        hashmap.put("Jan","01");
-        hashmap.put("Feb","02");
-        hashmap.put("Mar","03");
-        hashmap.put("Apr","04");
-        hashmap.put("May","05");
-        hashmap.put("Jun","06");
-        hashmap.put("Jul","07");
-        hashmap.put("Aug","08");
-        hashmap.put("Sep","09");
-        hashmap.put("Oct","10");
-        hashmap.put("Nov","11");
-        hashmap.put("Dec","12");
-        String appDate = parseDate(input,hashmap);
-        System.out.println("Parsed Date is ---"+appDate);
-        LocalDateTime appDateTime = LocalDateTime.parse(appDate,dtf);
 
-        ApplicationTime app = new ApplicationTime(appDateTime);
-        redirectAttributes.addAttribute("date",date);
-        return "redirect:profile";
+
+        if(applicationTime.setAppDateTime(dateInString)){
+            redirectAttributes.addFlashAttribute("message",dateInString);
+            return "redirect:profile";
+        }
+        else{
+            redirectAttributes.addFlashAttribute("message","invalid date format");
+            return "redirect:myerror";
+        }
+        //ApplicationTime app = new ApplicationTime(appDateTime);
+
+
+        //return "redirect:myerror"
     }
 
     public String parseDate(String input, Map<String,String> map)
