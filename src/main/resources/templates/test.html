@@ -15,8 +15,33 @@
 </head>
 <body>
 <div>
-
-<p>Custom error page</p>
+    <nav>
+        <div class="nav-wrapper">
+            <div class="row">
+                <div class="col s8">
+                    <a href="#" class="brand-logo">e-Library</a>
+                </div>
+                <div class="col s4">
+                    <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <li><a th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}">Add Books</a></li>
+                        <li><a th:href="@{/book}" th:if="${user.getUserRole() != 'ADMIN'}">Wait list</a></li>
+                        <li><a th:href="@{/books}">View Books</a></li>
+                        <li><a class="red" th:href="@{/logout}">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+<p style="text-align: center">Your daily/total limit of book to checkout has been reached. </p>
+    <div class="row">
+        <div class="col s12 m6 offset-m3 offset-s3">
+            <div class="card darken-1">
+                <div class="card-content white-text">
+                    <img class="center-align" src="http://cdn3.wpbeginner.com/wp-content/uploads/2015/08/error.jpg" />
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 </body>

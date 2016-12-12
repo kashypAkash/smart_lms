@@ -1,11 +1,13 @@
 package com.lms.cmpe.controller;
 
 
-import com.lms.cmpe.model.*;
+import com.lms.cmpe.model.ApplicationTime;
+import com.lms.cmpe.model.DataObj;
+import com.lms.cmpe.model.Phone;
+import com.lms.cmpe.model.User;
 import com.lms.cmpe.service.PhoneService;
 import com.lms.cmpe.service.UserService;
 import org.hibernate.Session;
-import java.time.format.DateTimeFormatter;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -17,10 +19,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 @Controller
 public class HelloController {
 
@@ -97,11 +98,11 @@ public class HelloController {
 
         if(applicationTime.setAppDateTime(dateInString)){
             redirectAttributes.addFlashAttribute("message",dateInString);
-            return "redirect:profile";
+            return "redirect:/profile";
         }
         else{
             redirectAttributes.addFlashAttribute("message","invalid date format");
-            return "redirect:myerror";
+            return "redirect:/myerror";
         }
         //ApplicationTime app = new ApplicationTime(appDateTime);
 

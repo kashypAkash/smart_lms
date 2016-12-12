@@ -2,12 +2,12 @@ package com.lms.cmpe.model;
 
 import org.springframework.stereotype.Component;
 
+<<<<<<< HEAD
 import java.text.DateFormat;
+=======
+>>>>>>> d1300bcb8203cf64875b27ccb9b54d014fa48379
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
