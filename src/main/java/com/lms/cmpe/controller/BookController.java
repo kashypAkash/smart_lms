@@ -152,7 +152,7 @@ public class BookController {
 
         Book book= bookService.getBookById(id);
         bookService.deleteBook(book);
-        redirectAttributes.addFlashAttribute("message", "Book has been deleted");
+        redirectAttributes.addFlashAttribute("message", book.getTitle() +" has been deleted");
         return "redirect:/books";
     }
 
@@ -199,7 +199,7 @@ public class BookController {
         System.out.println(bookList.toString());
         Transaction t=new Transaction();
 
-        Date dateobj = new Date();
+        Date dateobj = (Date)session.getAttribute("appTime");
 
         t.setTransactionDate(dateobj);
         Calendar c = Calendar.getInstance();
@@ -222,10 +222,9 @@ public class BookController {
         //System.out.println("checking for null error");
         //System.out.println(ts);
         User u=(User)session.getAttribute("user");
-        Transaction transaction = transactionService.checkOutBooks(t,u.getUserId());
+        Transaction transaction = transactionService.checkOutBooks(t,u.getUserId(),(Date)session.getAttribute("appTime"));
         if(transaction == null){
-            return "test"; // TODO: bad request ; return a error page
-
+            return "redirect:/myerror";
         }
         model.addAttribute("transaction",transaction);
         model.addAttribute("user",session.getAttribute("user"));
@@ -258,8 +257,9 @@ public class BookController {
         ArrayList<TransactionBooks> transactionBooksList = (ArrayList<TransactionBooks>)session.getAttribute("returnlist");
 
         User user = (User)session.getAttribute("user");
+        Date appTime=(Date)session.getAttribute("appTime");
 
-        boolean successfullyReturned = transactionService.returnBooks(transactionBooksList,user.getUserId());
+        boolean successfullyReturned = transactionService.returnBooks(transactionBooksList,user.getUserId(),appTime);
 
         session.removeAttribute("returnlist");
         return "redirect:/profile";
@@ -338,6 +338,13 @@ public class BookController {
         return "redirect:/profile";
 
     }
+
+    @GetMapping("/myerror")
+    public String customError(Model model, HttpSession session){
+        model.addAttribute("user",session.getAttribute("user"));
+        return "test";
+    }
+
 
 
 }

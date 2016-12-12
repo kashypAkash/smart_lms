@@ -34,19 +34,23 @@ public class TransactionDaoImpl implements TransactionDao{
     @Autowired
     private MailService mailService;
 
+
+
     @Override
     @SuppressWarnings("unchecked")
-    public Transaction checkOutBooks(Transaction transaction, int userId) {
+    public Transaction checkOutBooks(Transaction transaction, int userId,Date appTime) {
 
+        System.out.println(appTime+"from transactionDAO");
        try {
            Session session = sessionFactory.openSession();
 
            session.beginTransaction();
            String retrieve = "select count(*) from TransactionBooks tb join tb.transaction t" +
                    " where tb.returnDate" +
-                   " is null and t.user.userId=:userId and day(t.transactionDate)=day(current_date)";
+                   " is null and t.user.userId=:userId and day(t.transactionDate)=day(:appTime)";
            Query retrieveQuery = (Query) session.createQuery(retrieve);
            retrieveQuery.setParameter("userId", userId);
+           retrieveQuery.setParameter("appTime",appTime);
            //System.out.println((int)retrieveQuery.getResultList().size()+"in transaction query result");
            System.out.println(retrieveQuery.getResultList() + "only today");
 
@@ -87,10 +91,10 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
-    public boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId){
+    public boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId,Date appTime){
         Session session = sessionFactory.openSession();
         session.beginTransaction();
-        Date dateobj = new Date();
+        Date dateobj = appTime;
 
         for (TransactionBooks transactionBook:transactionBooksList) {
 
@@ -118,7 +122,7 @@ public class TransactionDaoImpl implements TransactionDao{
                 //take out the patron from waitlist table, assign the book to him by creating a record in waitlistToBeAssigned table
                 else{
                     System.out.println("inside the waitlistbookstobeassigned");
-                    Date date=new Date();
+                    Date date=appTime;
                     WaitlistBooksToBeAssigned obj=new WaitlistBooksToBeAssigned(transactionBook.getTransaction().getUser(),transactionBook.getBook(),date);
                     session.save(obj);
                     session.delete(u);
@@ -202,6 +206,11 @@ public class TransactionDaoImpl implements TransactionDao{
         //checking if someone has passed the due date and sending reminder mails to him has already started.
         String followingRemainderMails="select t.user,tb from TransactionBooks tb join tb.transaction t"+
                 " where tb.returnDate is null and tb.dueDate < current_date and day(tb.lastReminderMailTime)<day(current_date)";
+        /*String followingRemainderMails="select t.user,tb from TransactionBooks tb join tb.transaction t"+
+                " where tb.returnDate is null and tb.dueDate < current_date and " +
+                " (day(tb.dueDate)*24*60*60+hour(tb.dueDate)*60*60+minute(tb.dueDate)*60+" +
+                " second(tb.dueDate)-day(:appTime)*24*60*60-hour(:appTime)*60*60-" +
+                "minute(:appTime)*60- second(:appTime))";*/
         Query query2=(Query)session.createQuery(followingRemainderMails);
         List<Object[]> list2=(List<Object[]>) query2.getResultList();
         for(Object[] obj:list2){

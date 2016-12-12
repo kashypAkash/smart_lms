@@ -2,17 +2,14 @@ package com.lms.cmpe.model;
 
 import org.springframework.stereotype.Component;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by Nischith on 12/2/2016.
  */
+
 @Component
 public class ApplicationTime {
 
