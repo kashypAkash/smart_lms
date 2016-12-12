@@ -133,9 +133,13 @@
 
     function callback(x) {
     var book = x.items[0].volumeInfo;
+    $("#author").focus();
       $('#author').val(book.authors.join('; '));
+       $("#title").focus();
       $('#title').val(book.title);
+       $("#yearOfPublication").focus();
       $('#yearOfPublication').val(book.publishedDate);
+       $("#publisher").focus();
        $('#publisher').val(book.publisher);
    };
   });

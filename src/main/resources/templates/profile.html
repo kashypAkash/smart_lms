@@ -75,19 +75,16 @@
     <button id="appDate" ></button>
     <div id="popupForm" style="display:none;">
         <form th:action = "@{/getDate}" method="POST">
-            <input id = "text" type="text" name = "dateValue"  />
+            <input id = "text" type="date" name = "dateValue"  />
             <input type="submit" value="Submit" />
         </form>
     </div>
 </div>
 
 <script>
-
 $(function(){
   now = new Date();
   $('#appDate').text(now);
-
-
 });
 
 $("input[type=text]").change(function() {

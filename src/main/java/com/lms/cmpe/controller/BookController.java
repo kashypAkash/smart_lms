@@ -30,6 +30,12 @@ public class BookController {
     @Autowired
     private MailService mailService;
 
+    @Autowired
+    private WaitlistService waitlistService;
+
+    @Autowired
+    private WaitlistBooksToBeAssignedService waitlistBooksToBeAssignedService;
+
     @GetMapping("/books")
     public String getAllBooks(Model model, HttpSession session){
             model.addAttribute("user",session.getAttribute("user"));
@@ -48,21 +54,36 @@ public class BookController {
         return "allbooks";
     }
 
+    @GetMapping("/book/addtowaitlist/{id}")
+    public String addToWaitlist(Model model, HttpSession session,@PathVariable("id") int id)
+    {
+        Book book = bookService.getBookById(id);
+        User user = (User) session.getAttribute("user");
+        Waitlist waitlist = new Waitlist();
+        waitlist.setUser(user);
+        waitlist.setBook(book);
+        waitlistService.storeWaitlist(waitlist);
+        return "redirect:/waitListedbook";
+    }
     @GetMapping("/waitListedbook")
     public String getWaitlistedBooks(Model model,HttpSession session)
     {
         model.addAttribute("user",session.getAttribute("user"));
-        List<WaitlistBooksToBeAssigned> waitlist = new ArrayList<WaitlistBooksToBeAssigned>();
+        User user = (User)session.getAttribute("user");
+        /*List<WaitlistBooksToBeAssigned> waitlist = new ArrayList<WaitlistBooksToBeAssigned>();
         WaitlistBooksToBeAssigned waitlistBooksToBeAssigned = new WaitlistBooksToBeAssigned();
         Book book = bookService.getBookById(2);
         User user = userService.getUserById(23);
         waitlistBooksToBeAssigned.setBook(book);
         waitlistBooksToBeAssigned.setUser(user);
-
         waitlistBooksToBeAssigned.setInvalid(false);
         waitlist.add(waitlistBooksToBeAssigned);
         System.out.println("User email is --"+waitlist.get(0).getUser().getEmail());
         model.addAttribute("waitlist",waitlist);
+        return "waitlist";*/
+        List<Book> bookList = waitlistBooksToBeAssignedService.getWaitlistedBooks(user);
+        System.out.println("Size of books ---"+bookList.size());
+        model.addAttribute("bookList",bookList);
         return "waitlist";
     }
 

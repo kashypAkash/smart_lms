@@ -41,16 +41,15 @@
 
     <div class="row" >
         <div class="col s9 m9">
-            <div class="col s3 m3" th:object="${waitlist}">
-                <ul class="collection" th:each="item, status : ${waitlist}">
-                    <div th:if = "${user.getEmail()} == ${item.getUser().getEmail()}">
+            <div class="col s3 m3" th:object="${bookList}">
+                <ul class="collection" th:each="item, status : ${bookList}">
+
                         <li class="collection-item avatar valign-wrapper">
                             <img src="http://placehold.it/100x100" class="circle" />
-                            <span class="title" th:text="${item.getBook().getTitle()}">Title</span>
+                            <span class="title" th:text="${item.getTitle()}">Title</span>
                          </li>
-                        <li class="book-options"><a class="secondary-content" title="Add to waitlist" th:href="@{|/book/addtocart/${item.getBook().getBookId()}|}" th:if="${user.getUserRole() == 'USER' and item.isInvalid() == true}"><img src = "https://cdn2.iconfinder.com/data/icons/bitsies/128/Clock-48.png">Waiting List</img></a></li>
-                        <li class="book-options"><a class="secondary-content" title="Checkout" th:href="@{|/book/addtocart/${item.getBook().getBookId()}|}" th:if="${user.getUserRole() == 'USER' and item.isInvalid() == false}">Checkout</a></li>
-                    </div>
+                        <li class="book-options"><a class="secondary-content" title="Checkout" th:href="@{|/book/addtocart/${item.getBookId()}|}" th:if="${user.getUserRole() == 'USER'}">Checkout</a></li>
+
                 </ul>
             </div>
         </div>
