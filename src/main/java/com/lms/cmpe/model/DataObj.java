@@ -9,16 +9,7 @@ import java.util.List;
  */
 @ComponentScan
 public class DataObj {
-    private Phone phone;
     private List<User> user;
-
-    public Phone getPhone() {
-        return phone;
-    }
-
-    public void setPhone(Phone phone) {
-        this.phone = phone;
-    }
 
     public List<User> getUser() {
         return user;

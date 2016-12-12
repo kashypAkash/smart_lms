@@ -34,8 +34,6 @@ public class TransactionDaoImpl implements TransactionDao{
     @Autowired
     private MailService mailService;
 
-
-
     @Override
     @SuppressWarnings("unchecked")
     public Transaction checkOutBooks(Transaction transaction, int userId,Date appTime) {
@@ -91,12 +89,10 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
-    public boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId){
-        List<Waitlist> waitLists =null ;
     public boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId,Date appTime){
+        List<Waitlist> waitLists =null;
         Session session = sessionFactory.openSession();
         session.beginTransaction();
-        Date dateobj = new Date();
         User u = null;
         Date dateobj = appTime;
 
@@ -211,34 +207,39 @@ public class TransactionDaoImpl implements TransactionDao{
     //cron job for checking if any patron hasn't returned the book after duedate
     @Override
     public void checkForDueDates(){
+        Date appTime = ApplicationTime.staticAppDateTime;
+       // java.sql.Date appTimeSqlFormat = new java.sql.Date(appTime.getTime());
+
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         System.out.println("inside checkForDueDates");
         //checking if someone just passed the due date and no mail has been sent to him/her yet
         String firstRemainderMail="select t.user,tb from TransactionBooks tb join tb.transaction t "+
-                " where tb.returnDate is null and tb.dueDate < current_date and tb.lastReminderMailTime is null";
+                " where tb.returnDate is null and tb.dueDate < :appTime and tb.lastReminderMailTime is null";
         Query query=(Query)session.createQuery(firstRemainderMail);
+        query.setParameter("appTime", appTime);
         List<Object[]> list=(List<Object[]>) query.getResultList();
         for(Object[] obj:list){
             User user=(User) obj[0];
             TransactionBooks transactionBook=(TransactionBooks) obj[1];
             System.out.println(user+"printing"+transactionBook.getBook().getTitle()+transactionBook.getDueDate());
-            Date date=new Date();
+
             //set the last remainder mail column to the transactionBook object so that we don't send him mail again in the same day
-            transactionBook.setLastReminderMailTime(date);
+            transactionBook.setLastReminderMailTime(appTime);
             session.update(transactionBook);
             //sending the mail
             mailService.sendReminderMail(user,transactionBook);
         }
         //checking if someone has passed the due date and sending reminder mails to him has already started.
         String followingRemainderMails="select t.user,tb from TransactionBooks tb join tb.transaction t"+
-                " where tb.returnDate is null and tb.dueDate < current_date and day(tb.lastReminderMailTime)<day(current_date)";
+                " where tb.returnDate is null and tb.dueDate < :appTime and day(tb.lastReminderMailTime)<day(:appTime)";
         /*String followingRemainderMails="select t.user,tb from TransactionBooks tb join tb.transaction t"+
                 " where tb.returnDate is null and tb.dueDate < current_date and " +
                 " (day(tb.dueDate)*24*60*60+hour(tb.dueDate)*60*60+minute(tb.dueDate)*60+" +
                 " second(tb.dueDate)-day(:appTime)*24*60*60-hour(:appTime)*60*60-" +
                 "minute(:appTime)*60- second(:appTime))";*/
         Query query2=(Query)session.createQuery(followingRemainderMails);
+        query2.setParameter("appTime",appTime);
         List<Object[]> list2=(List<Object[]>) query2.getResultList();
         for(Object[] obj:list2){
             User user=(User) obj[0];
@@ -259,12 +260,23 @@ public class TransactionDaoImpl implements TransactionDao{
 
     @Override
     public void checkForWaitlistAssignments() {
+        ApplicationTime a = new ApplicationTime();
+        Date appTime = ApplicationTime.staticAppDateTime;
+       // java.sql.Date appTimeSqlFormat = new java.sql.Date(appTime.getTime());
+
+        System.out.println("Timeeeeeeeeeeeeeeeeeeeeeeeeeeeee "+ appTime);
+
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         //check for the patrons who didn't checkout the books assigned to them within 3 days
-        String waitlistAssignments="select wb from WaitlistBooksToBeAssigned wb where  wb.isInvalid=false and (day(current_date)*24*60+hour(current_date)*60+minute(current_date)"+
+        String waitlistAssignments="select wb from WaitlistBooksToBeAssigned wb where  wb.isInvalid=false and (day(:appDate)*24*60+hour(:appDate)*60+minute(:appDate)"+
                 "-day(wb.currentDate)-hour(wb.currentDate)-minute(wb.currentDate))>4320 ";
         Query waitlistAssignmentsQuery=(Query)session.createQuery(waitlistAssignments);
+       // waitlistAssignmentsQuery.setParameter("appDate", appTimeSqlFormat.toString());
+        waitlistAssignmentsQuery.setParameter("appDate", appTime);
+
+        System.out.println("Queryyyyyyyyyyyyyyyyyyyyyy "+ waitlistAssignmentsQuery);
+
         List<WaitlistBooksToBeAssigned> waitlistBooksToBeAssigned=(List<WaitlistBooksToBeAssigned>)waitlistAssignmentsQuery.getResultList();
         //loop through all such records in waitlistBooksToBeAssigned table(patrons who didn't checkout their corresponding assigned books in 3 days)
         for (WaitlistBooksToBeAssigned wb:waitlistBooksToBeAssigned) {

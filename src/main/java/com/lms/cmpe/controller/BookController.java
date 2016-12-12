@@ -378,7 +378,4 @@ public class BookController {
         model.addAttribute("user",session.getAttribute("user"));
         return "test";
     }
-
-
-
 }
