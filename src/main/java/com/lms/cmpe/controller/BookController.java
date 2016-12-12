@@ -76,20 +76,10 @@ public class BookController {
     {
         model.addAttribute("user",session.getAttribute("user"));
         User user = (User)session.getAttribute("user");
-        /*List<WaitlistBooksToBeAssigned> waitlist = new ArrayList<WaitlistBooksToBeAssigned>();
-        WaitlistBooksToBeAssigned waitlistBooksToBeAssigned = new WaitlistBooksToBeAssigned();
-        Book book = bookService.getBookById(2);
-        User user = userService.getUserById(23);
-        waitlistBooksToBeAssigned.setBook(book);
-        waitlistBooksToBeAssigned.setUser(user);
-        waitlistBooksToBeAssigned.setInvalid(false);
-        waitlist.add(waitlistBooksToBeAssigned);
-        System.out.println("User email is --"+waitlist.get(0).getUser().getEmail());
-        model.addAttribute("waitlist",waitlist);
-        return "waitlist";*/
-        List<Book> bookList = waitlistBooksToBeAssignedService.getWaitlistedBooks(user);
-        System.out.println("Size of books ---"+bookList.size());
-        model.addAttribute("bookList",bookList);
+        List<Book> waitlistBookstobeaddedbookList = waitlistBooksToBeAssignedService.getWaitlistedBooks(user);
+        List<Book> waitlistbooklist = waitlistService.getWaitlistBooks(user);
+        model.addAttribute("waitlistbooklist",waitlistbooklist);
+        model.addAttribute("bookList",waitlistBookstobeaddedbookList);
         return "waitlist";
     }
 
