@@ -6,10 +6,13 @@ import com.lms.cmpe.service.MailService;
 import javassist.bytecode.stackmap.BasicBlock;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.procedure.ProcedureCall;
+import org.hibernate.result.Output;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
+import javax.persistence.ParameterMode;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -33,6 +36,8 @@ public class TransactionDaoImpl implements TransactionDao{
 
     @Autowired
     private MailService mailService;
+
+
 
     @Override
     @SuppressWarnings("unchecked")
@@ -90,10 +95,8 @@ public class TransactionDaoImpl implements TransactionDao{
 
     @Override
     public boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId,Date appTime){
-        List<Waitlist> waitLists =null;
         Session session = sessionFactory.openSession();
         session.beginTransaction();
-        User u = null;
         Date dateobj = appTime;
 
         for (TransactionBooks transactionBook:transactionBooksList) {
@@ -102,19 +105,27 @@ public class TransactionDaoImpl implements TransactionDao{
             //TransactionBooks transactionBooks = session.get(TransactionBooks.class,transactionBookId);
             System.out.println("Hereeeeeeeeeeeeeeeeee "+transactionBook.getDueDate());
             //if number of available copies was 0 then we have to take out the first patron in waitlist and assign the book to him
+
             if(transactionBook.getBook().getNoOfAvailableCopies()==0){
-                String getWaitlistPatron = "select w from Waitlist w where w.waitlistId = (select min(w2.waitlistId) from Waitlist w2 where w2.book=:book)";
+                ProcedureCall call = session
+                        .createStoredProcedureCall("return_books");
+
+                call.registerParameter(1, Long.class,
+                        ParameterMode.IN).bindValue((long)transactionBook.getTransactionBooksId());
+
+
+
+                Output output = call.getOutputs().getCurrent();
+                if (output.isResultSet()) {
+                    //List<Object[]> postComments =
+                    //((ResultSetOutput) output).getResultList();
+                }
+                /*String getWaitlistPatron = "select w.user from Waitlist w where w.waitlistId = (select min(w2.waitlistId) from Waitlist w2 where w2.book=:book)";
                 Query getWaitlistPatronQuery = (Query) session.createQuery(getWaitlistPatron);
                 getWaitlistPatronQuery.setParameter("book",transactionBook.getBook());
                 //System.out.println((int)retrieveQuery.getResultList().size()+"in transaction query result");
-                List<Waitlist> wList=(List<Waitlist>) getWaitlistPatronQuery.getResultList();
-                Waitlist w=null;
-                if(wList.size()>0)
-                {
-                    w=wList.get(0);
-                    u = w.getUser();
-                }
-
+                System.out.println(getWaitlistPatronQuery.getResultList().get(0) + "only today");
+                User u=(User)getWaitlistPatronQuery.getResultList().get(0);
                 //if there are no patrons in waitlist for that book, increase the number of available copies by 1
                 if(u==null){
                     transactionBook.setReturnDate(dateobj);
@@ -131,11 +142,8 @@ public class TransactionDaoImpl implements TransactionDao{
                     Date date=appTime;
                     WaitlistBooksToBeAssigned obj=new WaitlistBooksToBeAssigned(transactionBook.getTransaction().getUser(),transactionBook.getBook(),date);
                     session.save(obj);
-
-                    waitLists.add(w);
-
-
-                }
+                    session.delete(u);
+                }*/
                 //Long todayBooks = (Long) getWaitlistPatronQuery.getResultList().get(0);
 
             }
@@ -152,23 +160,9 @@ public class TransactionDaoImpl implements TransactionDao{
         }
         mailService.sendTransactionReturnsInfoMail(transactionBooksList,(User)session.get(User.class,userId),dateobj);
 
+        //session.save(transaction);
         session.getTransaction().commit();
         session.close();
-
-        Session session1 = sessionFactory.openSession();
-        session1.beginTransaction();
-
-
-        if(waitLists != null) {
-            for (Waitlist waitList:waitLists) {
-                session1.delete(waitList);
-
-            }
-            session1.getTransaction().commit();
-        }
-
-        session1.close();
-
         return false;
     }
 
@@ -209,6 +203,9 @@ public class TransactionDaoImpl implements TransactionDao{
     public void checkForDueDates(){
         Date appTime = ApplicationTime.staticAppDateTime;
        // java.sql.Date appTimeSqlFormat = new java.sql.Date(appTime.getTime());
+        Calendar c = Calendar.getInstance();
+        c.setTime(appTime);
+        c.add(Calendar.DATE, 5);
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
@@ -217,7 +214,7 @@ public class TransactionDaoImpl implements TransactionDao{
         String firstRemainderMail="select t.user,tb from TransactionBooks tb join tb.transaction t "+
                 " where tb.returnDate is null and tb.dueDate < :appTime and tb.lastReminderMailTime is null";
         Query query=(Query)session.createQuery(firstRemainderMail);
-        query.setParameter("appTime", appTime);
+        query.setParameter("appTime", c.getTime());
         List<Object[]> list=(List<Object[]>) query.getResultList();
         for(Object[] obj:list){
             User user=(User) obj[0];
@@ -239,7 +236,7 @@ public class TransactionDaoImpl implements TransactionDao{
                 " second(tb.dueDate)-day(:appTime)*24*60*60-hour(:appTime)*60*60-" +
                 "minute(:appTime)*60- second(:appTime))";*/
         Query query2=(Query)session.createQuery(followingRemainderMails);
-        query2.setParameter("appTime",appTime);
+        query2.setParameter("appTime", c.getTime());
         List<Object[]> list2=(List<Object[]>) query2.getResultList();
         for(Object[] obj:list2){
             User user=(User) obj[0];
