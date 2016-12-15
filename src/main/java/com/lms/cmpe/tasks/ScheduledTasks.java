@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by raghu on 12/9/16.
@@ -25,16 +24,15 @@ public class ScheduledTasks {
 
     @Scheduled(fixedRate = 5000)
     public void reportCurrentTime() {
-
-        log.info("The time is now {}", dateFormat.format(new Date()));
-        transactionDao.checkForDueDates();
+/*        log.info("The time is now {}", dateFormat.format(new Date()));
+        transactionDao.checkForDueDates();*/
     }
 
     @Scheduled(fixedRate = 5000)
     public void checkForWaitlistAssignments() {
-
+/*
         log.info("The time is now {}", dateFormat.format(new Date()));
-        transactionDao.checkForWaitlistAssignments();
+        transactionDao.checkForWaitlistAssignments();*/
 
     }
 

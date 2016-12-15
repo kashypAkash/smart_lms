@@ -1,6 +1,7 @@
 package com.lms.cmpe.controller;
 
 
+import com.lms.cmpe.model.ApplicationTime;
 import com.lms.cmpe.model.TransactionBooks;
 import com.lms.cmpe.model.User;
 import com.lms.cmpe.service.*;
@@ -55,6 +56,8 @@ public class LoginController {
             session.setAttribute("user",user);
             model.addAttribute("user",user);
             Date appTime=new Date();
+            ApplicationTime appDateTime = new ApplicationTime();
+            appDateTime.setAppDateTime(appTime);
             session.setAttribute("appTime",appTime);
                 if(result.isVerified()) {
                     return "redirect:/profile";
