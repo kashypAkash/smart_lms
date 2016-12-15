@@ -59,7 +59,7 @@
 
                 <div class="row">
                     <div class="input-field col s12 m10 offset-m1 offset-s2">
-                        <button id="submit" class="btn waves-effect waves-light" type="submit" disabled = "disabled" name="action" value="signup">Sign Up</button>
+                        <button id="submit" class="btn waves-effect waves-light" type="submit" name="action" value="signup">Sign Up</button>
                     </div>
                 </div>
             </div>
@@ -77,7 +77,7 @@ $('#email').on("keyup",function(){
         if(email.match("@sjsu.edu$"))
         {
            $('#checkbox')[0].checked = true;
-          $("#checkbox").attr("disabled", true);
+          $("#checkbox").attr("disabled", false);
         }
          else
          {

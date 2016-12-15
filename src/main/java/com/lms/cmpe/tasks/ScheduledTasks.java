@@ -1,6 +1,5 @@
 package com.lms.cmpe.tasks;
 
-import com.lms.cmpe.dao.BookDao;
 import com.lms.cmpe.dao.TransactionDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,15 +26,15 @@ public class ScheduledTasks {
     @Scheduled(fixedRate = 5000)
     public void reportCurrentTime() {
 
-        //log.info("The time is now {}", dateFormat.format(new Date()));
-        //transactionDao.checkForDueDates();
+        log.info("The time is now {}", dateFormat.format(new Date()));
+        transactionDao.checkForDueDates();
     }
 
     @Scheduled(fixedRate = 5000)
     public void checkForWaitlistAssignments() {
 
-        //log.info("The time is now {}", dateFormat.format(new Date()));
-        //transactionDao.checkForWaitlistAssignments();
+        log.info("The time is now {}", dateFormat.format(new Date()));
+        transactionDao.checkForWaitlistAssignments();
 
     }
 

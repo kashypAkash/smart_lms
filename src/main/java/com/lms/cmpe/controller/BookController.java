@@ -117,7 +117,7 @@ public class BookController {
             int total = book.getNoOfAvailableCopies();
             book.setNoOfAvailableCopies(total);
             bookService.addBook(book);
-            redirectAttributes.addFlashAttribute("message", "Successfully Added! Add more books..");
+            redirectAttributes.addFlashAttribute("message","The Book " + book.getTitle() +"is successfully added! Add more books..");
             return"redirect:/book";
         }
         return "test";

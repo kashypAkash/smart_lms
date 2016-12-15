@@ -93,7 +93,7 @@ public class LoginController {
     @PostMapping("/activate")
     public String activateAccount(@RequestParam(value="activationcode", required=true) String activationcode,
                                   @RequestParam(value="userid", required=true) String userid,
-                                  Model model){
+                                  Model model, HttpSession session){
         System.out.println(userid);
         User user = userService.getUserById(Integer.parseInt(userid));
         model.addAttribute("user",user);
@@ -101,6 +101,7 @@ public class LoginController {
             mailService.sendSuccessfulRegistrationMail(user);
             user.setVerified(true);
             userService.updateUser(user);
+            session.setAttribute("user",user);
             return "redirect:/profile";
         }
 

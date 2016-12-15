@@ -54,42 +54,42 @@
                 <p th:if="${message != null}" th:text="${message}" style="color: red;text-align: center"></p>
                 <div class="row">
                     <div class="input-field col s6 m6">
-                        <input id="author" name="author" th:field="*{author}" type="text" class="validate" />
+                        <input id="author" name="author" th:field="*{author}" type="text" class="validate" required="required"/>
                         <label for="author">Author</label>
                     </div>
                     <div class="input-field col s6 m6">
-                        <input id="title" name="title" th:field="*{title}" type="text" class="validate" />
+                        <input id="title" name="title" th:field="*{title}" type="text" class="validate" required="required" />
                         <label for="title">Title</label>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="input-field col s6 m6">
-                        <input id="callNumber" name="callNumber" th:field="*{callNumber}" type="text" class="validate" />
+                        <input id="callNumber" name="callNumber" th:field="*{callNumber}" type="text" class="validate" required="required" />
                         <label for="callNumber">Call Number</label>
                     </div>
                     <div class="input-field col s6 m6">
-                        <input id="publisher" name="publisher" th:field="*{publisher}" type="text" class="validate" />
+                        <input id="publisher" name="publisher" th:field="*{publisher}" type="text" class="validate" required="required" />
                         <label for="publisher">Publisher</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s6 m6">
-                        <input id="yearOfPublication" name="yearOfPublication" th:field="*{yearOfPublication}" type="text" class="validate" />
+                        <input id="yearOfPublication" name="yearOfPublication" th:field="*{yearOfPublication}" type="text" class="validate" required="required"/>
                         <label for="yearOfPublication">Year of Publication</label>
                     </div>
                     <div class="input-field col s6 m6">
-                        <input id="locationInLibrary" name="locationInLibrary" th:value="*{locationInLibrary}" type="text" class="validate" />
+                        <input id="locationInLibrary" name="locationInLibrary" th:value="*{locationInLibrary}" type="text" class="validate" required="required" />
                         <label for="locationInLibrary">Location In Library</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s6 m6">
-                        <input id="noOfCopies" name="noOfCopies" th:value="*{noOfCopies}" type="text" class="validate" />
+                        <input id="noOfCopies" name="noOfCopies" th:value="*{noOfCopies}" type="text" class="validate" required="required"/>
                         <label for="noOfCopies">No of Copies</label>
                     </div>
                     <div class="input-field col s6 m6">
-                        <input id="currentStatus" name="currentStatus" th:value="*{currentStatus}" type="text" class="validate" />
+                        <input id="currentStatus" name="currentStatus" th:value="*{currentStatus}" type="text" class="validate" required="required" />
                         <label for="currentStatus">Current Status</label>
                     </div>
                 </div>
