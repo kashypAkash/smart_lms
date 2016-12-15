@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,10 +21,10 @@ public class TransactionServiceImpl implements TransactionService{
     private TransactionDao transactionDao;
 
     @Override
-    public Transaction checkOutBooks(Transaction transaction, int userId) { return transactionDao.checkOutBooks(transaction, userId); }
+    public Transaction checkOutBooks(Transaction transaction, int userId, Date appTime) { return transactionDao.checkOutBooks(transaction, userId,appTime); }
 
     @Override
-    public boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId) { return transactionDao.returnBooks(transactionBooksList, userId); }
+    public boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId, Date appTime) { return transactionDao.returnBooks(transactionBooksList, userId, appTime); }
 
     @Override
     public List<Book> getCheckedOutBooksByUser(int userId) { return transactionDao.getCheckedOutBooksByUser(userId); }

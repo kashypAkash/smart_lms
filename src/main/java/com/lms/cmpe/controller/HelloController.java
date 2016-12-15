@@ -14,6 +14,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 @Controller
 public class HelloController {
@@ -32,12 +39,20 @@ public class HelloController {
 
 
     @RequestMapping(value = "/getDate",method = RequestMethod.POST)
-    public String getDate(@RequestParam("dateValue") String dateInString, RedirectAttributes redirectAttributes)
+    public String getDate(@RequestParam("dateValue") String dateInString, RedirectAttributes redirectAttributes,HttpSession session)
     {
 
 
         if(applicationTime.setAppDateTime(dateInString)){
             redirectAttributes.addFlashAttribute("message",dateInString);
+            Date appTime;
+            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
+            try {
+                appTime = formatter.parse(dateInString);
+                session.setAttribute("appTime", appTime);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             return "redirect:/profile";
         }
         else{
