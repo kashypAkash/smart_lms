@@ -106,12 +106,15 @@ public class TransactionDaoImpl implements TransactionDao{
             System.out.println("Hereeeeeeeeeeeeeeeeee "+transactionBook.getDueDate());
             //if number of available copies was 0 then we have to take out the first patron in waitlist and assign the book to him
 
-            if(transactionBook.getBook().getNoOfAvailableCopies()==0){
+                Date testDate=new Date();
                 ProcedureCall call = session
                         .createStoredProcedureCall("return_books");
 
                 call.registerParameter(1, Long.class,
                         ParameterMode.IN).bindValue((long)transactionBook.getTransactionBooksId());
+
+                call.registerParameter(2, Date.class,
+                    ParameterMode.IN).bindValue(testDate);
 
 
 
@@ -146,17 +149,9 @@ public class TransactionDaoImpl implements TransactionDao{
                 }*/
                 //Long todayBooks = (Long) getWaitlistPatronQuery.getResultList().get(0);
 
-            }
-            //if the number of available copies was greater than 0, then just increase the number of available copies straight away
-            else {
-                transactionBook.setReturnDate(dateobj);
 
-                int bookId = transactionBook.getBook().getBookId();
-                Book book = session.get(Book.class, bookId);
-                book.setNoOfAvailableCopies(book.getNoOfAvailableCopies() + 1);
-                session.update(transactionBook);
-                session.update(book);
-            }
+            //if the number of available copies was greater than 0, then just increase the number of available copies straight away
+
         }
         mailService.sendTransactionReturnsInfoMail(transactionBooksList,(User)session.get(User.class,userId),dateobj);
 
