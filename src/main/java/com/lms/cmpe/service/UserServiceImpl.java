@@ -1,7 +1,6 @@
 package com.lms.cmpe.service;
 
 import com.lms.cmpe.dao.UserDao;
-import com.lms.cmpe.model.Phone;
 import com.lms.cmpe.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,11 +40,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(User user) {
         userDao.updateUser(user);
-    }
-
-    @Override
-    public List<Phone> getUsersByNumber(String numbers) {
-        return userDao.getUsersByNumbers(numbers);
     }
 
     @Override

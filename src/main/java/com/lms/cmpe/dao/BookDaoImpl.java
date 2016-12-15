@@ -1,7 +1,5 @@
 package com.lms.cmpe.dao;
 
-import com.lms.cmpe.model.Phone;
-import com.lms.cmpe.model.ApplicationTime;
 import com.lms.cmpe.model.Book;
 import com.lms.cmpe.model.BookKeywords;
 import org.hibernate.*;
@@ -14,12 +12,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
 import java.util.List;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 
 import static java.lang.Math.toIntExact;
 
