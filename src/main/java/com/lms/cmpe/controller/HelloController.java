@@ -3,9 +3,7 @@ package com.lms.cmpe.controller;
 
 import com.lms.cmpe.model.ApplicationTime;
 import com.lms.cmpe.model.DataObj;
-import com.lms.cmpe.model.Phone;
 import com.lms.cmpe.model.User;
-import com.lms.cmpe.service.PhoneService;
 import com.lms.cmpe.service.UserService;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -30,9 +28,6 @@ public class HelloController {
 
     @Autowired
     private  SessionFactory sessionFactory;
-
-    @Autowired
-    private PhoneService phoneService;
 
     @Autowired
     private UserService userService;
@@ -156,90 +151,6 @@ public class HelloController {
         }*/
         return String.format("redirect:/user/%d",user.getUserId());
     }
-
-
-    @RequestMapping(value = "/phone", method = RequestMethod.GET)
-    public String phoneForm(Model model){
-        Phone phone = new Phone();
-        model.addAttribute("phone",phone);
-        return "phone";
-    }
-
-    @RequestMapping(value = "/phone", method = RequestMethod.POST)
-    public String createPhone(@ModelAttribute Phone phone){
-        phoneService.createPhone(phone);
-        return "phone";
-    }
-
-    @RequestMapping(value = "/phone/{id}", method = RequestMethod.GET)
-    public String getPhone(Model model,@PathVariable("id") int id){
-
-        model.addAttribute("phone",phoneService.getPhoneById(id));
-        Session session = sessionFactory.openSession();
-        List<User> userList = new ArrayList<>();
-
-        try {
-            Query query = session.createNativeQuery("SELECT user_id from user_phone where phone_id=:phone_id");
-            query.setParameter("phone_id",id);
-            List<Integer> userIds =  query.getResultList();
-
-            for(Integer userid:userIds){
-                userList.add(userService.getUserById(userid.intValue()));
-            }
-        }
-        catch (NoResultException e){
-            System.out.println(e.getMessage());
-        }
-        model.addAttribute("users",userList);
-        session.close();
-
-        return "editphone";
-    }
-
-    @RequestMapping(value = "/phone/{id}", params = "json")
-    @ResponseBody
-    public DataObj getJsonPhone(Model model, @PathVariable("id") int id){
-        DataObj dataObj = new DataObj();
-        dataObj.setPhone(phoneService.getPhoneById(id));
-
-        Session session = sessionFactory.openSession();
-        List<User> userList = new ArrayList<>();
-
-        try {
-            Query query = session.createNativeQuery("SELECT user_id from user_phone where phone_id=:phone_id");
-            query.setParameter("phone_id",id);
-            List<Integer> userIds =  query.getResultList();
-
-            for(Integer userid:userIds){
-                userList.add(userService.getUserById(userid.intValue()));
-            }
-        }
-        catch (NoResultException e){
-            System.out.println(e.getMessage());
-        }
-        dataObj.setUser(userList);
-        session.close();
-        return dataObj;
-    }
-
-    @RequestMapping(value = "/phone/{id}", method = RequestMethod.POST)
-    public String updatePhone(@ModelAttribute Phone phone,@PathVariable("id") int id,
-                              @RequestParam(value="action", required=true) String action,
-                              @RequestParam(value="addressid", required=true) int addressId){
-        phone.setPhoneId(id);
-        phone.getAddress().setAddressId(addressId);
-
-        if(action.equals("update")){
-            phoneService.updatePhone(phone);
-            return String.format("redirect:/phone/%d",phone.getPhoneId());
-        }
-
-        if(action.equals("delete")){
-            phoneService.deletePhone(phone);
-        }
-        return "phone";
-    }
-
 
     @RequestMapping("/users")
     public String users(Model modelMap){

@@ -35,7 +35,7 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
     @Override
-    public boolean reissueBook(int transactionBookId, int userId) {
+    public int reissueBook(int transactionBookId, int userId) {
         return transactionDao.reissueBook(transactionBookId, userId);
     }
 }

@@ -16,5 +16,5 @@ public interface TransactionDao {
     List<TransactionBooks> getBooksToBeReturned(int userId);
     void checkForDueDates();
     void checkForWaitlistAssignments();
-    boolean reissueBook(int transactionBookId, int userId);
+    int reissueBook(int transactionBookId, int userId);
 }

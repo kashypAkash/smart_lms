@@ -13,6 +13,7 @@ import java.util.Date;
 @Component
 public class ApplicationTime {
 
+    public static Date staticAppDateTime ;
     private Date appDateTime;
 
     public ApplicationTime() {
@@ -42,6 +43,7 @@ public class ApplicationTime {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
             appDateTime = formatter.parse(appDateTimeInString);
+            staticAppDateTime = appDateTime;
         }catch (ParseException e){
             e.printStackTrace();
         }
@@ -80,6 +82,7 @@ public class ApplicationTime {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
             appDateTime = formatter.parse(appDateTimeInString);
+            staticAppDateTime = appDateTime;
             return true;
         }catch (ParseException e){
             e.printStackTrace();
@@ -87,7 +90,12 @@ public class ApplicationTime {
         }
     }
 
+    public void setAppDateTime(Date appDateTime) {
 
+        this.appDateTime = appDateTime;
+        this.staticAppDateTime = appDateTime;
+
+    }
 
 
 }

@@ -1,6 +1,5 @@
 package com.lms.cmpe.dao;
 
-import com.lms.cmpe.model.Phone;
 import com.lms.cmpe.model.User;
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,30 +57,6 @@ public class UserDaoImpl implements UserDao {
         return user;
 
     }
-
-    @Override
-    public List<Phone> getUsersByNumbers(String numbers) {
-
-        Session session = sessionFactory.openSession();
-        List<Phone> phoneList = new ArrayList<>();
-            String[] list = numbers.split(";");
-            for(String number: list){
-                //noinspection JpaQlInspection
-                Query query = session.createQuery("from Phone where number = :number");
-                query.setParameter("number",number);
-                try {
-                    Phone phone = (Phone) query.getSingleResult();
-                    phoneList.add(phone);
-                }
-                catch (NoResultException e){
-                    session.close();
-                    return null;
-                }
-            }
-            session.close();
-            return phoneList;
-    }
-
 
     @Override
     public boolean saveUser(User user) {

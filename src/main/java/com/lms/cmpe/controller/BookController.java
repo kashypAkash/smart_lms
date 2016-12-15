@@ -352,11 +352,23 @@ public class BookController {
     }
 
     @GetMapping("reissue/book/{id}")
-    public String reIssueBook(@PathVariable("id") int id, HttpSession session)
+    public String reIssueBook(@PathVariable("id") int id, HttpSession session, RedirectAttributes redirectAttributes)
     {
         System.out.println("Reissue Hereeeeeeeeeeeeeeeee " + id);
         User user = (User)session.getAttribute("user");
-        transactionService.reissueBook(id, user.getUserId());
+        int returnValue = transactionService.reissueBook(id, user.getUserId());
+        if(returnValue == 1)
+        {
+            redirectAttributes.addFlashAttribute("message", "Reissue failed as book is requested by someone else");
+            return "redirect:/profile";
+        }
+        else if (returnValue == 2)
+        {
+            redirectAttributes.addFlashAttribute("message", "Reissue failed as book is already issued twice");
+            return "redirect:/profile";
+        }
+        redirectAttributes.addFlashAttribute("message", "Booked has been reissued successfully");
+
         return "redirect:/profile";
 
     }
@@ -366,7 +378,4 @@ public class BookController {
         model.addAttribute("user",session.getAttribute("user"));
         return "test";
     }
-
-
-
 }

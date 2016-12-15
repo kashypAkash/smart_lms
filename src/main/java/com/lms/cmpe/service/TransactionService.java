@@ -19,5 +19,5 @@ public interface TransactionService {
     List<Book> getCheckedOutBooksByUser(int userId);
     List<TransactionBooks> getBooksToBeReturned(int userId);
 
-    boolean reissueBook(int transactionBookId, int userId);
+    int reissueBook(int transactionBookId, int userId);
 }
