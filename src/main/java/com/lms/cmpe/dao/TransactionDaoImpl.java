@@ -288,10 +288,12 @@ public class TransactionDaoImpl implements TransactionDao{
             Query nextPatronInWaitlistQuery = (Query) session.createQuery(nextPatronInWaitlist);
             nextPatronInWaitlistQuery.setParameter("book",wb.getBook());
             //System.out.println((int)retrieveQuery.getResultList().size()+"in transaction query result");
-            System.out.println(nextPatronInWaitlistQuery.getResultList().get(0) + "inside checkForWaitlistAssignments next man in waitlist");
-            Waitlist w=(Waitlist)nextPatronInWaitlistQuery.getResultList().get(0);
+            System.out.println(nextPatronInWaitlistQuery.getFirstResult());
+            System.out.println(nextPatronInWaitlistQuery.getResultList().size()+"length of the result list");
+            //System.out.println(nextPatronInWaitlistQuery.getResultList().get(0) + "inside checkForWaitlistAssignments next man in waitlist");
+
             //if there is no one in the wait list for that book, delete the record from waitlistToBeAssigned table and increment the number of available copies by 1
-            if(w==null){
+            if(nextPatronInWaitlistQuery.getResultList().size()==0){
                 Book book1=wb.getBook();
                 book1.setNoOfAvailableCopies(book1.getNoOfAvailableCopies()+1);
                 session.delete(wb);
@@ -299,6 +301,7 @@ public class TransactionDaoImpl implements TransactionDao{
             }
             //if there is any one in waitlist, take him out of waitlist, add to the waitlistToBeAssigned table, delete the old record from the table and waitlist tbale
             else {
+                Waitlist w=(Waitlist)nextPatronInWaitlistQuery.getResultList().get(0);
                 User u = w.getUser();
                 WaitlistBooksToBeAssigned waitlistBooksToBeAssigned1 = new WaitlistBooksToBeAssigned(u, wb.getBook(), new Date());
                 session.save(waitlistBooksToBeAssigned1);

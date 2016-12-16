@@ -181,6 +181,7 @@ public class BookController {
         }
 
         Book book= bookService.getBookById(id);
+
         bookService.deleteBook(book);
         redirectAttributes.addFlashAttribute("message", book.getTitle() +" has been deleted");
         return "redirect:/books";
