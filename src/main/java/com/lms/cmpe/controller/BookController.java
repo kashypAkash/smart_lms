@@ -61,15 +61,21 @@ public class BookController {
     }
 
     @GetMapping("/book/addtowaitlist/{id}")
-    public String addToWaitlist(Model model, HttpSession session,@PathVariable("id") int id)
+    public String addToWaitlist(Model model, HttpSession session,@PathVariable("id") int id,RedirectAttributes redirectAttributes)
     {
         Book book = bookService.getBookById(id);
         User user = (User) session.getAttribute("user");
         Waitlist waitlist = new Waitlist();
         waitlist.setUser(user);
         waitlist.setBook(book);
-        waitlistService.storeWaitlist(waitlist);
-        return "redirect:/waitListedbook";
+        if(waitlistService.storeWaitlist(waitlist)) {
+            return "redirect:/waitListedbook";
+        }
+        else {
+            redirectAttributes.addFlashAttribute("message","The book is already on your waitlist. Cannot add it to waitlist twice");
+            return "redirect:/myerror";
+
+        }
     }
     @GetMapping("/waitListedbook")
     public String getWaitlistedBooks(Model model,HttpSession session)
@@ -80,6 +86,14 @@ public class BookController {
         List<Book> waitlistbooklist = waitlistService.getWaitlistBooks(user);
         model.addAttribute("waitlistbooklist",waitlistbooklist);
         model.addAttribute("bookList",waitlistBookstobeaddedbookList);
+
+        if(session.getAttribute("booklist")==null){
+            BookList bookList = new BookList();
+            session.setAttribute("booklist",bookList);
+        }
+
+        model.addAttribute("booklist", session.getAttribute("booklist"));
+
         return "waitlist";
     }
 
@@ -195,12 +209,14 @@ public class BookController {
             }
 
             booklist = (BookList)session.getAttribute("booklist");
-
-            for(Book book:booklist.getBookList()){
-                if(book.getBookId() == id){
-                    return "redirect:/books";
+            if(booklist.getBookList().size()>0){
+                for(Book book:booklist.getBookList()){
+                    if(book.getBookId() == id){
+                        return "redirect:/books";
+                    }
                 }
             }
+
             booklist.getBookList().add(bookService.getBookById(id));
         return "redirect:/books";
     }

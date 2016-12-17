@@ -77,10 +77,29 @@ public class TransactionDaoImpl implements TransactionDao{
            for (TransactionBooks transactionBook:transaction.getTransactionBooksList()) {
                int bookId=transactionBook.getBook().getBookId();
                Book book = session.get(Book.class,bookId);
-               System.out.println("number of available copies"+book.getNoOfAvailableCopies());
-               book.setNoOfAvailableCopies(book.getNoOfAvailableCopies()-1);
-               book.getNoOfAvailableCopies();
-               session.update(book);
+               //User user=session.get(User.class,userId);
+               String checkBookInWaitlistToBeAssigned="select wb.waitlistBooksToBeAssignedId from WaitlistBooksToBeAssigned wb where wb.user.userId=:userId and wb.book.bookId=:bookId";
+               Query q_checkBookInWaitlistToBeAssigned=(Query) session.createQuery(checkBookInWaitlistToBeAssigned);
+               q_checkBookInWaitlistToBeAssigned.setParameter("userId",userId);
+               q_checkBookInWaitlistToBeAssigned.setParameter("bookId",bookId);
+               int count=q_checkBookInWaitlistToBeAssigned.getResultList().size();
+               if(count>0){
+                   //session.delete(waitlistBooksToBeAssignedList.get(0));
+                   int waitlistBooksToBeAssignedId=(int)q_checkBookInWaitlistToBeAssigned.getResultList().get(0);
+                   ProcedureCall call = session
+                           .createStoredProcedureCall("delete_waitlist_to_be_assigned");
+
+                   call.registerParameter(1, int.class,
+                           ParameterMode.IN).bindValue((waitlistBooksToBeAssignedId));
+
+                   Output output = call.getOutputs().getCurrent();
+
+               }else {
+                   System.out.println("number of available copies" + book.getNoOfAvailableCopies());
+                   book.setNoOfAvailableCopies(book.getNoOfAvailableCopies() - 1);
+                   book.getNoOfAvailableCopies();
+                   session.update(book);
+               }
 
            }
            session.save(transaction);
@@ -95,10 +114,11 @@ public class TransactionDaoImpl implements TransactionDao{
 
     @Override
     public boolean returnBooks(ArrayList<TransactionBooks> transactionBooksList, int userId,Date appTime){
+
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         Date dateobj = appTime;
-
+        ArrayList fineList = new ArrayList();
         for (TransactionBooks transactionBook:transactionBooksList) {
 
             int transactionBookId = transactionBook.getTransactionBooksId();
@@ -116,44 +136,18 @@ public class TransactionDaoImpl implements TransactionDao{
                 call.registerParameter(2, Date.class,
                     ParameterMode.IN).bindValue(testDate);
 
-
-
                 Output output = call.getOutputs().getCurrent();
                 if (output.isResultSet()) {
-                    //List<Object[]> postComments =
-                    //((ResultSetOutput) output).getResultList();
+
                 }
-                /*String getWaitlistPatron = "select w.user from Waitlist w where w.waitlistId = (select min(w2.waitlistId) from Waitlist w2 where w2.book=:book)";
-                Query getWaitlistPatronQuery = (Query) session.createQuery(getWaitlistPatron);
-                getWaitlistPatronQuery.setParameter("book",transactionBook.getBook());
-                //System.out.println((int)retrieveQuery.getResultList().size()+"in transaction query result");
-                System.out.println(getWaitlistPatronQuery.getResultList().get(0) + "only today");
-                User u=(User)getWaitlistPatronQuery.getResultList().get(0);
-                //if there are no patrons in waitlist for that book, increase the number of available copies by 1
-                if(u==null){
-                    transactionBook.setReturnDate(dateobj);
+                long diffInDays =  ((appTime.getTime() - transactionBook.getDueDate().getTime()) / (1000 * 60 * 60 * 24));
+                //i f(transactionBook.getDueDate())
 
-                    int bookId=transactionBook.getBook().getBookId();
-                    Book book = session.get(Book.class,bookId);
-                    book.setNoOfAvailableCopies(book.getNoOfAvailableCopies() + 1);
-                    session.update(transactionBook);
-                    session.update(book);
-                }
-                //take out the patron from waitlist table, assign the book to him by creating a record in waitlistToBeAssigned table
-                else{
-                    System.out.println("inside the waitlistbookstobeassigned");
-                    Date date=appTime;
-                    WaitlistBooksToBeAssigned obj=new WaitlistBooksToBeAssigned(transactionBook.getTransaction().getUser(),transactionBook.getBook(),date);
-                    session.save(obj);
-                    session.delete(u);
-                }*/
-                //Long todayBooks = (Long) getWaitlistPatronQuery.getResultList().get(0);
+                fineList.add(diffInDays);
 
-
-            //if the number of available copies was greater than 0, then just increase the number of available copies straight away
-
+                System.out.println("checking if return date is updated"+diffInDays);
         }
-        mailService.sendTransactionReturnsInfoMail(transactionBooksList,(User)session.get(User.class,userId),dateobj);
+        mailService.sendTransactionReturnsInfoMail(transactionBooksList,fineList,(User)session.get(User.class,userId),dateobj);
 
         //session.save(transaction);
         session.getTransaction().commit();
@@ -201,74 +195,55 @@ public class TransactionDaoImpl implements TransactionDao{
         {
             appTime = new Date();
         }
-      /* // java.sql.Date appTimeSqlFormat = new java.sql.Date(appTime.getTime());
+       // java.sql.Date appTimeSqlFormat = new java.sql.Date(appTime.getTime());
         Calendar c = Calendar.getInstance();
         c.setTime(appTime);
         c.add(Calendar.DATE, 5);
 
-        java.sql.Date appTimeSqlFormat = new java.sql.Date(appTime);
-*/
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         System.out.println("inside checkForDueDates");
         //checking if someone just passed the due date and no mail has been sent to him/her yet
         String firstRemainderMail="select t.user,tb from TransactionBooks tb join tb.transaction t "+
-                " where tb.returnDate is null and tb.lastReminderMailTime is null";
+                " where tb.returnDate is null and tb.dueDate < :appTime and tb.lastReminderMailTime is null";
         Query query=(Query)session.createQuery(firstRemainderMail);
-       /* query.setParameter("appTime", appTimeSqlFormat);*/
+        query.setParameter("appTime", c.getTime());
         List<Object[]> list=(List<Object[]>) query.getResultList();
         for(Object[] obj:list){
             User user=(User) obj[0];
             TransactionBooks transactionBook=(TransactionBooks) obj[1];
+            //System.out.println(user+"printing"+transactionBook.getBook().getTitle()+transactionBook.getDueDate()+transactionBook.getLastReminderMailTime());
 
-            Date dueDate = transactionBook.getDueDate();
-
-            int diffInDays = (int) ((appTime.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
-            System.out.println("dueDate.getTime() "+dueDate);
-            System.out.println("appTime.getTime() "+appTime);
-            System.out.println("diffInDaysssssssssssssssssssss "+diffInDays);
-            if(diffInDays > 5)
-            {
-                //set the last remainder mail column to the transactionBook object so that we don't send him mail again in the same day
-                transactionBook.setLastReminderMailTime(appTime);
-                session.update(transactionBook);
-                //sending the mail
-                mailService.sendReminderMail(user,transactionBook);
-            }
+            //set the last remainder mail column to the transactionBook object so that we don't send him mail again in the same day
+            transactionBook.setLastReminderMailTime(appTime);
+            session.update(transactionBook);
+            //sending the mail
+            mailService.sendReminderMail(user,transactionBook);
         }
         //checking if someone has passed the due date and sending reminder mails to him has already started.
         String followingRemainderMails="select t.user,tb from TransactionBooks tb join tb.transaction t"+
-                " where tb.returnDate is null";
-
+                " where tb.returnDate is null and tb.dueDate < :appTime and day(tb.lastReminderMailTime)!=day(:appTime)";
+        /*String followingRemainderMails="select t.user,tb from TransactionBooks tb join tb.transaction t"+
+                " where tb.returnDate is null and tb.dueDate < current_date and " +
+                " (day(tb.dueDate)*24*60*60+hour(tb.dueDate)*60*60+minute(tb.dueDate)*60+" +
+                " second(tb.dueDate)-day(:appTime)*24*60*60-hour(:appTime)*60*60-" +
+                "minute(:appTime)*60- second(:appTime))";*/
         Query query2=(Query)session.createQuery(followingRemainderMails);
-
+        query2.setParameter("appTime", c.getTime());
         List<Object[]> list2=(List<Object[]>) query2.getResultList();
         for(Object[] obj:list2){
             User user=(User) obj[0];
             TransactionBooks transactionBook=(TransactionBooks) obj[1];
-
-            Date dueDate = transactionBook.getDueDate();
-            Date lastReminderMailDate = transactionBook.getLastReminderMailTime();
-            int diffInDays = (int) ((dueDate.getTime() - appTime.getTime()) / (1000 * 60 * 60 * 24));
-            int differenceInLastReminderMailDate = 0;
-            try{
-                differenceInLastReminderMailDate = (int) ((lastReminderMailDate.getTime() - appTime.getTime()) / (1000 * 60 * 60 * 24));
-            }catch (Exception e)
-            {
-            }
-
-            if(diffInDays > 5 && differenceInLastReminderMailDate > 0 )
-            {
-                //updating the new reminder mail time
-                transactionBook.setLastReminderMailTime(appTime);
-                session.update(transactionBook);
-                //sending the mail
-                mailService.sendReminderMail(user,transactionBook);
-            }
-
-
-
+            System.out.println("in the following remainder mails");
+            System.out.println(user+"printing"+transactionBook.getBook().getTitle()+transactionBook.getDueDate());
+            //Date date=new Date();
+            //updating the new reminder mail time
+            transactionBook.setLastReminderMailTime(appTime);
+            session.update(transactionBook);
+            //sending the mail
+            mailService.sendReminderMail(user,transactionBook);
         }
+
         session.getTransaction().commit();
         session.close();
 
@@ -282,55 +257,21 @@ public class TransactionDaoImpl implements TransactionDao{
         {
             appTime = new Date();
         }
-       // java.sql.Date appTimeSqlFormat = new java.sql.Date(appTime.getTime());
-
-        System.out.println("Timeeeeeeeeeeeeeeeeeeeeeeeeeeeee "+ appTime);
-
         Session session = sessionFactory.openSession();
         session.beginTransaction();
-        //check for the patrons who didn't checkout the books assigned to them within 3 days
-        String waitlistAssignments="select wb from WaitlistBooksToBeAssigned wb where  wb.isInvalid=false and (day(:appDate)*24*60+hour(:appDate)*60+minute(:appDate)"+
-                "-day(wb.currentDate)-hour(wb.currentDate)-minute(wb.currentDate))>4320 ";
-        Query waitlistAssignmentsQuery=(Query)session.createQuery(waitlistAssignments);
-       // waitlistAssignmentsQuery.setParameter("appDate", appTimeSqlFormat.toString());
-        waitlistAssignmentsQuery.setParameter("appDate", appTime);
+        ProcedureCall call = session
+                .createStoredProcedureCall("check_for_waitlist_assignments");
 
-        System.out.println("Queryyyyyyyyyyyyyyyyyyyyyy "+ waitlistAssignmentsQuery);
+        call.registerParameter(1, Date.class,
+                ParameterMode.IN).bindValue(appTime);
 
-        List<WaitlistBooksToBeAssigned> waitlistBooksToBeAssigned=(List<WaitlistBooksToBeAssigned>)waitlistAssignmentsQuery.getResultList();
-        //loop through all such records in waitlistBooksToBeAssigned table(patrons who didn't checkout their corresponding assigned books in 3 days)
-        for (WaitlistBooksToBeAssigned wb:waitlistBooksToBeAssigned) {
-            //System.out.println(wb.getWaitlistBooksToBeAssignedId());
-            //get the book he is assigned
-            Book book=wb.getBook();
-            //find the next patron in waitlist table for that book
-            String nextPatronInWaitlist="select w from Waitlist w where w.waitlistId = (select min(w2.waitlistId) from Waitlist w2 where w2.book=:book)";
-            Query nextPatronInWaitlistQuery = (Query) session.createQuery(nextPatronInWaitlist);
-            nextPatronInWaitlistQuery.setParameter("book",wb.getBook());
-            //System.out.println((int)retrieveQuery.getResultList().size()+"in transaction query result");
-            System.out.println(nextPatronInWaitlistQuery.getFirstResult());
-            System.out.println(nextPatronInWaitlistQuery.getResultList().size()+"length of the result list");
-            //System.out.println(nextPatronInWaitlistQuery.getResultList().get(0) + "inside checkForWaitlistAssignments next man in waitlist");
 
-            //if there is no one in the wait list for that book, delete the record from waitlistToBeAssigned table and increment the number of available copies by 1
-            if(nextPatronInWaitlistQuery.getResultList().size()==0){
-                Book book1=wb.getBook();
-                book1.setNoOfAvailableCopies(book1.getNoOfAvailableCopies()+1);
-                session.delete(wb);
+        call.execute();
 
-            }
-            //if there is any one in waitlist, take him out of waitlist, add to the waitlistToBeAssigned table, delete the old record from the table and waitlist tbale
-            else {
-                Waitlist w=(Waitlist)nextPatronInWaitlistQuery.getResultList().get(0);
-                User u = w.getUser();
-                WaitlistBooksToBeAssigned waitlistBooksToBeAssigned1 = new WaitlistBooksToBeAssigned(u, wb.getBook(), new Date());
-                session.save(waitlistBooksToBeAssigned1);
-                session.delete(w);
-                session.delete(wb);
-            }
-        }
+
         session.getTransaction().commit();
         session.close();
+
     }
 
     @Override
