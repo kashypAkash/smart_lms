@@ -36,7 +36,9 @@
             </div>
         </div>
     </nav>
-
+    <div class="row">
+        <h5 class="apptime">Application Time : <span th:text="${appTime}"></span></h5>
+    </div>
     <div class="row" >
         <h5 style="margin-left: 30px"><small>Books Available for checkout</small> <small style="color: darkred;" th:if="${bookList.size()==0}"> - Books you've requested not ready for ready</small></h5>
         <div class="col s9 m9" th:object="${bookList}">

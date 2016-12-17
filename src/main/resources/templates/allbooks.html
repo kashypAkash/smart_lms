@@ -40,6 +40,9 @@
             </div>
         </div>
     </nav>
+    <div class="row">
+        <h5 class="apptime">Application Time : <span th:text="${appTime}"></span></h5>
+    </div>
     <div class="row" >
         <div class="col s9 m9">
             <p th:if="${message != null}" th:text="${message}" style="color: red;text-align: center"></p>

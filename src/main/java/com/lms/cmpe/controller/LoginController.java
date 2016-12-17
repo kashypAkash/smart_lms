@@ -140,7 +140,7 @@ public class LoginController {
             }
 
             model.addAttribute("returnlist", session.getAttribute("returnlist"));
-
+            model.addAttribute("appTime",session.getAttribute("appTime"));
             return "profile";
         }
         return "redirect:/";

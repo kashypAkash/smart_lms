@@ -35,7 +35,9 @@
             </div>
         </div>
     </nav>
-
+    <div class="row">
+        <h5 class="apptime">Application Time : <span th:text="${appTime}"></span></h5>
+    </div>
     <div style="margin-left: 30px" class="col s9 m9" th:object="${transaction}">
         <h5 style="text-align: left"  th:inline="text">Transaction Id : [[${transaction.transactionId}]]</h5>
         <h5 style="text-align: left"  th:inline="text"><small>Due Date : [[${transaction.transactionDate}]]</small></h5>

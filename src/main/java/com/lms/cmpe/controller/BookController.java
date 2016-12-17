@@ -55,7 +55,7 @@ public class BookController {
                 BookList bookList = new BookList();
                 session.setAttribute("booklist",bookList);
             }
-
+            model.addAttribute("appTime",session.getAttribute("appTime"));
             model.addAttribute("booklist", session.getAttribute("booklist"));
         return "allbooks";
     }
@@ -79,7 +79,7 @@ public class BookController {
     }
     @GetMapping("/waitListedbook")
     public String getWaitlistedBooks(Model model,HttpSession session)
-    {
+    {   model.addAttribute("appTime",session.getAttribute("appTime"));
         model.addAttribute("user",session.getAttribute("user"));
         User user = (User)session.getAttribute("user");
         List<Book> waitlistBookstobeaddedbookList = waitlistBooksToBeAssignedService.getWaitlistedBooks(user);
@@ -105,6 +105,7 @@ public class BookController {
         }
 
         Book book = new Book();
+        model.addAttribute("appTime",session.getAttribute("appTime"));
         model.addAttribute("user",session.getAttribute("user"));
         model.addAttribute("book",book);
 
@@ -284,7 +285,7 @@ public class BookController {
         if(session.getAttribute("user")==null){
             return "redirect:/";
         }
-
+        model.addAttribute("appTime",session.getAttribute("appTime"));
         model.addAttribute("user", session.getAttribute("user"));
         model.addAttribute("booklist", session.getAttribute("booklist"));
         model.addAttribute("books", session.getAttribute("books"));
