@@ -201,53 +201,73 @@ public class TransactionDaoImpl implements TransactionDao{
         {
             appTime = new Date();
         }
-       // java.sql.Date appTimeSqlFormat = new java.sql.Date(appTime.getTime());
+      /* // java.sql.Date appTimeSqlFormat = new java.sql.Date(appTime.getTime());
         Calendar c = Calendar.getInstance();
         c.setTime(appTime);
         c.add(Calendar.DATE, 5);
 
+        java.sql.Date appTimeSqlFormat = new java.sql.Date(appTime);
+*/
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         System.out.println("inside checkForDueDates");
         //checking if someone just passed the due date and no mail has been sent to him/her yet
         String firstRemainderMail="select t.user,tb from TransactionBooks tb join tb.transaction t "+
-                " where tb.returnDate is null and tb.dueDate < :appTime and tb.lastReminderMailTime is null";
+                " where tb.returnDate is null and tb.lastReminderMailTime is null";
         Query query=(Query)session.createQuery(firstRemainderMail);
-        query.setParameter("appTime", c.getTime());
+       /* query.setParameter("appTime", appTimeSqlFormat);*/
         List<Object[]> list=(List<Object[]>) query.getResultList();
         for(Object[] obj:list){
             User user=(User) obj[0];
             TransactionBooks transactionBook=(TransactionBooks) obj[1];
-            System.out.println(user+"printing"+transactionBook.getBook().getTitle()+transactionBook.getDueDate());
 
-            //set the last remainder mail column to the transactionBook object so that we don't send him mail again in the same day
-            transactionBook.setLastReminderMailTime(appTime);
-            session.update(transactionBook);
-            //sending the mail
-            mailService.sendReminderMail(user,transactionBook);
+            Date dueDate = transactionBook.getDueDate();
+
+            int diffInDays = (int) ((appTime.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
+            System.out.println("dueDate.getTime() "+dueDate);
+            System.out.println("appTime.getTime() "+appTime);
+            System.out.println("diffInDaysssssssssssssssssssss "+diffInDays);
+            if(diffInDays > 5)
+            {
+                //set the last remainder mail column to the transactionBook object so that we don't send him mail again in the same day
+                transactionBook.setLastReminderMailTime(appTime);
+                session.update(transactionBook);
+                //sending the mail
+                mailService.sendReminderMail(user,transactionBook);
+            }
         }
         //checking if someone has passed the due date and sending reminder mails to him has already started.
         String followingRemainderMails="select t.user,tb from TransactionBooks tb join tb.transaction t"+
-                " where tb.returnDate is null and tb.dueDate < :appTime and day(tb.lastReminderMailTime)<day(:appTime)";
-        /*String followingRemainderMails="select t.user,tb from TransactionBooks tb join tb.transaction t"+
-                " where tb.returnDate is null and tb.dueDate < current_date and " +
-                " (day(tb.dueDate)*24*60*60+hour(tb.dueDate)*60*60+minute(tb.dueDate)*60+" +
-                " second(tb.dueDate)-day(:appTime)*24*60*60-hour(:appTime)*60*60-" +
-                "minute(:appTime)*60- second(:appTime))";*/
+                " where tb.returnDate is null";
+
         Query query2=(Query)session.createQuery(followingRemainderMails);
-        query2.setParameter("appTime", c.getTime());
+
         List<Object[]> list2=(List<Object[]>) query2.getResultList();
         for(Object[] obj:list2){
             User user=(User) obj[0];
             TransactionBooks transactionBook=(TransactionBooks) obj[1];
-            System.out.println("in the following remainder mails");
-            System.out.println(user+"printing"+transactionBook.getBook().getTitle()+transactionBook.getDueDate());
-            Date date=new Date();
-            //updating the new reminder mail time
-            transactionBook.setLastReminderMailTime(date);
-            session.update(transactionBook);
-            //sending the mail
-            mailService.sendReminderMail(user,transactionBook);
+
+            Date dueDate = transactionBook.getDueDate();
+            Date lastReminderMailDate = transactionBook.getLastReminderMailTime();
+            int diffInDays = (int) ((dueDate.getTime() - appTime.getTime()) / (1000 * 60 * 60 * 24));
+            int differenceInLastReminderMailDate = 0;
+            try{
+                differenceInLastReminderMailDate = (int) ((lastReminderMailDate.getTime() - appTime.getTime()) / (1000 * 60 * 60 * 24));
+            }catch (Exception e)
+            {
+            }
+
+            if(diffInDays > 5 && differenceInLastReminderMailDate > 0 )
+            {
+                //updating the new reminder mail time
+                transactionBook.setLastReminderMailTime(appTime);
+                session.update(transactionBook);
+                //sending the mail
+                mailService.sendReminderMail(user,transactionBook);
+            }
+
+
+
         }
         session.getTransaction().commit();
         session.close();
