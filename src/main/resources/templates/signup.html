@@ -52,11 +52,9 @@
                 </div>
                 <div class="row">
                     <div class="input-field col s12 m10 offset-m1 offset-s2">
-                        <input id = "checkbox" name="userRole" value="ADMIN" type="checkbox" class="validate" />
-                        <label>Admin</label>
+                        <input id="role" name="role" th:value = "USER   " type="hidden" class="validate" />
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="input-field col s12 m10 offset-m1 offset-s2">
                         <button id="submit" class="btn waves-effect waves-light" type="submit" disabled = "disabled" name="action" value="signup">Sign Up</button>
@@ -70,22 +68,18 @@
 <script  th:src="@{/JS/validation.js}"></script>
 <script>
 
-
-$('#email').on("keyup",function(){
-        var email = $('#email').val();
-        var str = "@sjsu.edu"
-        if(email.match("@sjsu.edu$"))
-        {
-           $('#checkbox')[0].checked = true;
-          $("#checkbox").attr("disabled", true);
-        }
-         else
-         {
-           $('#checkbox')[0].checked = false;
-           $("#checkbox").attr("disabled", true);
-         }
-     });
-
+$('#submit').click(function(){
+    var email = $('#email').val();
+    var str = "@sjsu.edu"
+    if(email.match("@sjsu.edu$"))
+    {
+       $('#role').val('ADMIN')
+    }
+    else
+    {
+       $('#role').val('USER')
+    }
+});
 
 </script>
 </body>

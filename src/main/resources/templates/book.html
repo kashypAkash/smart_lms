@@ -104,7 +104,7 @@
 
                 <div class="row">
                     <div class="input-field col s6 m6">
-                        <button id="submit" class="btn waves-effect waves-light col m4" type="submit" name="action" value="add">add</button>
+                        <button id="submit" class="btn waves-effect waves-light col m4" disabled = "disabled" type="submit" name="action" value="add">add</button>
                     </div>
                 </div>
             </div>
@@ -113,8 +113,7 @@
 
 </div>
 <script  th:src="@{/JS/validation.js}"></script>
-
-    <script>
+<script>
      $(document).ready(function(){
         $('#submitCode').click(function(){
         var x;
@@ -144,6 +143,7 @@
        $('#publisher').val(book.publisher);
    };
   });
+
 });
 </script>
 </body>
