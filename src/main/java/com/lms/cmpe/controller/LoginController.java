@@ -80,16 +80,27 @@ public class LoginController {
     }
 
     @PostMapping("/signup")
-    public String createUser(@ModelAttribute User user,@RequestParam("role") String role){
+    public String createUser(Model model, @ModelAttribute User user,@RequestParam("role") String role){
         user.setVerificationCode(Integer.toString(verificationService.verficationCode()));
         if(role.equals("ADMIN"))
         {
            user.setUserRole(role);
         }
-
-        if(userService.saveUser(user)) {
+        int result = userService.saveUser(user);
+        if(result == 0)
+        {
             mailService.sendMail(user);
             return "activate";
+        } else if (result ==1) {
+            System.out.println("email Already existssssssssssssssssssssssssssssss");
+
+            model.addAttribute("message","Email already exists");
+        } else if (result ==2) {
+            System.out.println("id role Already existssssssssssssssssssssssssssssss");
+
+            model.addAttribute("message","University id with same role already exist");
+        } else if (result ==3) {
+            model.addAttribute("message","Unknown error occured. Try after some time. ");
         }
         return "test";
     }
