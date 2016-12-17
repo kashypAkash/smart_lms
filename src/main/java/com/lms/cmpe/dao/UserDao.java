@@ -1,6 +1,5 @@
 package com.lms.cmpe.dao;
 
-import com.lms.cmpe.model.Phone;
 import com.lms.cmpe.model.User;
 
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
 public interface UserDao {
     List<User> getUsers();
     User getUserById(int id);
-    List<Phone> getUsersByNumbers(String numbers);
+
     boolean saveUser(User user);
     void deleteUser(User user);
     void updateUser(User user);

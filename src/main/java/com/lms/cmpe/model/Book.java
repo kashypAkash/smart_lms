@@ -2,7 +2,6 @@ package com.lms.cmpe.model;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**

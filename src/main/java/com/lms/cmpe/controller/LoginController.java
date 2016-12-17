@@ -1,6 +1,7 @@
 package com.lms.cmpe.controller;
 
 
+import com.lms.cmpe.model.ApplicationTime;
 import com.lms.cmpe.model.TransactionBooks;
 import com.lms.cmpe.model.User;
 import com.lms.cmpe.service.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,6 +55,10 @@ public class LoginController {
             user = result;
             session.setAttribute("user",user);
             model.addAttribute("user",user);
+            Date appTime=new Date();
+            ApplicationTime appDateTime = new ApplicationTime();
+            appDateTime.setAppDateTime(appTime);
+            session.setAttribute("appTime",appTime);
                 if(result.isVerified()) {
                     return "redirect:/profile";
                 }
@@ -91,7 +97,7 @@ public class LoginController {
     @PostMapping("/activate")
     public String activateAccount(@RequestParam(value="activationcode", required=true) String activationcode,
                                   @RequestParam(value="userid", required=true) String userid,
-                                  Model model){
+                                  Model model, HttpSession session){
         System.out.println(userid);
         User user = userService.getUserById(Integer.parseInt(userid));
         model.addAttribute("user",user);
@@ -99,6 +105,7 @@ public class LoginController {
             mailService.sendSuccessfulRegistrationMail(user);
             user.setVerified(true);
             userService.updateUser(user);
+            session.setAttribute("user",user);
             return "redirect:/profile";
         }
 

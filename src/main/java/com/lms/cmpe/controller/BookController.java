@@ -117,7 +117,7 @@ public class BookController {
             int total = book.getNoOfAvailableCopies();
             book.setNoOfAvailableCopies(total);
             bookService.addBook(book);
-            redirectAttributes.addFlashAttribute("message", "Successfully Added! Add more books..");
+            redirectAttributes.addFlashAttribute("message","The Book " + book.getTitle() +"is successfully added! Add more books..");
             return"redirect:/book";
         }
         return "test";
@@ -181,6 +181,7 @@ public class BookController {
         }
 
         Book book= bookService.getBookById(id);
+
         bookService.deleteBook(book);
         redirectAttributes.addFlashAttribute("message", book.getTitle() +" has been deleted");
         return "redirect:/books";
@@ -219,7 +220,7 @@ public class BookController {
     }
 
     @GetMapping("/books/checkout")
-    public String checkout(HttpSession session, Model model){
+    public String checkout(HttpSession session, Model model, RedirectAttributes redirectAttributes){
 
         if(session.getAttribute("user")==null){
             return "redirect:/";
@@ -229,7 +230,7 @@ public class BookController {
         System.out.println(bookList.toString());
         Transaction t=new Transaction();
 
-        Date dateobj = new Date();
+        Date dateobj = (Date)session.getAttribute("appTime");
 
         t.setTransactionDate(dateobj);
         Calendar c = Calendar.getInstance();
@@ -248,12 +249,10 @@ public class BookController {
         }
         t.setTransactionBooksList(tbs);
         System.out.println(t.getUser()+t.getTransactionBooksList().get(0).getBook().getAuthor()+"in check out books");
-        //TransactionService ts=new TransactionServiceImpl();
-        //System.out.println("checking for null error");
-        //System.out.println(ts);
         User u=(User)session.getAttribute("user");
-        Transaction transaction = transactionService.checkOutBooks(t,u.getUserId());
+        Transaction transaction = transactionService.checkOutBooks(t,u.getUserId(),(Date)session.getAttribute("appTime"));
         if(transaction == null){
+            redirectAttributes.addFlashAttribute("message","Your Daily/Total limit of checkout books has been reached");
             return "redirect:/myerror";
         }
         model.addAttribute("transaction",transaction);
@@ -263,12 +262,6 @@ public class BookController {
         return "checkout";
     }
 
-/*    @GetMapping("/books/booksToBeReturned")
-    public String booksToBeReturned(HttpSession session){
-        System.out.println(session.getAttribute("user"));
-        transactionService.getBooksToBeReturned((int)((User)session.getAttribute("user")).getUserId());
-        return "redirect:/books";
-    }*/
 
     @GetMapping("/books/searchresults")
     public String searchResults(Model model, HttpSession session){
@@ -287,8 +280,9 @@ public class BookController {
         ArrayList<TransactionBooks> transactionBooksList = (ArrayList<TransactionBooks>)session.getAttribute("returnlist");
 
         User user = (User)session.getAttribute("user");
+        Date appTime=(Date)session.getAttribute("appTime");
 
-        boolean successfullyReturned = transactionService.returnBooks(transactionBooksList,user.getUserId());
+        boolean successfullyReturned = transactionService.returnBooks(transactionBooksList,user.getUserId(),appTime);
 
         session.removeAttribute("returnlist");
         return "redirect:/profile";
@@ -359,11 +353,23 @@ public class BookController {
     }
 
     @GetMapping("reissue/book/{id}")
-    public String reIssueBook(@PathVariable("id") int id, HttpSession session)
+    public String reIssueBook(@PathVariable("id") int id, HttpSession session, RedirectAttributes redirectAttributes)
     {
         System.out.println("Reissue Hereeeeeeeeeeeeeeeee " + id);
         User user = (User)session.getAttribute("user");
-        transactionService.reissueBook(id, user.getUserId());
+        int returnValue = transactionService.reissueBook(id, user.getUserId());
+        if(returnValue == 1)
+        {
+            redirectAttributes.addFlashAttribute("message", "Reissue failed as book is requested by someone else");
+            return "redirect:/profile";
+        }
+        else if (returnValue == 2)
+        {
+            redirectAttributes.addFlashAttribute("message", "Reissue failed as book is already issued twice");
+            return "redirect:/profile";
+        }
+        redirectAttributes.addFlashAttribute("message", "Booked has been reissued successfully");
+
         return "redirect:/profile";
 
     }
@@ -373,7 +379,4 @@ public class BookController {
         model.addAttribute("user",session.getAttribute("user"));
         return "test";
     }
-
-
-
 }
