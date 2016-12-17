@@ -36,43 +36,49 @@
             </div>
         </div>
     </nav>
-    <h5>
-        <small>Available Books For checout after Waitlist cleared</small>
-    </h5>
-
+    <div class="row">
+        <h5 class="apptime">Application Time : <span th:text="${appTime}"></span></h5>
+    </div>
     <div class="row" >
-        <div class="col s9 m9">
-            <div class="col s3 m3" th:object="${bookList}">
-                <ul class="collection" th:each="item, status : ${bookList}">
-
-                        <li class="collection-item avatar valign-wrapper">
-                            <img src="http://placehold.it/100x100" class="circle" />
-                            <span class="title" th:text="${item.getTitle()}">Title</span>
-                         </li>
-                        <li class="book-options"><a class="secondary-content" title="Checkout" th:href="@{|/book/addtocart/${item.getBookId()}|}" th:if="${user.getUserRole() == 'USER'}">Checkout</a></li>
-
-                </ul>
+        <h5 style="margin-left: 30px"><small>Books Available for checkout</small> <small style="color: darkred;" th:if="${bookList.size()==0}"> - Books you've requested not ready for ready</small></h5>
+        <div class="col s9 m9" th:object="${bookList}">
+            <div th:each="book : ${bookList}" class="col s12 m12">
+                <div class="row valign-wrapper book-item">
+                    <div class="col m2 valign">
+                        <img class="responsive-img" src="http://placehold.it/160x120" />
+                    </div>
+                    <div class="col m10">
+                        <h5 class="book-title" th:inline="text">[[${book.getTitle()}]]</h5>
+                        <h5 style="color: midnightblue;margin-left: -10px">
+                            <small class="col m4" th:inline="text">Author: [[${book.getAuthor()}]]</small>
+                            <small class="col m4" th:inline="text">Publisher: [[${book.getPublisher()}]]</small>
+                            <small class="col m4" th:inline="text">Published Year: [[${book.getYearOfPublication()}]]</small>
+                        </h5>
+                        <li class="book-options"><a class="secondary-content" title="Ready for checkout" th:href="@{|/book/addtocart/${book.getBookId()}|}" th:if="${user.getUserRole() == 'USER'}"><i class="small material-icons">shopping_cart</i></a></li>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <h5>
-        <small>Wait listed Books</small>
-    </h5>
-
     <div class="row" >
-        <div class="col s9 m9">
-            <div class="col s3 m3" th:object="${waitlistbooklist}">
-                <ul class="collection" th:each="item, status : ${waitlistbooklist}">
-
-                    <li class="collection-item avatar valign-wrapper">
-                        <img src="http://placehold.it/100x100" class="circle" />
-                        <span class="title" th:text="${item.getTitle()}">Title</span>
-                    </li>
-                    <li class="book-options"><img src = "https://cdn2.iconfinder.com/data/icons/bitsies/128/Clock-48.png">Checkout</img></li>
-
-                </ul>
-            </div>
+        <h5 style="margin-left: 30px"><small>Wait listed Books</small> <small style="color: darkred;" th:if="${waitlistbooklist.size()==0}"> - Nothing in your waitlist</small></h5>
+        <div class="col s9 m9" th:object="${waitlistbooklist}">
+                <div th:each="book : ${waitlistbooklist}" class="col s12 m12">
+                    <div class="row valign-wrapper book-item">
+                        <div class="col m2 valign">
+                            <img class="responsive-img" src="http://placehold.it/160x120" />
+                        </div>
+                        <div class="col m10">
+                            <h5 class="book-title" th:inline="text">[[${book.getTitle()}]]</h5>
+                            <h5 style="color: midnightblue;margin-left: -10px">
+                                <small class="col m4" th:inline="text">Author: [[${book.getAuthor()}]]</small>
+                                <small class="col m4" th:inline="text">Publisher: [[${book.getPublisher()}]]</small>
+                                <small class="col m4" th:inline="text">Published Year: [[${book.getYearOfPublication()}]]</small>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
         </div>
     </div>
 

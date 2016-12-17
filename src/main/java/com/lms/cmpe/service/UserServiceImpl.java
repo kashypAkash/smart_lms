@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean saveUser(User user) {
+    public int saveUser(User user) {
         return userDao.saveUser(user);
     }
 

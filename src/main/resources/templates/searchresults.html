@@ -40,6 +40,9 @@
             </div>
         </div>
     </nav>
+    <div class="row">
+        <h5 class="apptime">Application Time : <span th:text="${appTime}"></span></h5>
+    </div>
     <div class="row" >
         <div class="col s9 m9">
             <div th:each="book : ${books}" class="col s12 m12">
@@ -48,8 +51,12 @@
                         <img class="responsive-img" src="http://placehold.it/160x120" />
                     </div>
                     <div class="col m10">
-                        <h5 class="book-title" th:text="${book.getTitle()}" >Title of the Book</h5>
-                        <p class="book-author" th:text="${book.getAuthor()}">Author of the Book</p>
+                        <h5 class="book-title" th:inline="text">[[${book.getTitle()}]]</h5>
+                        <h5 style="color: midnightblue;margin-left: -10px">
+                            <small class="col m4" th:inline="text">Author: [[${book.getAuthor()}]]</small>
+                            <small class="col m4" th:inline="text">Publisher: [[${book.getPublisher()}]]</small>
+                            <small class="col m4" th:inline="text">Published Year: [[${book.getYearOfPublication()}]]</small>
+                        </h5>
                         <ul class="right" >
                             <li class="book-options"><a class="secondary-content" title="Delete" th:href="@{|/book/delete/searchresult/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">delete</i></a></li>
                             <li class="book-options"><a class="secondary-content" title="Update" th:href="@{|/book/update/${book.getBookId()}|}" th:if="${user.getUserRole() == 'ADMIN'}"><i class="small material-icons">playlist_add</i></a></li>

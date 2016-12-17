@@ -46,13 +46,18 @@ public class MailService {
         javaMailSender.send(mailMessage);
     }
 
-    public void sendTransactionReturnsInfoMail(ArrayList<TransactionBooks> transactionBooks, User user, Date returnDate){
+    public void sendTransactionReturnsInfoMail(ArrayList<TransactionBooks> transactionBooks,ArrayList fineList, User user, Date returnDate){
         StringBuilder sb=new StringBuilder("The following books have been returned");
         sb.append(System.getProperty("line.separator"));
 
+        int counter=0;
         for (TransactionBooks transactionBook:transactionBooks) {
             sb.append("Book Title - "+transactionBook.getBook().getTitle()+"  ");
             sb.append("Return Date - "+returnDate);
+            if((long)fineList.get(counter)>0){
+                sb.append("fine - "+fineList.get(counter));
+            }
+            counter++;
             sb.append(System.getProperty("line.separator"));
         }
         SimpleMailMessage mailMessage=new SimpleMailMessage();

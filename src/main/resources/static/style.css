@@ -61,6 +61,12 @@ input[type="search"] {
     margin-bottom: 0px;
 }
 
-
+.apptime{
+    text-align: right;
+    background-color: #edc125;
+    margin: 0px;
+    padding: 10px;
+    font-size: medium;
+}
 
 .material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
