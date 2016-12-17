@@ -61,15 +61,21 @@ public class BookController {
     }
 
     @GetMapping("/book/addtowaitlist/{id}")
-    public String addToWaitlist(Model model, HttpSession session,@PathVariable("id") int id)
+    public String addToWaitlist(Model model, HttpSession session,@PathVariable("id") int id,RedirectAttributes redirectAttributes)
     {
         Book book = bookService.getBookById(id);
         User user = (User) session.getAttribute("user");
         Waitlist waitlist = new Waitlist();
         waitlist.setUser(user);
         waitlist.setBook(book);
-        waitlistService.storeWaitlist(waitlist);
-        return "redirect:/waitListedbook";
+        if(waitlistService.storeWaitlist(waitlist)) {
+            return "redirect:/waitListedbook";
+        }
+        else {
+            redirectAttributes.addFlashAttribute("message","The book is already on your waitlist. Cannot add it to waitlist twice");
+            return "redirect:/myerror";
+
+        }
     }
     @GetMapping("/waitListedbook")
     public String getWaitlistedBooks(Model model,HttpSession session)
