@@ -80,10 +80,11 @@ public class LoginController {
     }
 
     @PostMapping("/signup")
-    public String createUser(@ModelAttribute User user,@RequestParam(value="userRole", required=false) String role){
+    public String createUser(@ModelAttribute User user,@RequestParam("role") String role){
         user.setVerificationCode(Integer.toString(verificationService.verficationCode()));
-        if(role != null){
-            user.setUserRole(role);
+        if(role.equals("ADMIN"))
+        {
+           user.setUserRole(role);
         }
 
         if(userService.saveUser(user)) {
