@@ -80,6 +80,14 @@ public class BookController {
         List<Book> waitlistbooklist = waitlistService.getWaitlistBooks(user);
         model.addAttribute("waitlistbooklist",waitlistbooklist);
         model.addAttribute("bookList",waitlistBookstobeaddedbookList);
+
+        if(session.getAttribute("booklist")==null){
+            BookList bookList = new BookList();
+            session.setAttribute("booklist",bookList);
+        }
+
+        model.addAttribute("booklist", session.getAttribute("booklist"));
+
         return "waitlist";
     }
 
@@ -195,12 +203,14 @@ public class BookController {
             }
 
             booklist = (BookList)session.getAttribute("booklist");
-
-            for(Book book:booklist.getBookList()){
-                if(book.getBookId() == id){
-                    return "redirect:/books";
+            if(booklist.getBookList().size()>0){
+                for(Book book:booklist.getBookList()){
+                    if(book.getBookId() == id){
+                        return "redirect:/books";
+                    }
                 }
             }
+
             booklist.getBookList().add(bookService.getBookById(id));
         return "redirect:/books";
     }
