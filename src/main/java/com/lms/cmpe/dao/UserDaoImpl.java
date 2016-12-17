@@ -1,9 +1,7 @@
 package com.lms.cmpe.dao;
 
 import com.lms.cmpe.model.User;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +9,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,7 +48,7 @@ public class UserDaoImpl implements UserDao {
         // Get the User by Id
         User user = null;
         try{
-             user = session.get(User.class,id);
+            user = session.get(User.class,id);
         }
         catch (NoResultException e){
             System.out.println(e.getMessage());
@@ -59,29 +58,64 @@ public class UserDaoImpl implements UserDao {
 
     }
 
-
     @Override
-    public boolean saveUser(User user) {
+    public int saveUser(User user) {
 
         try {
             // Open a session
             Session session = sessionFactory.openSession();
+            int emailExistsCount = 0;
+            int emailRoleAndUniversityIdExistsCount = 0;
+            String checkEmailExists = "select u.userId from User u where u.email = :email)";
 
-            // begin a transaction
-            session.beginTransaction();
+            Query checkEmailExistsQuery = (Query) session.createQuery(checkEmailExists);
+            checkEmailExistsQuery.setParameter("email",user.getEmail());
+            try {
+                emailExistsCount = (Integer) checkEmailExistsQuery.getSingleResult();
+            }catch (NoResultException noResultException)
+            {
+                System.out.println("checkEmailExistsQuery  existssssssssssssssssssssssssssssss");
+            }
 
-            session.save(user);
+            String checkEmailRoleAndUniversityIdExists = "select u.userId from User u where u.universityId = :universityId and u.userRole = :userRole)";
 
-            // save the user & commit trasaction
+            Query checkEmailRoleAndUniversityIdExistsQuery = (Query) session.createQuery(checkEmailRoleAndUniversityIdExists);
+            //checkEmailRoleAndUniversityIdExistsQuery.setParameter("email",user.getEmail());
+            checkEmailRoleAndUniversityIdExistsQuery.setParameter("universityId",user.getUniversityId());
+            checkEmailRoleAndUniversityIdExistsQuery.setParameter("userRole",user.getUserRole());
 
-            session.getTransaction().commit();
+            try {
+                emailRoleAndUniversityIdExistsCount = (Integer) checkEmailRoleAndUniversityIdExistsQuery.getSingleResult();
+            }catch (NoResultException noResultException)
+            {
+                System.out.println("checkEmailRoleAndUniversityIdExistsQuery Doesnot  existssssssssssssssssssssssssssssss");
+            }
 
+            if(emailExistsCount > 0)
+            {
+                return 1;
+            }
+
+            if(emailRoleAndUniversityIdExistsCount > 0)
+            {
+                return 2;
+            }
+            else
+            {
+                System.out.println("Else Doesnot  existssssssssssssssssssssssssssssss");
+                // begin a transaction
+                session.beginTransaction();
+                session.save(user);
+
+                // save the user & commit trasaction
+                session.getTransaction().commit();
+            }
             //close the session
             session.close();
-            return true;
+            return 0;
         }catch (Exception e){
             System.out.println(e+"printing exception");
-            return false;
+            return 3;
         }
     }
 
@@ -125,7 +159,7 @@ public class UserDaoImpl implements UserDao {
         Query query = session.createQuery("from User where email=:email");
         query.setParameter("email",email);
         try {
-           user = (User) query.getSingleResult();
+            user = (User) query.getSingleResult();
         }
         catch (NoResultException e){
             user = null;
