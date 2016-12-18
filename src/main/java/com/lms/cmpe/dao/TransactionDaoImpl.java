@@ -117,7 +117,7 @@ public class TransactionDaoImpl implements TransactionDao{
 
         Session session = sessionFactory.openSession();
         session.beginTransaction();
-        Date dateobj = appTime;
+        Date dateobj = ApplicationTime.staticAppDateTime;;
         ArrayList fineList = new ArrayList();
         for (TransactionBooks transactionBook:transactionBooksList) {
 
@@ -126,7 +126,7 @@ public class TransactionDaoImpl implements TransactionDao{
             System.out.println("Hereeeeeeeeeeeeeeeeee "+transactionBook.getDueDate());
             //if number of available copies was 0 then we have to take out the first patron in waitlist and assign the book to him
 
-                Date testDate=new Date();
+                //Date testDate=new Date();
                 ProcedureCall call = session
                         .createStoredProcedureCall("return_books");
 
@@ -134,7 +134,7 @@ public class TransactionDaoImpl implements TransactionDao{
                         ParameterMode.IN).bindValue((long)transactionBook.getTransactionBooksId());
 
                 call.registerParameter(2, Date.class,
-                    ParameterMode.IN).bindValue(testDate);
+                    ParameterMode.IN).bindValue(dateobj );
 
                 Output output = call.getOutputs().getCurrent();
                 if (output.isResultSet()) {
@@ -225,7 +225,7 @@ public class TransactionDaoImpl implements TransactionDao{
         }
         //checking if someone has passed the due date and sending reminder mails to him has already started.
         String followingRemainderMails="select t.user,tb from TransactionBooks tb join tb.transaction t"+
-                " where tb.returnDate is null";
+                " where tb.returnDate is null and tb.lastReminderMailTime is not null";
 
         Query query2=(Query)session.createQuery(followingRemainderMails);
 
@@ -237,10 +237,13 @@ public class TransactionDaoImpl implements TransactionDao{
 
             Date dueDate = transactionBook.getDueDate();
             Date lastReminderMailDate = transactionBook.getLastReminderMailTime();
-            int diffInDays = (int) ((dueDate.getTime() - appTime.getTime()) / (1000 * 60 * 60 * 24));
+            int diffInDays = (int) ((appTime.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
+
             int differenceInLastReminderMailDate = 0;
             try{
-                differenceInLastReminderMailDate = (int) ((lastReminderMailDate.getTime() - appTime.getTime()) / (1000 * 60 * 60 * 24));
+                differenceInLastReminderMailDate = (int) ((appTime.getTime() - lastReminderMailDate.getTime() ) / (1000 * 60 * 60 * 24));
+                System.out.println(differenceInLastReminderMailDate);
+                System.out.println(diffInDays);
             }catch (Exception e)
             {
             }
