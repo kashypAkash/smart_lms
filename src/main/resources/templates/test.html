@@ -21,15 +21,7 @@
                 <div class="col s8">
                     <a href="#" class="brand-logo">e-Library</a>
                 </div>
-                <div class="col s4">
-                    <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <li><a th:href="@{/profile}">Profile</a></li>
-                        <li><a th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}">Add Books</a></li>
-                        <li><a th:href="@{/book}" th:if="${user.getUserRole() != 'ADMIN'}">Wait list</a></li>
-                        <li><a th:href="@{/books}">View Books</a></li>
-                        <li><a class="red" th:href="@{/logout}">Logout</a></li>
-                    </ul>
-                </div>
+
             </div>
         </div>
     </nav>
