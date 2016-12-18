@@ -119,6 +119,7 @@ public class BookController {
             return "redirect:/";
         }
 
+        model.addAttribute("appTime",session.getAttribute("appTime"));
         model.addAttribute("user",session.getAttribute("user"));
         if(action.equals("addkeyword")){
             book.getBookKeywordsList().add(new BookKeywords());
@@ -157,6 +158,7 @@ public class BookController {
             return "redirect:/";
         }
 
+        model.addAttribute("appTime",session.getAttribute("appTime"));
         model.addAttribute("book", bookService.getBookById(id));
         model.addAttribute("user", session.getAttribute("user"));
         return "updatebook";
@@ -197,9 +199,13 @@ public class BookController {
 
         Book book= bookService.getBookById(id);
 
-        bookService.deleteBook(book);
-        redirectAttributes.addFlashAttribute("message", book.getTitle() +" has been deleted");
-        return "redirect:/books";
+        if(bookService.deleteBook(book)) {
+            redirectAttributes.addFlashAttribute("message", book.getTitle() + " has been deleted");
+            return "redirect:/books";
+        }else{
+            redirectAttributes.addFlashAttribute("message","Cannot delete this book. It has been checked out by a patron");
+            return "redirect:/myerror";
+        }
     }
 
     @GetMapping("/book/addtocart/{id}")
@@ -272,6 +278,7 @@ public class BookController {
             redirectAttributes.addFlashAttribute("message","Your Daily/Total limit of checkout books has been reached");
             return "redirect:/myerror";
         }
+        model.addAttribute("appTime", session.getAttribute("appTime"));
         model.addAttribute("transaction",transaction);
         model.addAttribute("user",session.getAttribute("user"));
         mailService.sendTransactionInfoMail(transaction,(User)session.getAttribute("user"));
