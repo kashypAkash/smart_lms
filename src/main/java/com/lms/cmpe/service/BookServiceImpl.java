@@ -30,7 +30,7 @@ public class BookServiceImpl implements BookService{
     public void addBook(Book book) { bookDao.addBook(book);};
 
     @Override
-    public void deleteBook(Book book) { bookDao.deleteBook(book);};
+    public boolean deleteBook(Book book) { return bookDao.deleteBook(book);};
 
     @Override
     public void updateBook(Book book) { bookDao.updateBook(book);}

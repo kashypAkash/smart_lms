@@ -197,9 +197,13 @@ public class BookController {
 
         Book book= bookService.getBookById(id);
 
-        bookService.deleteBook(book);
-        redirectAttributes.addFlashAttribute("message", book.getTitle() +" has been deleted");
-        return "redirect:/books";
+        if(bookService.deleteBook(book)) {
+            redirectAttributes.addFlashAttribute("message", book.getTitle() + " has been deleted");
+            return "redirect:/books";
+        }else{
+            redirectAttributes.addFlashAttribute("message","Cannot delete this book. It has been checked out by a patron");
+            return "redirect:/myerror";
+        }
     }
 
     @GetMapping("/book/addtocart/{id}")
