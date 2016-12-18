@@ -12,7 +12,7 @@ public interface BookDao {
 
     void addBook(Book book);
     void updateBook(Book book);
-    void deleteBook(Book book);
+    boolean deleteBook(Book book);
 
     List<BookKeywords> getBooksByKeyword(String keyword);
     List<Book> getAllBooks();

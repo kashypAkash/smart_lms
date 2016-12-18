@@ -113,16 +113,33 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public void deleteBook(Book book) {
+    public boolean deleteBook(Book book) {
         Session session = sessionFactory.openSession();
 
         session.beginTransaction();
 
-        session.delete(book);
+        String retrieve = "SELECT count(*) FROM TransactionBooks tb where " +
+                "tb.returnDate is null and tb.book.bookId=:bookId";
+        Query retrieveQuery = (Query) session.createQuery(retrieve);
+        retrieveQuery.setParameter("bookId",book.getBookId());
+        long count =(long)retrieveQuery.getSingleResult();
+        System.out.println("count of deleteBook"+count);
+        if(count==0) {
+            session.delete(book);
+            session.getTransaction().commit();
 
-        session.getTransaction().commit();
+            session.close();
 
-        session.close();
+            return true;
+        }
+        else{
+            session.getTransaction().commit();
+
+            session.close();
+
+            return false;
+        }
+
     }
 
     @Override

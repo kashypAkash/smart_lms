@@ -14,7 +14,7 @@ public interface BookService {
     List<BookKeywords> getBooksByKeyword(String keyword);
     Book getBookById(int id);
     void addBook(Book book);
-    void deleteBook(Book book);
+    boolean deleteBook(Book book);
     void updateBook(Book book);
     List<Book> getBooksByKey(String key);
 }
