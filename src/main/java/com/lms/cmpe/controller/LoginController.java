@@ -117,6 +117,14 @@ public class LoginController {
             user.setVerified(true);
             userService.updateUser(user);
             session.setAttribute("user",user);
+
+            if(session.getAttribute("appTime")== null){
+                Date appTime=new Date();
+                ApplicationTime appDateTime = new ApplicationTime();
+                appDateTime.setAppDateTime(appTime);
+                session.setAttribute("appTime",appTime);
+            }
+
             return "redirect:/profile";
         }
 

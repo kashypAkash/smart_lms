@@ -119,6 +119,7 @@ public class BookController {
             return "redirect:/";
         }
 
+        model.addAttribute("appTime",session.getAttribute("appTime"));
         model.addAttribute("user",session.getAttribute("user"));
         if(action.equals("addkeyword")){
             book.getBookKeywordsList().add(new BookKeywords());
@@ -157,6 +158,7 @@ public class BookController {
             return "redirect:/";
         }
 
+        model.addAttribute("appTime",session.getAttribute("appTime"));
         model.addAttribute("book", bookService.getBookById(id));
         model.addAttribute("user", session.getAttribute("user"));
         return "updatebook";
@@ -276,6 +278,7 @@ public class BookController {
             redirectAttributes.addFlashAttribute("message","Your Daily/Total limit of checkout books has been reached");
             return "redirect:/myerror";
         }
+        model.addAttribute("appTime", session.getAttribute("appTime"));
         model.addAttribute("transaction",transaction);
         model.addAttribute("user",session.getAttribute("user"));
         mailService.sendTransactionInfoMail(transaction,(User)session.getAttribute("user"));
