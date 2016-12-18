@@ -70,3 +70,20 @@ input[type="search"] {
 }
 
 .material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
+
+label[for = universityid].error{
+margin-top : 44px;
+color :red;
+}
+label[for = callNumber].error{
+margin-top : 44px;
+color :red;
+}
+label[for = yearOfPublication].error{
+margin-top : 44px;
+color :red;
+}
+label[for = noOfCopies].error{
+margin-top : 44px;
+color :red;
+}

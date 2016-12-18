@@ -100,6 +100,7 @@ public class LoginController {
 
             model.addAttribute("message","University id with same role already exist");
         } else if (result ==3) {
+            System.out.println("In here error!!!!!!!");
             model.addAttribute("message","Unknown error occured. Try after some time. ");
         }
         return "test";

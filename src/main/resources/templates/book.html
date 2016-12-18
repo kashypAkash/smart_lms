@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Kaushan+Script" rel="stylesheet" />
     <link rel="stylesheet" th:href="@{/style.css}" />
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.0/additional-methods.min.js"></script>
 
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
@@ -52,7 +54,7 @@
             <button id="submitCode" class="btn waves-effect waves-light col m4" value="data">ISBN Data</button>
         </div>
 
-        <form class="col s9 m9" th:action="@{/book/add}" method="post" th:object="${book}">
+        <form id="addbookform" class="col s9 m9" th:action="@{/book/add}" method="post" th:object="${book}">
             <div class="col s10 m10">
                 <p th:if="${message != null}" th:text="${message}" style="color: red;text-align: center"></p>
                 <div class="row">
@@ -145,6 +147,46 @@
        $('#publisher').val(book.publisher);
    };
   });
+
+
+    $('#addbookform').validate({
+    rules : {
+
+        callNumber : {
+        pattern : '^[0-9]+$'
+        },
+
+        yearOfPublication :{
+        pattern : '^[0-9]+$'
+        },
+
+        noOfCopies :{
+        pattern : '^[0-9]+$'
+        }
+    },
+    messages : {
+        callNumber : {
+        pattern : "Only numbers are allowed"
+        },
+
+        yearOfPublication : {
+        pattern : "Only numbers are allowed"
+        },
+
+        noOfCopies : {
+        pattern : "Only numbers are allowed"
+        }
+    },
+    errorPlacement: function(error, element) {
+      var placement = $(element).data('error');
+      if (placement) {
+        $(placement).append(error)
+      } else {
+        error.insertAfter(element);
+      }
+    }
+
+});
 
 });
 </script>
