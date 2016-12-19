@@ -53,7 +53,7 @@
                 </div>
                 <div class="row">
                     <div class="input-field col s12 m10 offset-m1 offset-s2">
-                        <input id="role" name="role" th:value = "USER   " type="hidden" class="validate" />
+                        <input id="role" name="role" th:value = "USER" type="hidden" class="validate" />
                     </div>
                 </div>
                 <div class="row">
@@ -68,6 +68,13 @@
 </div>
 <script  th:src="@{/JS/validation.js}"></script>
 <script>
+$('#submit').click(function(){
+    var email = $('#email').val();
+    if(email.match('@sjsu.edu$'))
+    {
+        $('#role').val('ADMIN');
+    }
+});
 
 $('#signupForm').validate({
     rules : {
