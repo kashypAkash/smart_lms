@@ -53,7 +53,9 @@ public class MailService {
         int counter=0;
         for (TransactionBooks transactionBook:transactionBooks) {
             sb.append("Book Title - "+transactionBook.getBook().getTitle()+"  ");
+            sb.append(System.getProperty("line.separator"));
             sb.append("Return Date - "+returnDate);
+            sb.append(System.getProperty("line.separator"));
             if((long)fineList.get(counter)>0){
                 sb.append("fine - "+fineList.get(counter));
             }
@@ -75,9 +77,11 @@ public class MailService {
         javaMailSender.send(mailMessage);
     }
     public void sendReminderMail(User user,TransactionBooks transactionBook){
-        StringBuilder sb=new StringBuilder("You have not returned the following book and due date is near. Please return it");
+        StringBuilder sb=new StringBuilder("You have not returned the following book and due date is near or you passed due date. Please return it");
         sb.append(System.getProperty("line.separator"));
-        sb.append("Book Title"+"------"+transactionBook.getBook().getTitle()+"------ Due Date"+transactionBook.getDueDate());
+        sb.append("Book Title - "+transactionBook.getBook().getTitle());
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Due Date - "+transactionBook.getDueDate());
         SimpleMailMessage mailMessage=new SimpleMailMessage();
         mailMessage.setTo(user.getEmail());
         mailMessage.setSubject("Reminder Mail --- Book Title ---"+transactionBook.getBook().getTitle());
