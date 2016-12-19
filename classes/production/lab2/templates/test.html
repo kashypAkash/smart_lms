@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8" />
+    <title>Smart LMS</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Kaushan+Script" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/style.css}" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+    <script  th:src="@{/JS/scripts.js}">    </script>
+</head>
+<body>
+<div>
+    <nav>
+        <div class="nav-wrapper">
+            <div class="row">
+                <div class="col s8">
+                    <a href="#" class="brand-logo">e-Library</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <p th:if="${message != null}" th:text="${message}" style="color: red;text-align: center"></p>
+    <div class="row">
+        <div class="col s12 m6 offset-m3 offset-s3">
+            <div class="card darken-1">
+                <div class="card-content white-text">
+                    <img class="center-align" src="http://cdn3.wpbeginner.com/wp-content/uploads/2015/08/error.jpg" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

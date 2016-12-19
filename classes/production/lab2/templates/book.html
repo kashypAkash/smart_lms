@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8" />
+    <title>Smart LMS</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Kaushan+Script" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/style.css}" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.0/additional-methods.min.js"></script>
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+    <script  th:src="@{/JS/scripts.js}"></script>
+
+</head>
+<body>
+<div>
+    <nav>
+        <div class="nav-wrapper">
+            <div class="row">
+                <div class="col s8">
+                    <a href="#" class="brand-logo">e-Library</a>
+                </div>
+                <div class="col s4">
+                    <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <li><a th:href="@{/profile}">Profile</a></li>
+                        <li><a th:href="@{/book}" th:if="${user.getUserRole() == 'ADMIN'}">Add Books</a></li>
+                        <li><a th:href="@{/waitListedbook}" th:if="${user.getUserRole() != 'ADMIN'}">Wait list</a></li>
+                        <li><a th:href="@{/books}">View Books</a></li>
+                        <li><a class="red" th:href="@{/logout}">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="row">
+        <h5 class="apptime">Application Time : <span th:text="${appTime}"></span></h5>
+    </div>
+    <div class="row">
+        <div class="row">
+            <h5 class="book-heading">Add a Book</h5>
+        </div>
+        <div class="col m3" >
+            <img src="http://placehold.it/250x250" />
+        </div>
+
+        <div class="input-field col s6 m6">
+            <input id="isbn" name="isbn" type="text" class="validate" />
+            <label for = "isbn">Enter ISBN Code</label>
+        </div>
+        <div class="input-field col s6 m6">
+            <button id="submitCode" class="btn waves-effect waves-light col m4" value="data">ISBN Data</button>
+        </div>
+
+        <form id="addbookform" class="col s9 m9" th:action="@{/book/add}" method="post" th:object="${book}">
+            <div class="col s10 m10">
+                <p th:if="${message != null}" th:text="${message}" style="color: red;text-align: center"></p>
+                <div class="row">
+                    <div class="input-field col s6 m6">
+                        <input id="author" name="author" th:field="*{author}" type="text" class="validate" />
+                        <label for="author">Author</label>
+                    </div>
+                    <div class="input-field col s6 m6">
+                        <input id="title" name="title" th:field="*{title}" type="text" class="validate" />
+                        <label for="title">Title</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s6 m6">
+                        <input id="callNumber" name="callNumber" th:field="*{callNumber}" type="text" class="validate" />
+                        <label for="callNumber">Call Number</label>
+                    </div>
+                    <div class="input-field col s6 m6">
+                        <input id="publisher" name="publisher" th:field="*{publisher}" type="text" class="validate" />
+                        <label for="publisher">Publisher</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6 m6">
+                        <input id="yearOfPublication" name="yearOfPublication" th:field="*{yearOfPublication}" type="text" class="validate" />
+                        <label for="yearOfPublication">Year of Publication</label>
+                    </div>
+                    <div class="input-field col s6 m6">
+                        <input id="locationInLibrary" name="locationInLibrary" th:value="*{locationInLibrary}" type="text" class="validate" />
+                        <label for="locationInLibrary">Location In Library</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6 m6">
+                        <input id="noOfCopies" name="noOfCopies" th:value="*{noOfCopies}" type="text" class="validate" />
+                        <label for="noOfCopies">No of Copies</label>
+                    </div>
+                    <div class="input-field col s6 m6">
+                        <input id="currentStatus" name="currentStatus" th:value="*{currentStatus}" type="text" class="validate" />
+                        <label for="currentStatus">Current Status</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <button class="btn waves-effect waves-light red book-tag" type="submit" name="action" value="addkeyword">Tag</button>
+                    <div th:each="word, keyStat : *{bookKeywordsList}">
+                        <div class="input-field col s3 m3">
+                            <input th:field="*{bookKeywordsList[__${keyStat.index}__].keyword}" type="text" class="validate" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s6 m6">
+                        <button id="submit" class="btn waves-effect waves-light col m4" type="submit" name="action" value="add">add</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+<script  th:src="@{/JS/validation.js}"></script>
+<script>
+     $(document).ready(function(){
+        $('#submitCode').click(function(){
+        var x;
+         var isbn = $('#isbn').val();
+         var xmlhttp = new XMLHttpRequest();
+         var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn;
+
+            xmlhttp.onreadystatechange = function() {
+            /*<![CDATA[*/
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            x = JSON.parse(xmlhttp.responseText);
+            callback(x);
+           }/*]]>*/
+           };
+           xmlhttp.open("GET", url, true);
+           xmlhttp.send();
+
+    function callback(x) {
+    var book = x.items[0].volumeInfo;
+    $("#author").focus();
+      $('#author').val(book.authors.join('; '));
+       $("#title").focus();
+      $('#title').val(book.title);
+       $("#publisher").focus();
+       $('#publisher').val(book.publisher);
+   };
+  });
+
+
+    $('#addbookform').validate({
+    rules : {
+
+        callNumber : {
+        pattern : '^[0-9]+$'
+        },
+
+        yearOfPublication :{
+        pattern : '^[0-9]+$'
+        },
+
+        noOfCopies :{
+        pattern : '^[0-9]+$'
+        }
+    },
+    messages : {
+        callNumber : {
+        pattern : "Only numbers are allowed"
+        },
+
+        yearOfPublication : {
+        pattern : "Only numbers are allowed"
+        },
+
+        noOfCopies : {
+        pattern : "Only numbers are allowed"
+        }
+    },
+    errorPlacement: function(error, element) {
+      var placement = $(element).data('error');
+      if (placement) {
+        $(placement).append(error)
+      } else {
+        error.insertAfter(element);
+      }
+    }
+
+});
+
+});
+</script>
+</body>
+</html>

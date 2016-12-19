@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8" />
+    <title>crazySpring</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Kaushan+Script" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/style.css}" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.0/additional-methods.min.js"></script>
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+    <script  th:src="@{/JS/scripts.js}">    </script>
+</head>
+<body>
+<div>
+    <nav>
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo">e-Library</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a th:href="@{/signup}">Sign Up</a></li>
+                <li><a th:href="@{/}">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="row">
+        <div class="row">
+            <h5 class="form-heading"> Sign Up </h5>
+        </div>
+           <form id="signupForm" class="col s6 m6 offset-m3 offset-s3" th:action="@{/signup}" method="post">
+            <div class="col s12">
+                <div class="row">
+                    <div class="input-field col s12 m10 offset-m1 offset-s2">
+                        <input id="universityid" name="universityId" th:value="${user.universityId}" minlength="6" maxlength="6" required="required" type="text" class="validate"/>
+                        <label for="universityid">University Id(Numbers Only)</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m10 offset-m1 offset-s2">
+                        <input id="email" name="email" th:value="${user.email}" type="email" class="validate" required="required"/>
+                        <label for="email">Email</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m10 offset-m1 offset-s2">
+                        <input id="password" name="password" th:value="${user.password}" type="password" class="validate" required="required"/>
+                        <label for="password">Password</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m10 offset-m1 offset-s2">
+                        <input id="role" name="role" th:value = "USER   " type="hidden" class="validate" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m10 offset-m1 offset-s2">
+                        <button id="submit" class="btn waves-effect waves-light" type="submit" disabled = "disabled" name="action" value="signup">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+<script  th:src="@{/JS/validation.js}"></script>
+<script>
+
+$('#signupForm').validate({
+    rules : {
+        universityId : {
+        pattern : '^[0-9]+$'
+    }
+    },
+    messages : {
+    universityId : {
+        pattern : "Only numbers are allowed"
+        }
+    },
+    errorPlacement: function(error, element) {
+      var placement = $(element).data('error');
+      if (placement) {
+        $(placement).append(error)
+      } else {
+        error.insertAfter(element);
+      }
+    }
+
+});
+
+</script>
+</body>
+</html>
